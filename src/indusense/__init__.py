@@ -1,2 +1,3 @@
-def main() -> None:
-    print("Hello from indusense!")
+from indusense.cli import main
+
+__all__ = ["main"]

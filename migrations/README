@@ -1,0 +1,3 @@
+Les migrations Alembic versionnent le schéma PostgreSQL Indusense.
+
+La première révision sera créée après validation des modèles Bronze et Ops.
