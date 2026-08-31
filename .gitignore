@@ -11,3 +11,4 @@ wheels/
 
 # Jupyter-generated files
 .ipynb_checkpoints/
+.env
