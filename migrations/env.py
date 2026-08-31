@@ -3,6 +3,7 @@ from logging.config import fileConfig
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
+from indusense.db import models as _models  # noqa: F401
 from indusense.db.base import Base
 from indusense.db.config import DatabaseSettings
 
