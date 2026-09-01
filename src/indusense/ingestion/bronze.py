@@ -1,23 +1,57 @@
 import csv
 import hashlib
 import json
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from dataclasses import dataclass
+from functools import partial
 from pathlib import Path
 
 from sqlalchemy import func, select, update
 from sqlalchemy.orm import Session, sessionmaker
 
-from indusense.db.models import IncidentRaw, IngestionBatch, MachineMaintenanceRaw, TelemetryRaw
+from indusense.db.base import Base
+from indusense.db.models import IngestionBatch
+
+
+BronzeRow = tuple[int, dict[str, str]]
+BronzeRowReader = Callable[[Path], Iterator[BronzeRow]]
+
+
+@dataclass(frozen=True)
+class BronzeTarget:
+    """Table Bronze et lecteur produisant ses lignes depuis une source."""
+
+    model: type[Base]
+    reader: BronzeRowReader
 
 
 @dataclass(frozen=True)
 class BronzeSource:
-    """Contrat d'une source CSV Bronze et de sa table de destination."""
+    """Contrat d'un fichier Bronze et de ses tables de destination."""
 
     name: str
     path: Path
-    model: type[IncidentRaw] | type[MachineMaintenanceRaw] | type[TelemetryRaw]
+    targets: tuple[BronzeTarget, ...]
+
+
+def csv_target(model: type[Base]) -> BronzeTarget:
+    """Construit une cible Bronze utilisant le lecteur CSV fidèle à la source."""
+
+    return BronzeTarget(model=model, reader=read_csv_rows)
+
+
+def sql_insert_target(
+    model: type[Base],
+    table_name: str,
+    *,
+    defaults: dict[str, str] | None = None,
+) -> BronzeTarget:
+    """Construit une cible lisant un bloc ``INSERT`` nommé dans un fichier SQL."""
+
+    return BronzeTarget(
+        model=model,
+        reader=partial(read_sql_insert_rows, table_name=table_name, defaults=defaults),
+    )
 
 
 def source_sha256(path: Path) -> str:
@@ -30,7 +64,7 @@ def source_sha256(path: Path) -> str:
 
 
 def source_record_hash(row: dict[str, str]) -> str:
-    """Produit une empreinte stable d'une ligne CSV brute."""
+    """Produit une empreinte stable d'une ligne Bronze brute."""
     serialized_row = json.dumps(
         row,
         ensure_ascii=False,
@@ -40,7 +74,7 @@ def source_record_hash(row: dict[str, str]) -> str:
     return hashlib.sha256(serialized_row.encode("utf-8")).hexdigest()
 
 
-def read_source_rows(path: Path) -> Iterator[tuple[int, dict[str, str]]]:
+def read_csv_rows(path: Path) -> Iterator[BronzeRow]:
     """Lit les lignes CSV avec les chaînes brutes, y compris les cellules vides."""
     with path.open(encoding="utf-8", newline="") as source_file:
         reader = csv.DictReader(source_file)
@@ -53,6 +87,85 @@ def read_source_rows(path: Path) -> Iterator[tuple[int, dict[str, str]]]:
             if any(value is None for value in row.values()):
                 raise ValueError(f"Ligne CSV incomplète dans {path} à la ligne {source_row_number}")
             yield source_row_number, row
+
+
+def read_sql_insert_rows(
+    path: Path,
+    *,
+    table_name: str,
+    defaults: dict[str, str] | None = None,
+) -> Iterator[BronzeRow]:
+    """Extrait sans exécution les valeurs d'un bloc ``INSERT INTO`` SQL contrôlé."""
+
+    insert_prefix = f"INSERT INTO {table_name} ("
+    columns: list[str] | None = None
+    reading_values = False
+    row_count = 0
+
+    with path.open(encoding="utf-8") as source_file:
+        for source_row_number, source_line in enumerate(source_file, start=1):
+            stripped_line = source_line.strip()
+
+            if columns is None:
+                if not stripped_line.startswith(insert_prefix):
+                    continue
+
+                closing_parenthesis = stripped_line.find(")", len(insert_prefix))
+                if closing_parenthesis == -1:
+                    raise ValueError(
+                        f"En-tête INSERT incomplet pour {table_name} dans {path}"
+                    )
+                columns = [
+                    column.strip()
+                    for column in stripped_line[len(insert_prefix) : closing_parenthesis].split(",")
+                ]
+                continue
+
+            if not reading_values:
+                if stripped_line == "VALUES":
+                    reading_values = True
+                continue
+
+            values_line, separator, _ = stripped_line.partition("ON CONFLICT")
+            values_line = values_line.rstrip(",;")
+
+            if values_line:
+                if not (values_line.startswith("(") and values_line.endswith(")")):
+                    raise ValueError(
+                        f"Ligne SQL inattendue pour {table_name} dans {path} "
+                        f"à la ligne {source_row_number}"
+                    )
+
+                parsed_values = next(
+                    csv.reader(
+                        [values_line[1:-1]],
+                        delimiter=",",
+                        quotechar="'",
+                        doublequote=True,
+                        skipinitialspace=True,
+                    )
+                )
+                if len(parsed_values) != len(columns):
+                    raise ValueError(
+                        f"Nombre de valeurs invalide pour {table_name} dans {path} "
+                        f"à la ligne {source_row_number}"
+                    )
+
+                row = {
+                    column: "" if value == "NULL" else value
+                    for column, value in zip(columns, parsed_values, strict=True)
+                }
+                row.update(defaults or {})
+                row_count += 1
+                yield source_row_number, row
+
+            if separator:
+                break
+
+    if columns is None:
+        raise ValueError(f"Bloc INSERT INTO {table_name} introuvable dans {path}")
+    if not reading_values or row_count == 0:
+        raise ValueError(f"Aucune valeur INSERT pour {table_name} dans {path}")
 
 
 def ingest_source(session_factory: sessionmaker[Session], source: BronzeSource) -> tuple[str, int]:
@@ -80,24 +193,39 @@ def ingest_source(session_factory: sessionmaker[Session], source: BronzeSource) 
         batch_id = batch.batch_id
 
     try:
-        rows = [
-            {
-                "batch_id": batch_id,
-                "source_row_number": source_row_number,
-                "record_hash": source_record_hash(row),
-                **row,
-            }
-            for source_row_number, row in read_source_rows(source.path)
-        ]
+        target_rows: list[tuple[BronzeTarget, list[dict[str, object]]]] = []
+        total_row_count = 0
+
+        for target in source.targets:
+            rows = [
+                {
+                    "batch_id": batch_id,
+                    "source_row_number": source_row_number,
+                    "record_hash": source_record_hash(row),
+                    **row,
+                }
+                for source_row_number, row in target.reader(source.path)
+            ]
+            if not rows:
+                raise ValueError(
+                    f"Aucune ligne pour {target.model.__table__.fullname} dans {source.path}"
+                )
+            target_rows.append((target, rows))
+            total_row_count += len(rows)
 
         with session_factory.begin() as session:
-            session.execute(source.model.__table__.insert(), rows)
+            for target, rows in target_rows:
+                session.execute(target.model.__table__.insert(), rows)
             session.execute(
                 update(IngestionBatch)
                 .where(IngestionBatch.batch_id == batch_id)
-                .values(status="completed", row_count=len(rows), finished_at=func.now())
+                .values(
+                    status="completed",
+                    row_count=total_row_count,
+                    finished_at=func.now(),
+                )
             )
-        return "completed", len(rows)
+        return "completed", total_row_count
     except Exception as error:
         with session_factory.begin() as session:
             session.execute(

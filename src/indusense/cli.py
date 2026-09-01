@@ -8,23 +8,44 @@ from sqlalchemy.exc import SQLAlchemyError
 from indusense.db.config import DatabaseConfigurationError
 from indusense.db.engine import create_database_engine
 from indusense.db.session import create_session_factory
-from indusense.ingestion.bronze import BronzeSource, ingest_source
+from indusense.ingestion.bronze import (
+    BronzeSource,
+    csv_target,
+    ingest_source,
+    sql_insert_target,
+)
+from indusense.ingestion.silver import build_silver
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 
 def _bronze_sources() -> dict[str, BronzeSource]:
-    from indusense.db.models import IncidentRaw, MachineMaintenanceRaw, TelemetryRaw
+    from indusense.db.models import IncidentRaw, MachineRaw, MaintenanceRaw, TelemetryRaw
 
     data_directory = PROJECT_ROOT / "datas"
     return {
-        "machine": BronzeSource("machine", data_directory / "machine.csv", MachineMaintenanceRaw),
+        "machine": BronzeSource(
+            "machine",
+            data_directory / "machine.sql",
+            (
+                sql_insert_target(
+                    MachineRaw,
+                    "machine",
+                    defaults={"is_active": "true"},
+                ),
+                sql_insert_target(MaintenanceRaw, "maintenance"),
+            ),
+        ),
         "incident": BronzeSource(
-            "incident", data_directory / "releves_incidents.csv.csv", IncidentRaw
+            "incident",
+            data_directory / "releves_incidents.csv",
+            (csv_target(IncidentRaw),),
         ),
         "telemetry": BronzeSource(
-            "telemetry", data_directory / "telemetry.csv.csv", TelemetryRaw
+            "telemetry",
+            data_directory / "telemetry.csv",
+            (csv_target(TelemetryRaw),),
         ),
     }
 
@@ -81,6 +102,32 @@ def _ingest_bronze(source_name: str) -> int:
     return 0
 
 
+def _build_silver() -> int:
+    try:
+        engine = create_database_engine()
+    except DatabaseConfigurationError as error:
+        print(f"Configuration PostgreSQL invalide : {error}")
+        return 1
+
+    session_factory = create_session_factory(engine)
+    try:
+        result = build_silver(session_factory)
+        print(
+            "Construction Silver terminée : "
+            f"run={result.run_id}, "
+            f"lignes_lues={result.metrics['rows_read']}, "
+            f"lignes_ecrites={result.metrics['rows_written']}, "
+            f"doublons_telemetrie={result.metrics['telemetry_duplicates_removed']}, "
+            f"maintenances_realignees={result.metrics['maintenance_machine_codes_aligned']}"
+        )
+    except (SQLAlchemyError, ValueError) as error:
+        print(f"Echec de la construction Silver : {error}")
+        return 1
+    finally:
+        engine.dispose()
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="indusense",
@@ -93,13 +140,17 @@ def build_parser() -> argparse.ArgumentParser:
     )
     ingest_parser = subparsers.add_parser(
         "ingest-bronze",
-        help="Charger les fichiers CSV Bronze dans PostgreSQL.",
+        help="Charger les fichiers Bronze dans PostgreSQL.",
     )
     ingest_parser.add_argument(
         "--source",
         choices=("all", "machine", "incident", "telemetry"),
         default="all",
         help="Source à ingérer ; toutes les sources par défaut.",
+    )
+    subparsers.add_parser(
+        "build-silver",
+        help="Transformer les derniers lots Bronze en tables Silver.",
     )
     return parser
 
@@ -112,6 +163,8 @@ def main(arguments: Sequence[str] | None = None) -> int:
         return _check_database()
     if parsed_arguments.command == "ingest-bronze":
         return _ingest_bronze(parsed_arguments.source)
+    if parsed_arguments.command == "build-silver":
+        return _build_silver()
 
     parser.error(f"Commande inconnue : {parsed_arguments.command}")
     return 2

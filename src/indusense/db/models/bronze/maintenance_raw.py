@@ -18,10 +18,10 @@ from sqlalchemy.orm import Mapped, mapped_column
 from indusense.db.base import Base
 
 
-class MachineMaintenanceRaw(Base):
-    """Ligne brute au grain mixte machine-maintenance issue de ``machine.csv``."""
+class MaintenanceRaw(Base):
+    """Ligne maintenance brute extraite du bloc ``INSERT`` de ``machine.sql``."""
 
-    __tablename__ = "machine_maintenance_raw"
+    __tablename__ = "maintenance_raw"
     __table_args__ = (
         UniqueConstraint("batch_id", "source_row_number"),
         {"schema": "bronze"},
@@ -44,14 +44,6 @@ class MachineMaintenanceRaw(Base):
 
     maintenance_id: Mapped[str] = mapped_column(Text, nullable=False)
     machine_code: Mapped[str] = mapped_column(Text, nullable=False)
-    commissioning_date: Mapped[str] = mapped_column(Text, nullable=False)
-    max_daily_capacity: Mapped[str] = mapped_column(Text, nullable=False)
-    max_hourly_capacity_pieces: Mapped[str] = mapped_column(Text, nullable=False)
-    model: Mapped[str] = mapped_column(Text, nullable=False)
-    production_line: Mapped[str] = mapped_column(Text, nullable=False)
-    location: Mapped[str] = mapped_column(Text, nullable=False)
-    criticality: Mapped[str] = mapped_column(Text, nullable=False)
-    is_active: Mapped[str] = mapped_column(Text, nullable=False)
     maintenance_at: Mapped[str] = mapped_column(Text, nullable=False)
     maintenance_type: Mapped[str] = mapped_column(Text, nullable=False)
     action_type: Mapped[str] = mapped_column(Text, nullable=False)

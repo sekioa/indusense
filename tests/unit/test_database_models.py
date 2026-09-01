@@ -4,7 +4,7 @@ from pathlib import Path
 
 from sqlalchemy import Text, UniqueConstraint
 
-from indusense.db.models import IncidentRaw, MachineMaintenanceRaw, TelemetryRaw
+from indusense.db.models import IncidentRaw, MachineRaw, MaintenanceRaw, TelemetryRaw
 
 
 TECHNICAL_COLUMNS = {
@@ -20,9 +20,8 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 class BronzeModelTests(unittest.TestCase):
     def test_model_columns_follow_the_source_file_headers(self) -> None:
         source_files = {
-            IncidentRaw: PROJECT_ROOT / "datas" / "releves_incidents.csv.csv",
-            MachineMaintenanceRaw: PROJECT_ROOT / "datas" / "machine.csv",
-            TelemetryRaw: PROJECT_ROOT / "datas" / "telemetry.csv.csv",
+            IncidentRaw: PROJECT_ROOT / "datas" / "releves_incidents.csv",
+            TelemetryRaw: PROJECT_ROOT / "datas" / "telemetry.csv",
         }
 
         for model, source_file in source_files.items():
@@ -60,8 +59,7 @@ class BronzeModelTests(unittest.TestCase):
                 "type_arret_urgence",
                 "type_defaut_qualite",
             },
-            MachineMaintenanceRaw: {
-                "maintenance_id",
+            MachineRaw: {
                 "machine_code",
                 "commissioning_date",
                 "max_daily_capacity",
@@ -71,6 +69,10 @@ class BronzeModelTests(unittest.TestCase):
                 "location",
                 "criticality",
                 "is_active",
+            },
+            MaintenanceRaw: {
+                "maintenance_id",
+                "machine_code",
                 "maintenance_at",
                 "maintenance_type",
                 "action_type",
@@ -102,7 +104,7 @@ class BronzeModelTests(unittest.TestCase):
                     self.assertFalse(column.nullable)
 
     def test_each_bronze_table_traces_rows_without_deduplicating_hashes(self) -> None:
-        for model in (IncidentRaw, MachineMaintenanceRaw, TelemetryRaw):
+        for model in (IncidentRaw, MachineRaw, MaintenanceRaw, TelemetryRaw):
             with self.subTest(model=model.__name__):
                 table = model.__table__
                 foreign_key = next(iter(table.columns.batch_id.foreign_keys))

@@ -19,7 +19,7 @@ from indusense.db.base import Base
 
 
 class IncidentRaw(Base):
-    """Ligne brute issue de ``releves_incidents.csv.csv``."""
+    """Ligne brute issue de ``releves_incidents.csv``."""
 
     __tablename__ = "incident_raw"
     __table_args__ = (

@@ -14,9 +14,17 @@ class DatabaseFoundationTests(unittest.TestCase):
             set(Base.metadata.tables),
             {
                 "bronze.incident_raw",
-                "bronze.machine_maintenance_raw",
+                "bronze.machine_raw",
+                "bronze.maintenance_raw",
                 "bronze.telemetry_raw",
                 "ops.ingestion_batch",
+                "ops.pipeline_run",
+                "ops.pipeline_run_source",
+                "ops.transformation_issue",
+                "silver.incident",
+                "silver.machine",
+                "silver.maintenance",
+                "silver.telemetry",
             },
         )
 

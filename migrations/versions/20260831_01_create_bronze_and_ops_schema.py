@@ -69,12 +69,18 @@ def upgrade() -> None:
     )
 
     _bronze_table(
-        "machine_maintenance_raw",
+        "machine_raw",
         [
-            "maintenance_id", "machine_code", "commissioning_date", "max_daily_capacity",
+            "machine_code", "commissioning_date", "max_daily_capacity",
             "max_hourly_capacity_pieces", "model", "production_line", "location", "criticality",
-            "is_active", "maintenance_at", "maintenance_type", "action_type", "component",
-            "description", "related_incident_id", "duration_hours",
+            "is_active",
+        ],
+    )
+    _bronze_table(
+        "maintenance_raw",
+        [
+            "maintenance_id", "machine_code", "maintenance_at", "maintenance_type",
+            "action_type", "component", "description", "related_incident_id", "duration_hours",
         ],
     )
     _bronze_table(
@@ -97,7 +103,7 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    for table_name in ("telemetry_raw", "incident_raw", "machine_maintenance_raw"):
+    for table_name in ("telemetry_raw", "incident_raw", "maintenance_raw", "machine_raw"):
         op.drop_table(table_name, schema="bronze")
     op.drop_table("ingestion_batch", schema="ops")
     op.execute("DROP SCHEMA bronze")

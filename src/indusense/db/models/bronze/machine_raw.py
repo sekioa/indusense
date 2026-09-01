@@ -18,10 +18,10 @@ from sqlalchemy.orm import Mapped, mapped_column
 from indusense.db.base import Base
 
 
-class TelemetryRaw(Base):
-    """Ligne brute issue de ``telemetry.csv``."""
+class MachineRaw(Base):
+    """Ligne machine brute extraite du bloc ``INSERT`` de ``machine.sql``."""
 
-    __tablename__ = "telemetry_raw"
+    __tablename__ = "machine_raw"
     __table_args__ = (
         UniqueConstraint("batch_id", "source_row_number"),
         {"schema": "bronze"},
@@ -42,10 +42,12 @@ class TelemetryRaw(Base):
         server_default=func.now(),
     )
 
-    machine_id: Mapped[str] = mapped_column(Text, nullable=False)
-    timestamp: Mapped[str] = mapped_column(Text, nullable=False)
-    temperature_c: Mapped[str] = mapped_column(Text, nullable=False)
-    pressure_bar: Mapped[str] = mapped_column(Text, nullable=False)
-    voltage_mean_v: Mapped[str] = mapped_column(Text, nullable=False)
-    rotation_mean_rpm: Mapped[str] = mapped_column(Text, nullable=False)
-    pieces_produced: Mapped[str] = mapped_column(Text, nullable=False)
+    machine_code: Mapped[str] = mapped_column(Text, nullable=False)
+    commissioning_date: Mapped[str] = mapped_column(Text, nullable=False)
+    max_daily_capacity: Mapped[str] = mapped_column(Text, nullable=False)
+    max_hourly_capacity_pieces: Mapped[str] = mapped_column(Text, nullable=False)
+    model: Mapped[str] = mapped_column(Text, nullable=False)
+    production_line: Mapped[str] = mapped_column(Text, nullable=False)
+    location: Mapped[str] = mapped_column(Text, nullable=False)
+    criticality: Mapped[str] = mapped_column(Text, nullable=False)
+    is_active: Mapped[str] = mapped_column(Text, nullable=False)

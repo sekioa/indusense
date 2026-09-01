@@ -19,10 +19,19 @@ class CommandLineTests(unittest.TestCase):
         self.assertEqual(parsed_arguments.command, "ingest-bronze")
         self.assertEqual(parsed_arguments.source, "all")
 
+    def test_build_silver_command_is_available(self) -> None:
+        parsed_arguments = build_parser().parse_args(["build-silver"])
+
+        self.assertEqual(parsed_arguments.command, "build-silver")
+
     def test_bronze_sources_resolve_inside_the_project(self) -> None:
         sources = _bronze_sources()
 
         self.assertTrue(all(source.path.is_file() for source in sources.values()))
+        self.assertEqual(sources["machine"].path.name, "machine.sql")
+        self.assertEqual(len(sources["machine"].targets), 2)
+        self.assertEqual(sources["incident"].path.name, "releves_incidents.csv")
+        self.assertEqual(sources["telemetry"].path.name, "telemetry.csv")
 
     def test_db_check_reports_missing_configuration_without_traceback(self) -> None:
         output = StringIO()
