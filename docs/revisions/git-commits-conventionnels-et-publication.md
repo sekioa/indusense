@@ -17,6 +17,12 @@ L’objectif est de produire un historique lisible, vérifiable et facile à cor
 7. Pousser la branche explicitement, par exemple `git push origin main`.
 8. Comparer `git rev-parse HEAD` au SHA retourné par `git ls-remote origin refs/heads/main`.
 
+## Contrat d'un agent de publication
+
+Un agent chargé de publier doit recevoir un périmètre explicite : dépôt, branche cible, remote GitHub et changements à publier. Il peut alors préparer des commits et pousser directement cette branche, mais il ne doit pas inventer une branche, une pull request, une fusion, un tag ni inclure des fichiers hors sujet.
+
+Avant chaque commit, il vérifie la branche active, les remotes, les modifications existantes et le contenu exact de l'index. Il découpe les changements en sujets indépendants et utilise un message **Conventional Commit** par sujet. Après chaque push, il confirme que le SHA local correspond au SHA de la branche distante.
+
 ## Types courants
 
 - `feat` : nouvelle capacité fonctionnelle ou technique ;

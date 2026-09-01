@@ -35,14 +35,9 @@ Les données observées contiennent :
 
 ### 2. Harmoniser les fuseaux
 
-`maintenance_at` contient le décalage `+00` et est donc explicitement en UTC. La date et l'heure des incidents ne précisent aucun fuseau.
+`maintenance_at` contient le décalage `+00` et est donc explicitement en UTC. La date et l'heure des incidents ne précisent aucun fuseau dans le CSV, mais l'information métier confirme que toutes les données temporelles Indusense sont en UTC. Les timestamps sans offset doivent donc être interprétés directement en UTC, sans localisation préalable en `Europe/Paris` et sans décalage de leur heure affichée.
 
-Deux scénarios cohérents sont comparés :
-
-1. scénario UTC : les incidents sont supposés en UTC et les maintenances restent en UTC ;
-2. scénario `Europe/Paris` : les incidents sont supposés locaux et les maintenances UTC sont converties en `Europe/Paris`.
-
-Il ne faut pas comparer dans une même série des incidents en UTC à des maintenances en heure locale. Toutes les données d'un scénario doivent partager le même référentiel temporel.
+Le notebook exploratoire comparait initialement un scénario UTC et un scénario `Europe/Paris` parce que cette information métier n'était pas encore disponible. Cette comparaison reste une analyse de sensibilité historique ; le scénario UTC est désormais le seul référentiel canonique pour Silver.
 
 ### 3. Construire un panel mensuel complet
 
@@ -63,8 +58,8 @@ Cette analyse événementielle complète l'agrégation mensuelle. Le choix de 30
 
 ## Résultats observés et limites
 
-- Les scénarios UTC et `Europe/Paris` produisent la même corrélation mensuelle de Spearman : environ `0,0723`, soit une association contemporaine très faible.
-- Le choix du fuseau modifie le compte avant/après pour 3 maintenances sur 115.
+- L'analyse exploratoire comparait UTC et `Europe/Paris` et obtenait la même corrélation mensuelle de Spearman, environ `0,0723`. L'information métier désormais disponible impose de retenir uniquement le résultat UTC dans le pipeline Silver.
+- La différence observée sur le compte avant/après de 3 maintenances illustre le risque d'inventer un fuseau local pour des données métier UTC.
 - Pour les maintenances proactives, les moyennes sont proches : environ 6,3 incidents avant et après.
 - Pour les maintenances réactives, environ 10 incidents sont observés avant et 4,6 après.
 - Cette baisse descriptive ne prouve pas que la maintenance est l'unique cause. La production, l'âge, la criticité, la saison ou l'utilisation peuvent également intervenir.
@@ -73,13 +68,17 @@ Cette analyse événementielle complète l'agrégation mensuelle. Le choix de 30
 
 Cette structure ne démontre toutefois pas que chaque identifiant désigne l'incident déclencheur précis. Un seul lien concerne la même machine ; aucun incident référencé n'est l'incident global immédiatement antérieur à sa maintenance. Le délai varie de 1,7 à 102,7 jours, avec une médiane de 35,7 jours, et augmente presque parfaitement avec l'ordre des maintenances (`ρ ≈ 0,9915`). L'association composant remplacé–type d'incident n'est pas concluante au test par permutations (`p ≈ 0,265`), pas plus que l'association entre les deux machines (`p ≈ 0,848`) ou une différence de gravité (`p ≈ 0,103`).
 
-Conclusion : le lien doit être conservé comme une relation fournie par la source, mais sa signification causale et la possibilité d'une propagation inter-machine restent à confirmer avec le métier. Les 24 liens inter-machine ne conviennent pas à l'alignement temporel principal limité à une même machine, sans être pour autant invalides.
+Conclusion initiale sur le CSV : le lien semblait devoir être conservé comme une relation fournie par la source, avec une signification causale et une éventuelle propagation inter-machine restant à confirmer avec le métier. Le formateur a depuis confirmé que `machine.csv` résulte d'une création de données défectueuse et que la table `machine` de `machine.sql` fait foi pour les identifiants machine. Le contrôle de cette source SQL montre que 503 des 1 472 maintenances réactives reliées, soit 34,17 %, référencent un incident porté par une autre machine. Les 1 472 identifiants existent tous dans le fichier incidents. La décision retenue conserve `machine.sql` et le Bronze inchangés, puis reporte en Silver l'identifiant machine de l'incident sur la maintenance correspondante par `related_incident_id`.
 
 Le croisement avec le commentaire Bronze renforce la réalité sémantique du lien. Les 25 descriptions de maintenance mentionnent explicitement l'identifiant associé sous la forme d'une intervention corrective réalisée après cet incident. La similarité lexicale entre le composant remplacé et le commentaire de l'incident est supérieure aux appariements aléatoires (`p ≈ 0,0004`). Une grille de compatibilité métier volontairement prudente reconnaît 12 couples composant–symptôme sur 25, contre 6,66 en moyenne après permutation (`p ≈ 0,0094`). Par exemple, des capteurs de température sont associés à des symptômes thermiques ou à des alarmes de capteur, un roulement à un bruit mécanique et une courroie à des vibrations.
 
+Les commentaires d'incident ne nomment toutefois aucune machine : sur les 1 245 commentaires, dont les 25 incidents reliés, aucun ne contient un code `MACH-xx`, un modèle de machine (`InduPress-X1` à `InduPress-Z1`) ni les termes génériques recherchés « machine », « presse », « équipement » ou « ligne ». Le commentaire décrit donc un symptôme, mais ne permet pas d'identifier une machine destinataire différente ni d'expliquer directement les 24 relations inter-machine.
+
 Ces deux tests ciblés ne contredisent pas le test global composant–type non concluant (`p ≈ 0,265`) : le test global compare toutes les catégories exactes dans un tableau très clairsemé, tandis que les tests ciblés recherchent une proximité textuelle ou une compatibilité regroupée. Ils restent exploratoires, car les règles de rapprochement n'ont pas été définies à l'avance avec le métier.
 
-Les machines reliées ne partagent toutefois pas plus souvent que le hasard leur modèle (`p ≈ 0,637`), leur ligne de production (`p ≈ 0,376`), leur atelier (`p ≈ 0,849`) ou leur criticité (`p ≈ 0,922`). L'hypothèse d'une propagation locale entre machines d'une même ligne n'est donc pas soutenue par ces attributs. Deux explications restent compatibles avec les observations : une relation inter-machine fondée sur le symptôme ou le composant, ou une incohérence des codes machine lors de la génération des données. Seul le métier peut les départager.
+Les machines reliées dans le CSV ne partageaient pas plus souvent que le hasard leur modèle (`p ≈ 0,637`), leur ligne de production (`p ≈ 0,376`), leur atelier (`p ≈ 0,849`) ou leur criticité (`p ≈ 0,922`). Ces statistiques restent utiles comme exemple de détection d'une incohérence, mais pas comme connaissance métier à intégrer au Silver. La valeur reçue reste disponible dans Bronze et dans `source_machine_code`, tandis que `machine_code` porte la valeur alignée dans Silver.
+
+Le sens de la correction ne peut pas être inversé sans ambiguïté : 363 incidents sont référencés par des maintenances portant deux ou trois codes machine différents. Reporter ces codes vers l'incident imposerait un choix arbitraire. Reporter le code de l'incident vers chaque maintenance liée fournit au contraire une machine unique par couple incident-maintenance.
 
 Le commentaire a servi ici à qualifier la relation dans le Bronze. Il reste exclu du Silver par minimisation : la conclusion agrégée peut être conservée sans recopier le texte libre ni les informations relatives aux opérateurs.
 
@@ -141,6 +140,7 @@ Toujours signaler les périodes incomplètes. Dans le fichier incidents, juin 20
 - Choisir une granularité sans mesurer le nombre de périodes vides.
 - Déduire une causalité d'une simple corrélation ou d'une baisse avant/après.
 - Faire confiance à une clé de rapprochement sans vérifier sa présence et sa cohérence métier.
+- Interpréter une compatibilité entre un symptôme et un composant comme la preuve que le commentaire désigne la machine maintenue, alors qu'aucun identifiant de machine n'y figure.
 - Tester de nombreux décalages puis ne présenter que celui qui donne la corrélation la plus forte.
 - Ignorer que des fenêtres autour de maintenances proches peuvent se chevaucher.
 
@@ -155,10 +155,10 @@ Toujours signaler les périodes incomplètes. Dans le fichier incidents, juin 20
 ## Points à savoir expliquer lors de la soutenance
 
 - Pourquoi le mois a été retenu pour la vue annuelle et complété par une fenêtre de 30 jours.
-- Comment les deux scénarios horaires ont été construits sans mélanger UTC et heure locale.
+- Pourquoi deux scénarios horaires avaient été explorés avant la validation métier, puis pourquoi seul UTC est retenu dans Silver.
 - Pourquoi Spearman a été privilégié et comment interpréter une valeur proche de zéro.
 - Pourquoi la diminution observée après certaines maintenances ne démontre pas une causalité.
-- Comment les liens inter-machine portés par `related_incident_id` ont été détectés, pourquoi ils ont été exclus de l'analyse limitée à une même machine et pourquoi ils restent conservés en attente d'une validation métier.
+- Comment les liens inter-machine portés par `related_incident_id` ont permis de détecter un défaut de données, puis comment la table `machine` et la machine de l'incident servent à réaligner les maintenances correspondantes en Silver sans modifier le Bronze.
 - Comment vérifier qu'un graphe raconte fidèlement l'ordre des événements.
 
 La correspondance exacte avec les compétences C1 à C9 reste à confirmer avec le Kit candidat.

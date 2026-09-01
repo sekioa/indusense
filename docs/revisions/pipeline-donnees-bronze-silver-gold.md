@@ -74,6 +74,10 @@ Pour prévoir une panne industrielle :
 - Silver convertit les dates et mesures, harmonise les unités, retire les doublons et isole les valeurs invalides ;
 - Gold sélectionne les capteurs pertinents, calcule par exemple une moyenne glissante, puis produit les jeux d’entraînement, de validation et de test.
 
+Dans Indusense, le métier confirme que plusieurs télémétries portant la même machine et le même timestamp sont des répétitions techniques dues à l'occupation du bus. Les 1 340 groupes observés présentent des écarts très faibles, inférieurs à `0,15 %` de la moyenne du groupe au maximum, et aucune différence sur le nombre de pièces produites. Bronze conserve toutes les lignes ; Silver conserve la ligne la plus complète, puis la première ligne source en cas d'égalité, et audite les 1 346 lignes écartées.
+
+Une valeur de capteur manquante n'est pas automatiquement une ligne invalide. Dans le Bronze Indusense, 2 828 télémétries ont au moins une température, pression ou rotation absente. Comme les autres mesures de ces lignes restent valides, Silver conserve la ligne avec `NULL` et un avertissement. L'imputation éventuelle appartient à une future vue de features, avec une règle explicite, et non au nettoyage Silver.
+
 ## Erreurs fréquentes et bonnes pratiques
 
 - Modifier ou écraser les données Bronze empêche de rejouer fidèlement les traitements.

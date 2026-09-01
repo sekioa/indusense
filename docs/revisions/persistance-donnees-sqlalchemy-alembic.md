@@ -169,15 +169,15 @@ Pour une couche Bronze fidèle à la source, le modèle ORM reste volontairement
 - les relations métier, comme machine vers incidents, ne sont pas imposées à ce stade si la source ne garantit pas leur intégrité ;
 - une contrainte d’unicité ne doit pas supprimer les doublons réellement présents dans le fichier source.
 
-Les trois tables Bronze envisagées pour Indusense restent `machine_maintenance_raw`, `incident_raw` et `telemetry_raw`. La table `machine_maintenance_raw` conserve volontairement le grain mixte du fichier `machine.csv` ; séparer machine et maintenance serait déjà une normalisation Silver.
+L'implémentation Bronze du 31 août comportait `machine_maintenance_raw`, `incident_raw` et `telemetry_raw`. Elle conservait le grain mixte de l'ancien `machine.csv`. Depuis l'arrivée de la source de référence `machine.sql`, cette structure a été remplacée dans le code, la migration initiale et PostgreSQL par `machine_raw`, `maintenance_raw`, `incident_raw` et `telemetry_raw`, sans modifier les valeurs reçues.
 
-Pour Indusense, la convention validée est un fichier Python par modèle : trois modules dans `db/models/bronze/` et un module `ingestion_batch.py` dans `db/models/ops/`. Les colonnes sources sont explicites, en `Text` et non nulles ; les cellules CSV vides devront donc rester des chaînes vides pendant la lecture. La paire `(batch_id, source_row_number)` est unique, tandis que `record_hash` ne l’est pas afin de conserver les doublons réellement présents dans les sources.
+La convention reste un fichier Python par modèle et un module `ingestion_batch.py` dans `db/models/ops/`. Les colonnes sources sont explicites, en `Text` et non nulles ; les cellules CSV vides restent donc des chaînes vides pendant la lecture. La paire `(batch_id, source_row_number)` est unique dans chaque table, tandis que `record_hash` ne l'est pas afin de conserver les doublons réellement présents dans les sources.
 
 Les modèles sont enregistrés dans `Base.metadata` et testés indépendamment de PostgreSQL. Cette validation confirme leur structure Python ; elle ne prouve pas encore que les schémas et tables existent dans la base. La création réelle reste réservée à une migration Alembic relue puis appliquée explicitement.
 
-### Validation PostgreSQL et ingestion Bronze Indusense
+### Validation PostgreSQL historique et remplacement Bronze
 
-La migration initiale `20260831_01` a été appliquée sur PostgreSQL local : elle a créé les schémas `bronze` et `ops`, les tables `machine_maintenance_raw`, `incident_raw`, `telemetry_raw` et `ingestion_batch`.
+L'ancienne version de la migration initiale `20260831_01` avait été appliquée sur PostgreSQL local : elle avait créé les schémas `bronze` et `ops`, les tables `machine_maintenance_raw`, `incident_raw`, `telemetry_raw` et `ingestion_batch`.
 
 La commande `indusense ingest-bronze` lit les trois CSV avec `csv.DictReader`, conserve les cellules vides sous forme de chaînes vides, calcule l’empreinte SHA-256 du fichier et celle de chaque ligne, puis écrit les lignes en transaction. Un lot est créé dans `ops.ingestion_batch` avant l’écriture ; il passe à `completed` avec son volume ou à `failed` avec un message d’erreur et une date de fin.
 
@@ -185,9 +185,15 @@ L’**idempotence** signifie qu’une seconde exécution avec le même fichier n
 
 Une idempotence validée ne remplace pas un test de rollback : il reste à provoquer une erreur pendant une insertion et à vérifier qu’aucune ligne Bronze partielle ne subsiste.
 
+Le remplacement du 1er septembre introduit quatre modèles ORM et un lecteur contrôlé de `machine.sql`. Le fichier SQL n'est pas exécuté : ses blocs `INSERT INTO machine` et `INSERT INTO maintenance` sont extraits, puis leurs 15 et 1 562 lignes sont chargées sous un même `batch_id` et dans une même transaction. Les 17 tests unitaires, la compilation et la génération SQL Alembic hors ligne sont validés.
+
+La migration initiale remplacée conserve l'identifiant `20260831_01`. Comme une base ayant déjà enregistré cette révision ne rejoue pas son contenu avec un simple `alembic upgrade head`, le volume PostgreSQL `pg-db-data` a été supprimé et recréé après autorisation ; le volume pgAdmin a été préservé. La migration est désormais à `head`.
+
+La première ingestion du nouveau Bronze contient 15 machines, 1 562 maintenances, 1 245 incidents et 135 626 mesures de télémétrie. Les trois lots sont `completed`, aucun n'est `failed`, les 90 maintenances proactives conservent un identifiant d'incident vide et l'ancienne table mixte est absente. Un second lancement ignore les trois sources sans modifier les volumes, ce qui valide l'idempotence sur ces fichiers.
+
 ### Notebook de construction et d'ingestion Bronze
 
-Le notebook `indusense/build-data-bronze.ipynb` est une démonstration reproductible de la mise en place Bronze. Il alterne une explication métier et une cellule de vérification : inventaire des CSV, inspection des classes ORM, présence de la migration, puis calcul des empreintes SHA-256 sans modification de la source.
+Le notebook `indusense/build-data-bronze.ipynb` documente l'ancienne mise en place Bronze. Il n'a pas été modifié pendant le remplacement des modèles et ne doit plus être utilisé comme validation du contrat courant tant qu'une adaptation distincte n'a pas été discutée.
 
 Le contrôle PostgreSQL y est volontairement optionnel (`VALIDER_POSTGRESQL = False`). Cette précaution évite qu'une exécution globale du notebook crée ou modifie des données. Après avoir configuré les variables `DB_*` et appliqué la migration, l'utilisateur peut passer cette variable à `True` pour lire les trois volumes attendus. L'écriture reste une action explicite dans le terminal : `uv run indusense ingest-bronze --source all`.
 
@@ -195,13 +201,19 @@ Le contrôle PostgreSQL y est volontairement optionnel (`VALIDER_POSTGRESQL = Fa
 
 La conception Silver commence par fixer le **grain** de chaque table, c'est-à-dire ce que représente exactement une ligne. Une source Bronze peut volontairement mélanger plusieurs grains pour rester fidèle au fichier reçu ; Silver sépare alors le référentiel machine des événements de maintenance, des incidents et des mesures de télémétrie.
 
-Une clé étrangère garantit que la valeur référencée existe dans la table cible. Elle ne garantit pas automatiquement une règle portant sur plusieurs colonnes. Par exemple, une maintenance peut référencer un identifiant d'incident existant tout en appartenant à une autre machine. Cela ne constitue pas automatiquement une anomalie : une relation inter-machine peut avoir un sens fonctionnel. Tant que le métier ne l'interdit pas, la base doit imposer seulement l'existence de l'incident par une clé étrangère simple et conserver la machine propre à chaque événement.
+Une clé étrangère garantit que la valeur référencée existe dans la table cible. Elle ne garantit pas automatiquement une règle portant sur plusieurs colonnes. Par exemple, une maintenance peut référencer un identifiant d'incident existant tout en appartenant à une autre machine. Une telle situation doit être qualifiée avec la source d'autorité et le métier avant de devenir une règle du modèle cible.
 
-L'analyse détaillée confirme que `related_incident_id` est systématiquement renseigné pour les maintenances réactives et jamais pour les maintenances proactives. La clé étrangère simple et nullable vers `silver.incident.incident_id` est donc conservée. Elle formalise une relation déclarée par la source, sans prétendre que l'incident est la cause directe de la maintenance ni qu'il doit concerner la même machine. Cette sémantique reste à valider avec le métier.
+L'analyse de `machine.csv` montrait que `related_incident_id` était systématiquement renseigné pour les maintenances réactives et jamais pour les maintenances proactives. Le formateur a ensuite confirmé un bug de création de ce fichier et désigné `machine.sql` comme source faisant foi. Le profil de cette source contient 1 562 maintenances : 90 proactives sans lien et 1 472 réactives avec un lien. Tous les identifiants référencés existent, mais 503 liens, soit 34,17 %, associent deux machines différentes. Par ailleurs, 1 057 incidents distincts sont référencés et un même incident peut être lié à trois maintenances au maximum.
 
-Le croisement des commentaires Bronze et des composants de maintenance renforce cette décision : les descriptions des 25 maintenances réactives mentionnent explicitement leur incident lié et les couples composant–symptôme sont plus cohérents que des appariements aléatoires. La relation doit donc être persistée. Les commentaires eux-mêmes restent absents de Silver conformément à la minimisation déjà décidée ; ils ne sont pas nécessaires pour matérialiser la clé étrangère.
+Le schéma SQL déclare `related_incident_id` comme un simple `VARCHAR(16)` nullable, sans clé étrangère vers les incidents ni contrainte de même machine. La règle de réalignement envisagée utilise la table `machine` comme référentiel canonique : `incident.machine_id` doit référencer un `machine.machine_code` existant, puis ce code est reporté sur la maintenance liée par `related_incident_id`. Les maintenances proactives, dépourvues d'incident lié, conservent leur `machine_code` source après validation dans le même référentiel.
 
-Le profil Bronze Indusense observé le 31 août 2026 montre :
+La décision retenue est de conserver `machine.sql` et le Bronze tels qu'ils ont été reçus, puis de réaligner la clé machine pendant la transformation vers Silver. La maintenance conserve son code reçu dans `source_machine_code` et utilise comme `machine_code` Silver celui de l'incident lié. Le contrôle final attendu est zéro maintenance liée dont la machine diffère de celle de son incident.
+
+Le sens inverse serait ambigu : 363 incidents sont reliés à des maintenances portant plusieurs codes machine. Reporter les codes des maintenances vers l'incident imposerait donc un choix arbitraire.
+
+Le croisement des commentaires Bronze et des composants de maintenance montrait une cohérence textuelle dans le CSV défectueux, mais ne peut pas valider sa structure relationnelle. Les commentaires eux-mêmes restent absents de Silver conformément à la minimisation déjà décidée.
+
+Le profil du CSV Bronze Indusense observé le 31 août 2026 montrait :
 
 - 15 machines communes au référentiel, aux incidents et à la télémétrie ;
 - des attributs de machine stables dans les 115 lignes machine-maintenance ;
@@ -209,15 +221,50 @@ Le profil Bronze Indusense observé le 31 août 2026 montre :
 - 25 références maintenance-incident existantes, dont une associe la même machine des deux côtés et 24 relient deux machines différentes ;
 - 1 340 couples télémétriques `(machine_id, timestamp)` répétés avec des mesures différentes.
 
-Ces répétitions de télémétrie ne sont pas des doublons exacts. La décision retenue est de conserver chaque mesure dans Silver avec une clé technique `telemetry_id` auto-incrémentée. `(machine_id, measured_at)` reste un index de recherche non unique. Une référence unique vers la ligne Bronze source devra empêcher qu'un rejeu du pipeline ne recrée la même mesure Silver. Le métier décidera ultérieurement si les mesures partageant un instant doivent être agrégées, distinguées par une information supplémentaire ou considérées comme des anomalies.
+Ces effectifs décrivent l'état du CSV analysé, pas la référence SQL. Le contrôle de `machine.sql` doit être conservé séparément afin de ne pas mélanger les deux populations : 115 maintenances dans le CSV contre 1 562 dans le SQL. La provenance doit être explicite dans les transformations et les résultats.
+
+Ces répétitions de télémétrie ne sont pas identiques sur toutes les mesures, mais le métier confirme qu'elles sont des doublons techniques dus à l'occupation du bus de données. Les 1 340 groupes contiennent 2 686 lignes, soit 1 346 lignes excédentaires lorsqu'une seule représentante est conservée. Les écarts maximaux sont faibles : `0,063 °C`, `0,088 bar`, `0,064 V`, `0,088 rpm` et zéro pièce produite ; le maximum relatif à la moyenne du groupe reste inférieur à `0,15 %`. Silver impose donc l'unicité de `(machine_id, measured_at)` et trace les lignes écartées. La règle déterministe validée conserve la ligne la plus complète, puis la plus petite `source_row_number` en cas d'égalité, sans calculer de moyenne.
+
+Le profil révèle également 2 828 lignes Bronze avec au moins un capteur absent : 894 températures, 995 pressions et 958 rotations, réparties sur les 15 machines. Silver conserve ces lignes avec `NULL` sur la mesure absente et un avertissement d'audit ; il ne remplace pas une absence par zéro et ne rejette pas les autres mesures valides de la ligne.
 
 Une relation ORM avec `relationship()` facilite la navigation entre objets Python, mais la clé étrangère et les contraintes PostgreSQL restent les garanties d'intégrité. Les deux notions sont complémentaires et ne doivent pas être confondues.
+
+### Ordre de mise en œuvre du passage Bronze vers Silver
+
+Le contrat d'entrée Bronze est réaligné dans le code et PostgreSQL sur `machine.sql`, `releves_incidents.csv` et `telemetry.csv`. Les quatre tables brutes sont `machine_raw`, `maintenance_raw`, `incident_raw` et `telemetry_raw`. Pour Silver, le chargement complet et atomique est validé dans le contrat cible.
+
+L'ordre recommandé est :
+
+1. figer les sources Bronze, leur représentation et le mode de chargement complet ou incrémental ;
+2. profiler les données et définir le contrat Silver : grain, colonnes, types, nullabilité, clés, cardinalités et règles de qualité ;
+3. figer les transformations : alignement des codes machine depuis l'incident vers la maintenance liée, dédoublonnage stable, suppression des données opérateur et traitement des valeurs invalides ;
+4. définir la traçabilité, l'idempotence, les audits de dédoublonnage, la quarantaine et les critères bloquants ;
+5. créer les modèles ORM Silver et les tests de structure ;
+6. créer et relire la migration Alembic du schéma Silver et des tables Ops nécessaires ;
+7. implémenter le pipeline transactionnel Bronze vers Silver avec publication atomique ;
+8. exécuter les tests unitaires, de migration, d'intégration et de qualité, puis seulement lancer le pipeline sur PostgreSQL et contrôler les volumes.
+
+Les tests ne constituent pas uniquement une dernière étape : leurs cas et résultats attendus sont définis avec le contrat, puis implémentés au fur et à mesure du modèle, de la migration et du pipeline.
+
+Le modèle cible a été validé le 1er septembre 2026. Tous les horodatages métier sont en UTC : les timestamps sans offset des CSV incidents et télémétrie sont interprétés directement en UTC, et non convertis depuis `Europe/Paris`. La machine n'est pas historisée dans cette première version, les indicateurs d'incident utilisent les noms anglais du contrat, la description de maintenance est conservée, toute anomalie bloquante annule la publication et le chargement Silver initial est complet et atomique.
+
+L'implémentation Silver ajoute quatre modèles ORM métier, `ops.pipeline_run`, `ops.pipeline_run_source`, `ops.transformation_issue`, la migration `20260901_01` et la commande `indusense build-silver`. Les 29 tests, la compilation et la génération SQL Alembic hors ligne réussissent.
+
+L'exécution PostgreSQL du 1er septembre 2026 est validée : le run `235a0dd3-9c39-48b0-9287-31d3aa5449c2` est `completed` sans erreur et référence les trois lots Bronze. Il a lu 138 448 lignes et publié 137 102 lignes métier : 15 machines, 1 245 incidents, 1 562 maintenances et 134 280 télémétries. L'audit contient 1 346 doublons techniques écartés et 2 792 télémétries conservées avec au moins un `NULL`, soit 4 138 avertissements. Les contrôles en base trouvent zéro référence machine orpheline, zéro divergence entre une maintenance liée et son incident, zéro doublon `(machine_code, measured_at)` et zéro colonne personnelle supprimée encore présente dans `silver.incident`.
+
+Le notebook `build-data-silver.ipynb` retrace cette démarche en 17 cellules alternant Markdown et Python. Son exécution est volontairement en lecture seule : elle inspecte les modèles et la migration, relit le dernier run, vérifie les volumes et exécute les contrôles d'intégrité sans relancer la publication atomique.
 
 La correspondance exacte avec les compétences C1 à C9 reste à confirmer avec le Kit candidat.
 
 ## Consulter les données Indusense dans pgAdmin
 
 **pgAdmin** est une interface graphique d’administration de PostgreSQL. Dans l’environnement Docker d’Indusense, pgAdmin doit joindre PostgreSQL par le nom du service Docker `db`, et non par `localhost` : `localhost` désignerait le conteneur pgAdmin lui-même.
+
+### Diagnostiquer des tables qui semblent vides
+
+L'arbre d'objets et les onglets **View/Edit Data** de pgAdmin ne se mettent pas toujours à jour après un chargement exécuté depuis une autre application. Il faut distinguer une vue non rafraîchie d'une autre connexion PostgreSQL. Le contrôle fiable consiste à ouvrir **Query Tool** depuis la base `indusense` et à exécuter une requête qui affiche simultanément l'identité de la connexion et les volumes. Pour l'exécution Silver du 1er septembre 2026, la connexion applicative a confirmé la base `indusense`, le rôle `indusense-user`, le port `5432` et respectivement 15, 1 245, 1 562 et 134 280 lignes dans `silver.machine`, `silver.incident`, `silver.maintenance` et `silver.telemetry`.
+
+Si la barre d'état indique par exemple **Total rows: 15 of 15** et **Successfully run**, mais qu'aucune grille n'est visible, les données sont bien présentes : le panneau **Data Output** est simplement replié sous l'éditeur SQL. Il faut saisir la fine barre de séparation horizontale située juste au-dessus de la barre d'état et la faire glisser vers le haut pour réafficher la grille des résultats.
 
 Pour enregistrer la connexion depuis l’écran d’accueil de pgAdmin :
 
@@ -229,7 +276,8 @@ Pour enregistrer la connexion depuis l’écran d’accueil de pgAdmin :
 
 Les données ingérées se trouvent dans les tables du schéma `bronze` :
 
-- `machine_maintenance_raw` ;
+- `machine_raw` ;
+- `maintenance_raw` ;
 - `incident_raw` ;
 - `telemetry_raw`.
 
