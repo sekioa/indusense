@@ -49,9 +49,9 @@ Le résultat attendu est un dataset cohérent, contrôlé et encore réutilisabl
 
 Dans le TP `releves_incidents`, la consigne impose également de rendre les données qualifiées de sensibles non identifiables dès la production du Silver. Cela précise le pipeline propre à l’exercice : une transformation de protection n’est pas réservée par principe au Gold. Elle doit être appliquée au niveau approprié, avant qu’une donnée identifiable soit exposée ou utilisée sans nécessité. La méthode exacte reste à choisir après l’analyse des colonnes et du risque de réidentification.
 
-Pour l'analyse incidents-maintenance, la décision retenue est une **minimisation par suppression** de `operator_name`, `operator_badge` et `comment`. Ces colonnes ne contribuent pas au besoin, qui porte sur les machines et les événements. Le fichier Bronze reste inchangé et un nouveau CSV Silver est produit puis relu pour vérifier que les trois colonnes sont réellement absentes.
+Pour l'analyse incidents-maintenance, la décision retenue est une **minimisation par suppression** de `operator_name`, `operator_badge` et `shift`. Le commentaire libre `comment` est conservé dans Silver : il peut contenir une information métier sur un arrêt de machine absente des indicateurs structurés. Le fichier Bronze reste inchangé et le Silver est relu pour vérifier à la fois l'absence des trois colonnes opérateur et la présence du commentaire métier.
 
-Cette suppression rend le Silver non directement identifiable dans le périmètre du TP, mais elle ne suffit pas à démontrer une anonymisation irréversible face à tout recoupement possible. Un horodatage précis associé à une machine peut encore constituer un quasi-identifiant si un tiers possède, par exemple, le planning détaillé des opérateurs.
+Cette minimisation réduit les identifiants directs, mais elle ne suffit pas à démontrer une anonymisation irréversible face à tout recoupement possible. Le commentaire libre doit également être contrôlé avant toute diffusion, car il peut contenir des éléments identifiants. Un horodatage précis associé à une machine peut encore constituer un quasi-identifiant si un tiers possède, par exemple, le planning détaillé des opérateurs.
 
 ### 4. Préparer le niveau Gold
 

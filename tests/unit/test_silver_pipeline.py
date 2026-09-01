@@ -39,7 +39,7 @@ def incident() -> IncidentRaw:
         machine_id="MACH-01",
         severity="4",
         operator_badge="OP1002",
-        comment="Supprimé en Silver",
+        comment="Arrêt ligne signalé par l'opérateur",
         shift="nuit",
         type_surchauffe="1",
         type_baisse_pression="0",
@@ -102,6 +102,7 @@ class SilverPipelineTests(unittest.TestCase):
         self.assertTrue(dataset.maintenances[0]["machine_code_was_aligned"])
         self.assertIs(dataset.incidents[0]["occurred_at"].tzinfo, UTC)
         self.assertNotIn("operator_name", dataset.incidents[0])
+        self.assertEqual(dataset.incidents[0]["comment"], "Arrêt ligne signalé par l'opérateur")
         self.assertEqual(dataset.metrics["maintenance_machine_codes_aligned"], 1)
         self.assertEqual(dataset.metrics["telemetry_duplicates_removed"], 1)
 

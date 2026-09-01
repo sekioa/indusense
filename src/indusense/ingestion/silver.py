@@ -25,8 +25,8 @@ from indusense.db.models import (
 )
 
 
-PIPELINE_VERSION = "1.0.0"
-TRANSFORMATION_VERSION = "20260901_01"
+PIPELINE_VERSION = "1.1.0"
+TRANSFORMATION_VERSION = "20260901_02"
 SOURCE_FILES = ("machine.sql", "releves_incidents.csv", "telemetry.csv")
 INSERT_CHUNK_SIZE = 5_000
 
@@ -339,6 +339,7 @@ def _incident_row(raw: IncidentRaw, run_id: UUID) -> dict[str, object]:
         ),
         "severity": severity,
         **flags,
+        "comment": raw.comment.strip(),
         **_lineage(raw, run_id),
     }
 

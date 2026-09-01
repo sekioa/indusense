@@ -68,9 +68,9 @@ Supprimer seulement le nom ou remplacer un identifiant par un code ne suffit pas
 
 Le cas d'usage cherche une relation temporelle entre les incidents et les maintenances des machines. Il ne nécessite aucune analyse par opérateur.
 
-Les colonnes `operator_name`, `operator_badge` et `comment` sont donc supprimées du Silver par application du principe de minimisation. Cette solution est préférable à un simple hash du badge : un identifiant déterministe haché resterait un pseudonyme permettant de suivre la même personne et ne constituerait pas automatiquement une anonymisation.
+Les colonnes `operator_name`, `operator_badge` et `shift` sont supprimées du Silver par application du principe de minimisation. Le champ `comment` reste conservé car il peut décrire un arrêt de machine absent des indicateurs structurés. Cette solution est préférable à un simple hash du badge : un identifiant déterministe haché resterait un pseudonyme permettant de suivre la même personne et ne constituerait pas automatiquement une anonymisation.
 
-Le contrôle doit porter sur le fichier Silver réellement exporté, et pas seulement sur le `DataFrame` en mémoire. Il faut relire son en-tête, vérifier l'absence des trois colonnes et confirmer que le nombre de lignes attendu a été conservé.
+Le contrôle doit porter sur le Silver réellement publié, et pas seulement sur le `DataFrame` en mémoire. Il faut vérifier l'absence des trois colonnes opérateur, la présence du commentaire nécessaire au cas d'usage, son contenu avant toute diffusion, puis confirmer que le nombre de lignes attendu a été conservé.
 
 La présence d'un horodatage précis et d'un identifiant de machine maintient un risque résiduel de recoupement avec une source externe. La formulation rigoureuse est donc « non directement identifiable dans le périmètre du TP », sans prétendre avoir démontré une anonymisation RGPD irréversible.
 

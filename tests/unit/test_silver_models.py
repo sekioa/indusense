@@ -63,14 +63,13 @@ class SilverModelTests(unittest.TestCase):
             composite_targets,
         )
 
-    def test_incident_model_excludes_minimized_source_columns(self) -> None:
+    def test_incident_model_keeps_operational_comment_but_excludes_personal_columns(self) -> None:
         incident_columns = set(Incident.__table__.columns.keys())
 
         self.assertTrue(
-            {"operator_name", "operator_badge", "shift", "comment"}.isdisjoint(
-                incident_columns
-            )
+            {"operator_name", "operator_badge", "shift"}.isdisjoint(incident_columns)
         )
+        self.assertIn("comment", incident_columns)
 
 
 if __name__ == "__main__":

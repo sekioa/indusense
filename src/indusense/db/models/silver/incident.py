@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Boolean, CheckConstraint, DateTime, ForeignKey, Index, SmallInteger, String, UniqueConstraint
+from sqlalchemy import Boolean, CheckConstraint, DateTime, ForeignKey, Index, SmallInteger, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from indusense.db.base import Base
@@ -36,6 +36,7 @@ class Incident(SilverLineageMixin, Base):
     is_sensor_alarm: Mapped[bool] = mapped_column(Boolean, nullable=False)
     is_emergency_stop: Mapped[bool] = mapped_column(Boolean, nullable=False)
     is_quality_defect: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    comment: Mapped[str] = mapped_column(Text, nullable=False)
 
     machine: Mapped["Machine"] = relationship(back_populates="incidents")
     maintenances: Mapped[list["Maintenance"]] = relationship(
