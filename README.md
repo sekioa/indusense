@@ -15,6 +15,8 @@ Le notebook `data-exercice-1.ipynb` explore des relevés d'incidents saisis par 
 
 Les fichiers du dossier `datas/` sont considérés comme des données Bronze : ils sont lus sans être modifiés.
 
+Le notebook [build-data-bronze.ipynb](build-data-bronze.ipynb) documente le passage de ces CSV vers PostgreSQL : contrat Bronze, modèles SQLAlchemy, migration Alembic, ingestion par lot et contrôle de l'idempotence.
+
 ## Prérequis
 
 - Git ;
