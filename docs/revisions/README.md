@@ -6,6 +6,7 @@ Ce dossier regroupe les fiches de révision construites progressivement pendant 
 
 - [AI Act européen : approche par les risques et calendrier](ai-act-europeen-risques-et-calendrier.md)
 - [Analyse temporelle des incidents et des maintenances](analyse-temporelle-incidents-maintenance.md)
+- [Classification binaire et découpage temporel](classification-binaire-et-decoupage-temporel.md)
 - [Docker Desktop : démarrage et validation du moteur](docker-desktop-demarrage-et-validation.md)
 - [Environnement Python et Jupyter avec UV](environnement-python-jupyter-avec-uv.md)
 - [Explorer un fichier CSV avec pandas](exploration-csv-avec-pandas.md)
