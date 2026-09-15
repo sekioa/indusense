@@ -78,6 +78,86 @@ Dans Indusense, le métier confirme que plusieurs télémétries portant la mêm
 
 Une valeur de capteur manquante n'est pas automatiquement une ligne invalide. Dans le Bronze Indusense, 2 828 télémétries ont au moins une température, pression ou rotation absente. Comme les autres mesures de ces lignes restent valides, Silver conserve la ligne avec `NULL` et un avertissement. L'imputation éventuelle appartient à une future vue de features, avec une règle explicite, et non au nettoyage Silver.
 
+### Observation Silver avant la définition du label Gold
+
+Une exploration exécutée sur Silver sert à réunir des faits avant de décider le contrat métier d'un arrêt ; elle ne le remplace pas. Le périmètre observé couvre 1 245 incidents, 1 562 maintenances et 134 280 mesures de télémétrie, entre le 1er juin 2025 et le 9 juin 2026 selon la table.
+
+- 19 incidents ont `is_emergency_stop = true`. Cette information est structurée, donc plus facilement traçable et testable qu'une interprétation du texte libre.
+- Les incidents de criticité 4 portent la plus forte proportion observée d'arrêts d'urgence (`14 / 167`, soit `8,38 %`), mais la gravité 4 ne se confond pas avec un arrêt : 153 incidents de ce niveau ne sont pas des arrêts d'urgence.
+- Les commentaires mentionnant `arrêt` ou `stop` sont associés à 18 des 19 arrêts d'urgence dans cet historique. Le test du chi-deux mesure une association très forte ; il ne prouve ni la causalité ni que le commentaire était disponible avant l'incident. Le texte libre reste donc du contexte d'analyse, pas une feature ou une règle de label à ce stade.
+- 1 472 maintenances sont réactives et 90 proactives. Les liens vers les incidents aident à étudier le contexte, mais une intervention réactive ne doit pas être automatiquement assimilée à un arrêt machine.
+- La télémétrie contient 270 mesures à production nulle (`0,20 %`). Une production nulle peut refléter un arrêt, une pause planifiée ou un défaut de collecte : elle demande une analyse temporelle avant tout usage comme label.
+
+Les constats chiffrés sont dépendants du jeu Silver actuel. La décision versionnée sur `machine_stop` reste à valider par le métier avant la construction des labels Gold.
+
+### Décision de périmètre : label Gold v1
+
+Pour la première version pédagogique du Gold Indusense, un `machine_stop` est défini comme un incident `silver.incident` dont `is_emergency_stop = true`. L'événement porte la machine `machine_code`, la date `occurred_at`, l'identifiant source `incident_id` et la version de définition `emergency-stop-v1`.
+
+Cette définition est volontairement restrictive : elle ne prétend pas couvrir tous les arrêts réels. En particulier, une machine peut être arrêtée manuellement en réponse à un problème. Les incidents de criticité élevée, les maintenances réactives et les périodes de production nulle ressemblent potentiellement à ce type de situation, mais ne seront **pas** ajoutés au label v1 sans une règle métier permettant d'éviter les faux positifs.
+
+Une version ultérieure étudiera une définition enrichie des arrêts manuels, à partir de ces signaux et de leur chronologie. Les commentaires restent des éléments de qualification et de validation, jamais une règle automatique ou une feature du premier modèle.
+
+Le notebook `build-data-gold.ipynb` construit en mémoire la table logique `gold_stop_event`, avec les cinq colonnes minimales de lignée, l'indicateur source d'arrêt d'urgence et la criticité source. Le commentaire libre n'est pas recopié : l'incident complet reste accessible dans Silver grâce à `source_table` et `source_event_id`.
+
+L'exécution complète contre Silver valide 19 événements, 19 identifiants sources uniques, aucune valeur manquante dans les colonnes obligatoires et le respect de la définition `emergency-stop-v1` pour chaque ligne. Les labels ne sont pas encore construits.
+
+Pour Gold V1, seuls les instants de prédiction disposant d'au moins 24 heures futures entièrement observables seront conservés. Cette règle rend les trois horizons de 6 h, 12 h et 24 h simultanément calculables et évite de transformer une fin d'historique inconnue en faux label négatif.
+
+Le label d'une ligne porte uniquement sur l'arrêt futur de la machine identifiée par cette ligne. Une surchauffe ou un arrêt récent observé sur une autre machine peut néanmoins constituer une future feature de contexte si cette information est disponible à l'instant de prédiction. En revanche, rendre positif le label d'une machine qui ne s'arrête pas changerait la question métier en « une machine quelconque va-t-elle s'arrêter ? ».
+
+La cadence de prédiction retenue pour Gold V1 est d'une heure, alignée sur les timestamps de `silver.telemetry`. Les 15 machines observées possèdent chacune 8 952 mesures, du 1er juin 2025 à 00:00 au 8 juin 2026 à 23:00 UTC, sans aucun intervalle différent de 60 minutes. Après retrait des 24 dernières heures non labellisables, la future grille doit contenir 8 928 instants par machine, soit 133 920 lignes.
+
+Le notebook construit désormais `gold_prediction_grid` en mémoire, sans table PostgreSQL ni fichier. La grille générée contient bien 133 920 lignes et respecte le grain d'une ligne par machine et par heure. Les contrôles exécutés valident l'absence de clé `(machine_id, prediction_at)` dupliquée, une cadence strictement horaire et un horizon futur de 24 h observable pour chaque ligne.
+
+Gold V1 conserve un snapshot même si aucune ligne de télémétrie ne correspond à son heure et expose alors `telemetry_row_available = false`. Une ligne Silver présente mais contenant un capteur à `NULL` est une situation différente : le snapshot reste également conservé, sans imputation à ce stade. Les indicateurs propres aux capteurs et la couverture des fenêtres seront traités avec les features. Sur la grille actuelle, les 133 920 snapshots ont tous `telemetry_row_available = true` et aucune heure Silver complète ne manque.
+
+Les trois labels binaires sont ajoutés au format large avec la convention `(prediction_at ; prediction_at + horizon]`. L'exécution produit 102 positifs à 6 h (`0,0762 %`), 204 à 12 h (`0,1523 %`) et 408 à 24 h (`0,3047 %`). Les contrôles valident l'imbrication `target_stop_6h <= target_stop_12h <= target_stop_24h`, le maintien des 133 920 lignes et l'absence du timestamp futur temporaire dans la grille finale. Plusieurs arrêts proches peuvent couvrir les mêmes snapshots : le nombre de positifs ne se calcule donc pas en multipliant simplement le nombre d'arrêts par l'horizon.
+
+Chaque ligne de la grille porte les métadonnées du contrat (`gold_dataset_version`, `stop_definition_version`, `prediction_cadence_hours`, `max_label_horizon_hours`) et de l'exécution (`gold_build_run_id`, `gold_built_at`, `source_observed_until`). Un UUID et un horodatage UTC communs identifient chaque exécution. Ces colonnes servent à la traçabilité et doivent être exclues des features ; `source_observed_until` contient notamment une information future par rapport à de nombreux snapshots.
+
+### Première référence de features de télémétrie
+
+La convention opérationnelle retenue pour les features est `(t - fenêtre ; t]` : la borne ancienne est exclue et la mesure disponible à l'instant `t` est incluse, car le snapshot est produit après sa réception. Avec une cadence horaire, une fenêtre de 6 h complète contient donc six mesures. Les labels restent calculés dans `(t ; t + horizon]`.
+
+Avant toute vectorisation, le notebook calcule explicitement `temperature_last`, la moyenne, l'écart-type de population (`ddof=0`), le nombre de valeurs disponibles, le nombre et le taux de valeurs manquantes sur trois snapshots de `MACH-01`. `feature_available_at` vérifie que la date source maximale utilisée ne dépasse jamais `prediction_at`.
+
+Dans l'exemple précédant le premier arrêt V1 de `MACH-01`, les trois fenêtres contiennent chacune six températures valides. La moyenne sur 6 h passe de `64,5985 °C` à `75,9993 °C`, puis `77,7433 °C`, tandis que la dernière valeur atteint `80 °C`. Ce cas illustre un signal à étudier ; il ne démontre pas à lui seul une relation causale généralisable entre la hausse de température et l'arrêt.
+
+La même référence est recalculée avec `pandas.rolling("6h", closed="right")`. La dernière valeur, la moyenne, les comptes et taux de manque sont strictement identiques à la boucle. L'écart absolu maximal sur l'écart-type est de `4,66 × 10⁻¹⁴`, uniquement dû à l'arithmétique en virgule flottante et inférieur à la tolérance de validation `10⁻¹²`. Cette comparaison autorise la vectorisation sans changer la définition métier de la fenêtre.
+
+La généralisation Gold V1 ajoute 100 features de télémétrie : quatre dernières valeurs (`temperature`, `pressure`, `voltage`, `rotation`) puis, pour les fenêtres de 3 h, 6 h, 12 h et 24 h, la moyenne, le minimum, le maximum, l'écart-type de population, le nombre de valeurs disponibles et le taux de manque. Les calculs sont réalisés par machine avec `rolling(..., closed="right")`, donc uniquement à partir de données disponibles dans `(t - fenêtre ; t]`. La fenêtre 1 h est écartée car elle répéterait la dernière mesure avec la cadence horaire ; l'étendue, les médianes et quantiles sont reportés pour limiter les features redondantes ; aucun compteur d'outlier n'est créé faute de signal numérique dédié dans Silver.
+
+Sur les 133 920 snapshots, les taux de manque moyens des fenêtres restent faibles. Ils vont de `0,0112 %` à `0,1288 %` pour la tension et d'environ `0,67 %` à `0,86 %` pour les autres capteurs, selon la fenêtre. Les périodes de début d'historique restent présentes : leur couverture réduite est exposée par `available_count` et `missing_rate`, sans imputation ni exclusion.
+
+### Lags et variations de télémétrie
+
+Le vocabulaire retenu distingue la **variation signée** `delta = current_value - lag_value` d'une éventuelle valeur absolue dérivable ensuite. Un lag disponible à l'horizon `h` est la dernière valeur non nulle dont la date source est inférieure ou égale à `t - h`. Sa valeur doit être accompagnée de son âge réel : une feature nommée `lag_1h` peut autrement provenir d'une mesure plus ancienne si une télémétrie manque.
+
+La variation relative est calculée par `delta / abs(lag_value)` seulement lorsque le lag est présent et non nul. Le temps écoulé depuis la dernière valeur non nulle est également conservé. La référence sur `MACH-01` vérifie les horizons 1 h, 6 h et 24 h : chaque source respecte sa date limite et, dans l'historique actuel sans trou, les âges réellement observés correspondent aux horizons demandés.
+
+**Vectoriser** un calcul consiste à appliquer une opération sur une série ou une table entière plutôt que de parcourir une ligne de snapshot après l'autre avec une boucle Python. Pour les lags, une jointure temporelle vectorisée recherche, par machine, la dernière mesure non nulle dont la date est inférieure ou égale à `prediction_at - h`. Elle produit le même résultat que la référence explicite, mais efficacement sur toutes les lignes, tout en conservant l'horodatage source pour contrôler l'absence de fuite de données.
+
+La vectorisation avec `merge_asof` ajoute 52 features : pour chaque capteur, le temps depuis la dernière mesure non nulle, puis aux horizons 1 h, 6 h et 24 h la valeur de lag, son âge réel, le delta signé et la variation relative. Les timestamps sources restent temporaires et ne sont pas intégrés au dataset. La jointure est partitionnée par machine et la comparaison aux neuf cas de référence de `MACH-01` est identique. Les sections 5.1 et 5.2 totalisent désormais 152 features de télémétrie : leur sélection et leur régularisation devront être étudiées avant l'entraînement, compte tenu des 19 arrêts indépendants disponibles.
+
+### Tendances de télémétrie
+
+Une tendance complète le niveau courant, les statistiques de fenêtre et les lags : elle mesure le sens et la vitesse d'évolution d'un capteur. Gold V1 retiendra, pour chaque capteur, une pente de régression linéaire sur 6 h et sur 24 h, exprimée dans l'unité du capteur par heure, ainsi que `mean_gap_6h_24h = moyenne_6h - moyenne_24h`. Un écart positif signifie que le niveau moyen récent dépasse son niveau moyen sur 24 h ; il peut révéler une montée récente sans établir à lui seul une causalité.
+
+Comme les autres features de fenêtre, les pentes utilisent exclusivement les valeurs non nulles de `(t - fenêtre ; t]`. La pente nécessite au minimum deux valeurs : si cette condition n'est pas satisfaite, la feature reste manquante et ne doit pas être remplacée arbitrairement. Le contrôle `feature_available_at <= prediction_at` rend la frontière temporelle vérifiable.
+
+La référence exécutée sur `MACH-01` avant le premier arrêt montre une hausse de température : à `2025-06-17 00:00 UTC`, la pente vaut `1,4955 °C/h` sur 6 h et `0,9437 °C/h` sur 24 h, avec un écart de moyennes de `11,6663 °C`. Elle valide la formule et le périmètre temporel ; la vectorisation pour l'ensemble des machines et des quatre capteurs reste l'étape suivante.
+
+La vectorisation retenue calcule les pentes à partir des sommes glissantes du nombre de valeurs, du temps, de la valeur, du temps au carré et du produit temps-valeur. Elle ajoute 12 features : pour chacun des quatre capteurs, `slope_6h`, `slope_24h` et `mean_gap_6h_24h`. La jointure conserve les 133 920 snapshots Gold et la comparaison avec la référence explicite de `MACH-01` est identique à la tolérance de `10⁻¹²`. Les sections 5.1 à 5.3 totalisent donc 164 features de télémétrie.
+
+Pour calculer une pente par heure de façon robuste, le temps est exprimé comme durée écoulée depuis la première mesure de la même machine. Cette translation ne modifie pas la pente. Éviter une conversion directe de la représentation interne d'un timestamp en entier : selon la précision (`us` ou `ns`) du type datetime, elle peut introduire une erreur d'unité, ici un facteur 1 000 détecté par la comparaison avec l'exemple de référence.
+
+Erreur rencontrée : pour une machine sans arrêt futur, affecter directement `pd.NaT` crée par défaut une série sans fuseau horaire. Sa comparaison avec un `prediction_at` en UTC échoue avec `Cannot compare tz-naive and tz-aware datetime-like objects`. La série vide doit reprendre explicitement le type horodaté UTC de `gold_stop_event.stop_at`.
+
+Précondition locale : si Docker Desktop n'est pas démarré, les requêtes Silver attendent ou échouent faute de PostgreSQL. Il faut démarrer Docker Desktop, puis vérifier le projet Compose explicite `indusense` avant d'exécuter le notebook. Un projet Compose implicite incorrect peut donner l'impression qu'aucun conteneur n'est présent.
+
+Erreur de diagnostic rencontrée : lancer `docker compose` depuis le dossier `.docker` sans préciser le nom du projet a interrogé un projet Compose implicite différent et a donné l'impression que PostgreSQL était arrêté. Le contrôle correct utilise le projet `indusense` (option `-p indusense`) et confirme que le conteneur `db-1` est actif. Il faut vérifier le projet Compose ciblé avant de conclure qu'un service est indisponible.
+
 ## Erreurs fréquentes et bonnes pratiques
 
 - Modifier ou écraser les données Bronze empêche de rejouer fidèlement les traitements.
