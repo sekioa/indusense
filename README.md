@@ -4,7 +4,7 @@
 
 Projet réalisé pendant le parcours IT de la formation certifiante « Concevoir et implémenter une solution d'intelligence artificielle ».
 
-Le notebook `data-exercice-1.ipynb` explore des relevés d'incidents saisis par les opérateurs d'une usine fonctionnant 24 h/24 selon les trois-huit. Il utilise principalement `pandas` pour :
+Le notebook `notebooks/01-sprint-1/01-exercices/03-data-exercice-1.ipynb` explore des relevés d'incidents saisis par les opérateurs d'une usine fonctionnant 24 h/24 selon les trois-huit. Il utilise principalement `pandas` pour :
 
 - examiner la structure du fichier CSV et ses dix premières lignes ;
 - déterminer et adapter les types des colonnes ;
@@ -15,7 +15,7 @@ Le notebook `data-exercice-1.ipynb` explore des relevés d'incidents saisis par 
 
 Les fichiers du dossier `datas/` sont considérés comme des données Bronze : ils sont lus sans être modifiés.
 
-Le notebook [build-data-bronze.ipynb](build-data-bronze.ipynb) documente le passage de ces CSV vers PostgreSQL : contrat Bronze, modèles SQLAlchemy, migration Alembic, ingestion par lot et contrôle de l'idempotence.
+Le notebook [02-build-data-bronze.ipynb](notebooks/01-sprint-1/02-pipeline-donnees/02-build-data-bronze.ipynb) documente le passage de ces CSV vers PostgreSQL : contrat Bronze, modèles SQLAlchemy, migration Alembic, ingestion par lot et contrôle de l'idempotence.
 
 ## Prérequis
 
@@ -62,7 +62,7 @@ L'option `--with jupyter` fournit temporairement JupyterLab, qui n'est pas insta
 
 Dans l'interface ouverte dans le navigateur :
 
-1. ouvrir `data-exercice-1.ipynb` ;
+1. ouvrir `notebooks/01-sprint-1/01-exercices/03-data-exercice-1.ipynb` ;
 2. vérifier que le kernel affiché en haut à droite est `Python 3 (ipykernel)` ;
 3. utiliser **Run > Run All Cells** pour exécuter toutes les cellules dans l'ordre ;
 4. vérifier que la dernière cellule affiche `Validation réussie`.
