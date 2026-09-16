@@ -1,0 +1,658 @@
+# Cours — Évaluation des modèles
+
+Langue détectée : fr (probabilité 100.00%)
+
+> Transcription automatique de l'audio, avec horodatages. Le complément placé après la transcription provient explicitement du support AELION : il ne s'agit pas de parole attribuée à l'intervenant.
+
+[00:00:00 → 00:00:04] surtout les étapes du coup pendant l'entraînement que vous allez avoir avant
+[00:00:04 → 00:00:07] tout ce que vous avez vu avec Jarmine de préparation des données
+[00:00:07 → 00:00:11] même un peu après etc de réglages sur les données mais après la grosse partie
+[00:00:11 → 00:00:15] IA elle est sur l'entraînement du modèle
+[00:00:15 → 00:00:19] donc du coup sur l'entraînement du modèle il y a le développement
+[00:00:19 → 00:00:24] sur ce process là il va y avoir la sélection du modèle donc ça on y
+[00:00:24 → 00:00:29] reviendra tout à l'heure sur voir quel modèle choisir
+[00:00:29 → 00:00:33] les réglages des hyperparamètres ça c'est propre à chaque modèle
+[00:00:33 → 00:00:38] chaque modèle va avoir des paramètres que vous vous devez définir
+[00:00:38 → 00:00:42] donc comment vous réglez ces hyperparamètres là et il y a aussi un
+[00:00:42 → 00:00:46] autre hyperparamètre d'ailleurs on n'a pas trop parlé encore mais qui est là
+[00:00:46 → 00:00:51] qu'on n'a pas modifié mais qui est la loss du coup qui permet de calculer
+[00:00:51 → 00:00:53] l'erreur durant l'entraînement
+[00:00:53 → 00:00:57] ensuite il y a vraiment l'entraînement du modèle où là vous vous lancez le code
+[00:00:57 → 00:01:02] ça part pour 20 minutes 30 minutes une heure deux heures et il n'y a rien à faire
+[00:01:02 → 00:01:06] là c'est une optimisation qui se fait automatiquement et la dernière étape
+[00:01:06 → 00:01:08] c'est l'évaluation du modèle
+[00:01:08 → 00:01:11] le truc c'est que l'évaluation du modèle c'est ce qui va vous permettre de
+[00:01:11 → 00:01:15] comparer du coup tous les modèles entre eux de dire est ce que vous allez dans le
+[00:01:15 → 00:01:19] bon sens même si vous avez changé des hyperparamètres de votre modèle est ce
+[00:01:19 → 00:01:24] que vous avez fait bien fait de le changer ou pas donc pour ça vous avez
+[00:01:24 → 00:01:28] besoin d'évaluer et en fait la métrique d'évaluation on va choisir
+[00:01:28 → 00:01:34] quasi des départs du projet parce que c'est une métrique que vous allez
+[00:01:34 → 00:01:41] utiliser tout le long et qui doit forcément répondre aux besoins du aux
+[00:01:41 → 00:01:44] besoins métier en fait c'est comme ça que vous allez évaluer votre modèle
+[00:01:44 → 00:01:47] donc c'est comme ça que vous allez dire que votre modèle a une bonne
+[00:01:47 → 00:01:53] performance donc il faut que votre choix de métrique d'évaluation soit dans le
+[00:01:53 → 00:01:57] sens de ce que veut le métier ça il faut pas minimiser cette phase là de
+[00:01:57 → 00:02:02] compréhension du besoin métier et essayer de la faire de traduire ce
+[00:02:02 → 00:02:07] besoin métier là en métrique par rapport à votre modèle
+[00:02:07 → 00:02:12] il va y avoir aussi d'autres étapes à forcément au début au tout début du
+[00:02:12 → 00:02:16] projet ça va être de se dire quel est l'objectif mais quel est l'objectif
+[00:02:16 → 00:02:24] métier et qu'il y a quasi le héroï qui a tendu pour ça et comme ça ça peut
+[00:02:24 → 00:02:30] aussi vous donner des idées pour savoir est ce qu'il aimait de faire assure et
+[00:02:30 → 00:02:36] quel est le métrique dans les choses est-ce que quelqu'un appartement de la
+[00:02:36 → 00:02:40] première vous avez bien présenté une métrique qui l'a compris ou n'est-ce pas
+[00:02:44 → 00:03:02] moi j'ai compris la métrique à placer donc l'exactitude la proportion des
+[00:03:02 → 00:03:11] prédictions correcte je ça me fait penser en fait à son inverse qui est plutôt
+[00:03:11 → 00:03:17] les faux positifs qui sont je pense les faux positifs du coup ça pourrait être
+[00:03:17 → 00:03:22] des réponses voilà l'envers
+[00:03:22 → 00:03:30] alors la curatie du coup c'est la façon c'est la métrique la plus simple
+[00:03:30 → 00:03:38] existe et la plus on va dire humainement compréhensible et à laquelle on pense en
+[00:03:38 → 00:03:43] plus c'est-à-dire si on fait par exemple de la classification c'est plutôt dans
+[00:03:43 → 00:03:47] ce cas là qu'on va l'utiliser c'est de dire dans combien de pourcentage de
+[00:03:47 → 00:03:53] cas mon modèle a eu fait une bonne prédiction comme c'est juste de dire est-ce
+[00:03:53 → 00:03:59] qu'il a été bon ou pas sur ma prédiction le problème du de le faire
+[00:03:59 → 00:04:05] le point non la curatie il faut positive du coup c'est pas c'est pas
+[00:04:05 → 00:04:11] dans l'inverse non la curatie ça va être dans combien de pourcent donc en
+[00:04:11 → 00:04:17] fait c'est plutôt la curatie c'est très positif et très négatif oui au
+[00:04:17 → 00:04:22] terroir c'est une partie mais justement on parlait de la matrice de confusion du
+[00:04:22 → 00:04:27] coup dans la curatie c'est vraiment calculé la partie des vrais positifs et
+[00:04:27 → 00:04:32] des prix négatifs sur la totalité ce que j'ai donc combien j'ai fait de vraies
+[00:04:32 → 00:04:37] prédictions combien combien de fois j'ai eu une bonne et les faux
+[00:04:37 → 00:04:44] positifs c'est combien de fois j'ai fait une prédiction positive alors que
+[00:04:44 → 00:04:49] c'était faux alors que alors que je me suis trompé en fait sur ma prédiction
+[00:04:49 → 00:04:52] visite donc combien de fois j'ai détecté une panne alors qu'en fait il n'y en avait pas
+[00:04:52 → 00:05:04] ok c'est marqué qu'il faut s'en méfier parce que il faut s'en méfier quand les
+[00:05:04 → 00:05:09] places sont déséquilibrées exactement et c'est du coup notre cas qu'on va avoir
+[00:05:09 → 00:05:15] si vous avez récupéré le pourcentage le nombre de panne que vous avez
+[00:05:16 → 00:05:25] sur surtout vous avez en fait 15% de panne je crois globalement à peu près si je
+[00:05:25 → 00:05:29] ne calcule que la curatie donc est-ce que mon modèle est bon ou pas admettons je
+[00:05:29 → 00:05:34] sais pas je dis avec les équipes métiers oui est-ce que si dans 80% des cas je
+[00:05:34 → 00:05:37] suis bon est-ce que c'est déjà bien et tout oui et eux ont pas conscience de
+[00:05:37 → 00:05:41] ce qu'est la curatie forcément ça veut dire que si j'ai un modèle qui me
+[00:05:41 → 00:05:48] dit que tout va bien tout le temps il est bon dans 85% des cas sauf que
+[00:05:48 → 00:05:54] problématique votre modèle n'a rien enfin n'a rien prédit n'a rien déterminé et
+[00:05:54 → 00:05:57] surtout n'est pas du tout utile parce que ce qui va être utile dans notre cas
+[00:05:57 → 00:06:02] ça va être de prédire les panne pour essayer de les éviter donc c'est pour
+[00:06:02 → 00:06:05] ça que quand en fait le la difficulté c'est que quand on a des classes
+[00:06:05 → 00:06:09] déséquilibrées bah du coup un modèle très naïf qui met que la classe qui
+[00:06:09 → 00:06:14] est la plus présente risque d'être très bon en pourcentage en accuratie et donc
+[00:06:14 → 00:06:18] c'est ce qu'on aurait ici c'est pour ça qu'il faut s'enmerfier et il ne faut pas
+[00:06:18 → 00:06:24] pour forcément sauter sur l'accuratie comme métrique d'évaluation pour de la
+[00:06:24 → 00:06:28] classification parce que elle peut du coup ne pas avoir de sens
+[00:06:28 → 00:06:33] par contre si dans nos données on avait 50% de panne et 50% de tout va bien
+[00:06:33 → 00:06:38] bah si votre modèle est bon dans 85% des cas ça veut dire qu'il arrive
+[00:06:38 → 00:06:43] bien à détecter au moins un certain pourcentage des panne donc il y a de
+[00:06:43 → 00:06:48] l'information dans votre modèle alors que nous dans notre cas si on détecte
+[00:06:48 → 00:06:52] si on a une accueillie à 85% ça peut très bien être le cas de on dit tout va
+[00:06:52 → 00:06:58] bien tout le temps et on a une accueillie à 85%
+[00:06:58 → 00:07:04] Oui et c'est dans le cas où du coup une panne serait rare ? Oui c'est ça
+[00:07:04 → 00:07:08] c'est exactement ça et du coup c'est pour ça qu'on va le retrouver à chaque
+[00:07:08 → 00:07:16] fois dans des sujets de classification pour l'accuratie et on va du coup avoir
+[00:07:16 → 00:07:22] d'autres métriques y compris du coup de la matrice de confusion à calculer pour
+[00:07:22 → 00:07:27] tous les cas où on cherche quelque chose qui est assez rare mais où la plus
+[00:07:27 → 00:07:31] value de faire un algorithme de machine learning c'est de vraiment détecter
+[00:07:31 → 00:07:37] ces éléments là par exemple en médecine si vous avez je sais pas
+[00:07:37 → 00:07:43] sur mille sur mille images vous avez que une centaine d'exemples de
+[00:07:43 → 00:07:51] tumeurs par exemple c'est peut-être enfin si on fait que la accueillie et que le
+[00:07:51 → 00:07:58] modèle de détecter jamais rien bah il est bon dans 99% des cas
+[00:07:58 → 00:08:03] en 90% des cas alors que en fait ce qui nous interesse est vraiment de
+[00:08:03 → 00:08:07] détecter les tumeurs donc du coup on va venir chercher d'autres métriques
+[00:08:08 → 00:08:13] qui ont plus de sens pour et qui mettent plus le poids sur est-ce que j'arrive bien à
+[00:08:13 → 00:08:24] détecter la classe la classe positive et la classe rare du coup du coup est-ce que
+[00:08:24 → 00:08:27] quelqu'un aura une idée de métriques qu'on peut utiliser justement dans les
+[00:08:27 → 00:08:33] cas où on a des classes déséquilibrées là il parle de position de
+[00:08:33 → 00:08:42] nature dans les carors ouais ok et d'un oui ça peut après c'est pas le premier
+[00:08:42 → 00:08:48] auquel on pense forcément il y en a des plus simples entre guillemets qui sont
+[00:08:48 → 00:08:56] plus ouaide et qui sont un peu plus naturelles à trouver donc on apprécier
+[00:08:56 → 00:09:14] pour aller un peu tout à l'heure j'ai la classe positive rare donc on y
+[00:09:14 → 00:09:23] retrouve par a8 et puis plan d'autres précisions rappel fb ta matrice de
+[00:09:23 → 00:09:27] confusion c'est ça en fait la base de toutes ces métriques là ça va être la
+[00:09:27 → 00:09:33] matrice de confusion après on va du coup les organiser différemment mettre
+[00:09:33 → 00:09:37] des airs sur la courbe etc mais la matrice de confusion va être un élément
+[00:09:37 → 00:09:41] très important que vous allez devoir apprendre à lire pour le coup pour tous
+[00:09:41 → 00:09:48] les cas où vous avez des justement des cas des équilibrés etc donc je vais vous
+[00:09:48 → 00:09:52] montrer en quoi ça consiste mais du coup la matrice de confusion c'est vraiment
+[00:09:52 → 00:09:56] le coup important de la comprendre donc là hésitez pas à poser des questions
+[00:09:56 → 00:10:08] là presque je vais vous montrer si jamais mais du coup oui tout pour tout ce
+[00:10:08 → 00:10:14] qui est dans nos cas là on va partir sur de la sur des bases à partir de la
+[00:10:14 → 00:10:23] matrice de confusion et après il ya d'autres avant de vous montrer sur la
+[00:10:23 → 00:10:32] confusion est ce que vous avez des pouvez me nommer des métriques pour pour de la
+[00:10:32 → 00:10:41] régression dans la bibliothèque sans forcément les expliquer mais juste voir
+[00:10:41 → 00:10:50] comment on peut calculer quand on cherche à prédire une valeur continue pour
+[00:10:50 → 00:10:54] la régression
+[00:10:54 → 00:11:00] ouais vas-y dis moi
+[00:11:00 → 00:11:04] je vois le min absolute error
+[00:11:04 → 00:11:05] ouais
+[00:11:05 → 00:11:09] le mse min squared error
+[00:11:09 → 00:11:11] le bot min squared error
+[00:11:11 → 00:11:13] ouais c'est ça
+[00:11:13 → 00:11:15] error carré coefficient de détermination
+[00:11:15 → 00:11:17] c'est ça, error de score etc
+[00:11:17 → 00:11:19] ouais
+[00:11:19 → 00:11:25] je vais toutes les expliquer là mais oui donc c'est tout celle là et du coup vous avez
+[00:11:25 → 00:11:32] allez voir suivant qu'on va se classification en régression vous avez des
+[00:11:32 → 00:11:39] types de métriques et si vous regardez par exemple sur scikit-learn qui est de la
+[00:11:39 → 00:11:43] bibliothèque qu'on utilise pour faire du machine learning si vous cherchez les
+[00:11:43 → 00:11:48] métriques vous en avez énormément donc après c'est globalement on
+[00:11:48 → 00:11:53] utiliserait souvent les mêmes mais vous pouvez en trouver des
+[00:11:53 → 00:11:57] particulières et vous pouvez même si vous voulez ne pas utiliser des méthodes
+[00:11:57 → 00:12:01] qui existent déjà vous pouvez totalement créer vos propres métriques d'évaluation
+[00:12:01 → 00:12:05] en fait il y en a tellement qui existe que c'est assez rare
+[00:12:05 → 00:12:08] je ne sais pas d'accord dans quelqu'un on aurait besoin d'une métriques d'évaluation
+[00:12:08 → 00:12:13] en fait sur mesure mais on sait jamais ça peut peut-être arriver
+[00:12:13 → 00:12:20] donc l'évaluation du coup je vais le reprendre dans la globalité du coup
+[00:12:20 → 00:12:28] vers envers la matrice de confusion donc vous allez avoir du coup votre
+[00:12:28 → 00:12:32] vos données là que vous avez dans la globalité donc toutes vos lignes de
+[00:12:32 → 00:12:39] tableau que vous allez séparer en phase un jeu d'entraînement et jeu de test
+[00:12:39 → 00:12:48] l'idée c'est d'avoir le jeu de test qui ressemble à 20 à 30% des données et
+[00:12:48 → 00:12:52] qui est similaire aux données de prot l'idée ça sera du coup d'évaluer votre
+[00:12:52 → 00:12:57] modèle sur ce jeu de test là qui est un échantillon de comment ça serait si
+[00:12:57 → 00:13:02] comment à quoi ça peut ressembler si je teste réellement en production
+[00:13:02 → 00:13:09] justement à pouvoir dire aux équipes métières en disant j'évalue mon
+[00:13:09 → 00:13:14] modèle sur du test j'arrive à tel le pourcentage de
+[00:13:14 → 00:13:21] d'évaluation est-ce que vous pensiez ça ok ou pas donc ça sert vraiment à tester
+[00:13:21 → 00:13:25] ce jeu là dans notre de test il va servir à tester la fiabilité du modèle
+[00:13:25 → 00:13:31] normalement vous devez avoir dans votre code pour ceux qui ont fait du coup le
+[00:13:31 → 00:13:36] code hier sur le tp au moins une ligne comme ça qui utilise très une test
+[00:13:36 → 00:13:40] split qui vient du coup splitter vos données non quoi que nous on n'a pas
+[00:13:40 → 00:13:43] parce que c'était déjà dans les c'est déjà dans les données dans le dans la
+[00:13:43 → 00:13:48] feature mais en gros si vous n'aviez pas le split qui était dans la donnée dans la
+[00:13:48 → 00:13:54] dans la colonne vous pourriez directement couper votre train de votre jeu de données
+[00:13:54 → 00:13:59] comme ça d'ailleurs à chaque fois niveau nomenclature on marre on écrit
+[00:13:59 → 00:14:04] très souvent le x qui est vos entrées pour toutes vos features sur les la
+[00:14:04 → 00:14:08] centaine de lignes autres que vous avez en x majuscule parce que c'est une
+[00:14:08 → 00:14:11] matrice du coup un certain nombre de lignes avec un certain nombre de colonne
+[00:14:11 → 00:14:16] et on écrit le y qui est votre sortie donc qui est ce que vous voulez prédire
+[00:14:16 → 00:14:22] en minuscule puisque là ce n'est que un vecteur donc ça c'est des c'est des
+[00:14:22 → 00:14:26] conventions de nommage en général c'est ça et vous retrouvez du coup la même
+[00:14:26 → 00:14:31] convention de nommage sur les jeux d'entraînement et jeu de test avec
+[00:14:31 → 00:14:36] x train qui est les entrées de la partie d'entraînement donc les lignes du
+[00:14:36 → 00:14:41] jeu d'entraînement avec tous les colonnes correspondante et y train qui est le
+[00:14:41 → 00:14:45] vecteur qui va en face de dire par exemple vous panne pas panne panne pas panne
+[00:14:45 → 00:14:51] etc donc si vous aviez eu à découper vous découpez comme ça et si vous faites un
+[00:14:51 → 00:14:55] jeu de validation le jeu de validation étudiez pendant l'entraînement du
+[00:14:55 → 00:14:59] modèle d'en fait c'est cette partie là du jeu d'entraînement qui est
+[00:14:59 → 00:15:03] redécoupé avec une partie qui reste le jeu d'entraînement pur et une
+[00:15:03 → 00:15:08] autre partie qui est le jeu de validation il y a en gros un jeu de micro jeu de
+[00:15:08 → 00:15:17] test pendant pendant l'optimisation du modèle donc juste sur le partage de vos
+[00:15:17 → 00:15:23] données et la création du coup de votre jeu de test si vous faites un train test
+[00:15:23 → 00:15:33] kit classique du coup vous allez avoir en fait ça prend en général les 70 pour
+[00:15:33 → 00:15:40] ce premier pour cent et les 30 derniers pour cent et ça les ça s'allait
+[00:15:40 → 00:15:46] tir au hasard donc du coup vous allez avoir le train 7 qui est d'un côté le
+[00:15:46 → 00:15:54] test 7 de l'autre tiré au hasard donc ça peut ne pas être en souci dans
+[00:15:54 → 00:15:58] plein cas mais ça peut être un souci dans le cas où par exemple vous avez de
+[00:15:58 → 00:16:02] la temporalité si ici c'est votre info au 1er janvier et que vous êtes sur
+[00:16:02 → 00:16:07] par exemple nous de la prédiction de panne on va avoir besoin que le jeu
+[00:16:07 → 00:16:12] d'entraînement soit 70% des premières données et que le jeu de test soit 30% des
+[00:16:12 → 00:16:17] dernières données sinon on fait de la fuite de données sur ce jeu donc faites
+[00:16:17 → 00:16:20] juste attention à ne pas séparer n'importe comment si vous avez des
+[00:16:20 → 00:16:24] jeux des données qui sont censées avoir du sens les unes à la suite des
+[00:16:24 → 00:16:31] autres quelque chose aussi auquel il faut faire attention c'est que votre
+[00:16:31 → 00:16:35] votre jeu d'entraînement et votre jeu de test en particulier quand vous avez des
+[00:16:35 → 00:16:40] données déséquilibrées c'est à dire que vous avez beaucoup moins par exemple de
+[00:16:40 → 00:16:44] de classes positives que de classes négatives il faut faire attention qu'il
+[00:16:44 → 00:16:50] y ait des classes positives et des classes négatives en même proportion quasi sur
+[00:16:50 → 00:16:55] le jeu d'entraînement et sur le jeu de test ça y a un paramètre qui le fait
+[00:16:55 → 00:17:00] dans le d'un si vous faites du train d'esprit vous lui dites fait
+[00:17:00 → 00:17:05] attention en suivant des suivants les y donc suivant votre sortie mais autant
+[00:17:05 → 00:17:11] en gros de 1 et de 0 dans chaque jeu que ce soit le jeu d'entraînement ou le jeu de
+[00:17:11 → 00:17:15] test comme ça vous vous entrez votre jeu de test ressemble réellement à ce que
+[00:17:15 → 00:17:20] vous avez en production sinon vous pouvez vous retrouver facilement avec
+[00:17:20 → 00:17:24] un jeu de test qui ne contient que des données sans panne et donc vous du
+[00:17:24 → 00:17:26] coup vous n'allez pas vraiment évaluer votre modèle
+[00:17:26 → 00:17:30] aussi il faut faire attention si vous avez des données déséquilibrées là dans
+[00:17:30 → 00:17:39] notre cas d'usage ça a été géré par du coup quand j'en ai fait le jeu
+[00:17:39 → 00:17:43] d'entraînement et jeu de test et jeu de validation et d'ailleurs vous pouvez
+[00:17:43 → 00:17:46] regarder les proportions de panne et non panne dans chaque jeu de données
+[00:17:46 → 00:17:54] normalement elles sont à peu près qu'il faut vérifier et vérifier ça et
+[00:17:54 → 00:17:58] donc ensuite quand vous allez vouloir évaluer votre modèle voilà comment
+[00:17:58 → 00:18:02] ça va se passer déjà dans votre code normalement vous devez retrouver
+[00:18:02 → 00:18:08] l'entraînement du modèle sur le jeu d'entraînement donc ça c'est votre
+[00:18:08 → 00:18:13] modèle donc en gros là le modèle c'est vous avez choisi que vous faisiez une
+[00:18:13 → 00:18:17] régression linéaire par exemple donc au dessus vous avez décidé modèle
+[00:18:17 → 00:18:23] égal à régression linéaire avec des hyper paramètres c'est là que vous
+[00:18:23 → 00:18:27] disiez qu'il y a des hyper paramètres à décider et derrière vous faîtes
+[00:18:27 → 00:18:31] modèle point fit donc le point fit c'est vraiment le côté entraînement et le
+[00:18:31 → 00:18:35] côté je viens calculer et je viens regarder les données et trouver des
+[00:18:35 → 00:18:42] patterns et j'entraîne du coup sur l'input d'entraînement avec la sortie
+[00:18:42 → 00:18:48] d'entraînement qui est en face c'est après le modèle et piton fait en sorte que
+[00:18:48 → 00:18:51] du coup chaque ligne se remet en face de sa bonne classe évidemment tout est
+[00:18:51 → 00:18:56] resté dans mon ordre ensuite vous faites votre prédiction sur le jeu de
+[00:18:56 → 00:19:01] test donc ça va vous sortir un vecteur des prédictions avec
+[00:19:01 → 00:19:06] ben est ce que c'est panne pas panne panne pas panne etc.
+[00:19:06 → 00:19:11] ça c'est une faite un prédict ça vous sort directement des 1 et des 0 en
+[00:19:11 → 00:19:15] notre cas de classification donc on dit qu'on prend notre modèle qui a été
+[00:19:15 → 00:19:19] entraîné là on a du coup le modèle à s'en garder les paramètres qui ont
+[00:19:19 → 00:19:22] été optimisés pendant l'entraînement donc on prend ce modèle là
+[00:19:22 → 00:19:25] sur lequel on vient faire et on vient faire les prédictions sur notre
+[00:19:25 → 00:19:34] jeu de test et ensuite du coup notre évaluation va se faire en comparant les
+[00:19:34 → 00:19:38] vrais valeurs et les valeurs prédites donc là par exemple si je veux calculer
+[00:19:38 → 00:19:45] de la cure assis je donne la je vais donner du coup à la cure assis le fait
+[00:19:45 → 00:19:50] d'avoir l'y de test donc mes prédictions que j'ai faite
+[00:19:50 → 00:19:55] dans la réalité pardon la réalité sur le jeu de test et les prédictions que j'ai
+[00:19:55 → 00:20:00] fait sur le jeu de test et donc comme ça le modèle va venir comparer à 1 à 1 et
+[00:20:00 → 00:20:06] là vous calculer la cure assis donc là si on est sur avec de la classification si
+[00:20:06 → 00:20:09] il va calculer la cure assis donc si vous avez par exemple 100 éléments dans
+[00:20:09 → 00:20:15] votre jeu de test il va regarder combien de fois vous avez bien prédit 1 à 1 ou 0 à
+[00:20:15 → 00:20:20] 0 donc voilà comment ça va se faire donc en soi niveau code il n'y a pas
+[00:20:20 → 00:20:24] énormément de choses mais du coup la partie la plus importante c'est quelle est
+[00:20:24 → 00:20:30] la métrique que vous choisissez ici donc ça vous avez vous avez plein choix et
+[00:20:30 → 00:20:34] donc il va falloir les prendre et les choisir en amont de votre projet ce qu'on
+[00:20:34 → 00:20:37] disait c'est que si vous comparez enfin une fois que vous avez calculé un modèle
+[00:20:37 → 00:20:42] avec une cure assis avec une une métrique d'évaluation vous allez
+[00:20:42 → 00:20:46] comparer toutes les modèles que vous allez faire avec la même métrique
+[00:20:47 → 00:20:51] vous pouvez totalement calculer plusieurs métriques à la fois mais il vous
+[00:20:51 → 00:20:57] en faut une majoritaire qui fait arbitre pour si jamais il y a un travail qui est
+[00:20:57 → 00:21:05] fait dessus si jamais il y a je sais pas je prends mais par exemple la précision et
+[00:21:05 → 00:21:11] le recall de présenter après il faut que je sache et que je me dis et la
+[00:21:11 → 00:21:15] quelle je veux voir majoritaire et laquelle est minoritaire pour si jamais
+[00:21:15 → 00:21:19] il y a un arbitrage à faire que je le sache dès le départ et que surtout ça
+[00:21:19 → 00:21:28] correspond à ma problématique et à l'objectivité du coup dans le cas
+[00:21:28 → 00:21:33] on en est dans de la régression on vient du coup donc là régression type de
+[00:21:33 → 00:21:38] modèle par régression linéaire pour tous les modèles qui permettent de
+[00:21:38 → 00:21:44] calculer de prédire une valeur continue vous avez plusieurs métriques
+[00:21:44 → 00:21:49] d'évaluation donc là je vous montre je vais vous montrer les plus connus
+[00:21:49 → 00:21:53] il y en a évidemment d'autres qui existent suivant les cas mais ça pourrait
+[00:21:53 → 00:21:57] faire une liste un peu de quelques-uns donc ce qui se passe c'est que vous avez du
+[00:21:57 → 00:22:03] coup le y de test qui est toutes les valeurs du coup les valeurs réelles de
+[00:22:03 → 00:22:08] vos données de test qui sont ici et vous avez fait votre prédiction donc
+[00:22:08 → 00:22:13] en gros ce que le modèle va faire c'est de les mettre côte à côte et on peut
+[00:22:13 → 00:22:19] déjà calculer l'erreur sur chaque ligne donc on vient calculer l'erreur et ensuite
+[00:22:19 → 00:22:23] vous avez des critères d'invaliation les plus connus pour ce genre de modèles qui
+[00:22:23 → 00:22:29] sont par exemple la mae donc min absolute erreur qui vient calculer en fait
+[00:22:29 → 00:22:34] l'erreur en valeur absolue moyenne donc ça vient vous dire quelle est la
+[00:22:34 → 00:22:39] valeur à quelle l'erreur moyenne en valeur absolue surtout sur tout votre
+[00:22:39 → 00:22:46] jeu de test vous avez pareil avec l'erreur au carré moyenne qui vient du coup qui
+[00:22:46 → 00:22:52] du coup ressortation va être une valeur plus grande et du coup mais plus de
+[00:22:52 → 00:22:54] poids dès que vous vous trompez beaucoup
+[00:22:54 → 00:22:57] enfin par exemple là ici il y a une erreur qui est quand même assez haute par
+[00:22:57 → 00:23:03] rapport aux autres mais ça va grandement impacter votre votre votre performance
+[00:23:03 → 00:23:07] donc ce que va faire est-ce que quand vous allez avoir un modèle qui est
+[00:23:07 → 00:23:11] meilleur ça veut dire que globalement ils n'ont pas réussi à diminuer les grosses
+[00:23:11 → 00:23:19] erreurs et avoir quelque chose de plus homogène donc ça c'est deux de valeur
+[00:23:19 → 00:23:24] par contre il faut faire attention il n'y a pas de limite à la valeur de la mae
+[00:23:24 → 00:23:30] ou de la MSU c'est des valeurs entre 0 et l'infinie si vous êtes sur je sais pas
+[00:23:30 → 00:23:34] si vous devez prédire du coup des prix de vente votre erreur elle peut être de
+[00:23:34 → 00:23:42] 10 500 ou de 350 000 j'en sais rien donc on monte vite vers des énormes vers
+[00:23:42 → 00:23:46] des grandes valeurs et qui sont des fois un peu compliqué à comparer mais
+[00:23:46 → 00:23:52] compliqué à se représenter sur à quel point mon modèle est bon ou pas si vous
+[00:23:52 → 00:23:55] êtes sur de l'accuratie à vous dire je suis bon dans un 95% des cas vous
+[00:23:55 → 00:24:00] dites ok mon modèle est bon si je vous dis que la mine absolue terror c'est de 35
+[00:24:00 → 00:24:06] 000 vous avez en fait il faut que vous ayez en tête quel est votre par exemple la
+[00:24:06 → 00:24:09] valeur moyenne que vous calculer pour vous dire est-ce que déjà j'ai un
+[00:24:09 → 00:24:17] pourcentage d'erreurs moyens qui a du sens est-ce que ça vous c'est deux métriques
+[00:24:17 → 00:24:22] là vous paraissent clair du coup sur comment ils sont calculés et à quoi il
+[00:24:22 → 00:24:32] tient je n'ai pas très bien compris l'étudie de calculer l'erreur au
+[00:24:32 → 00:24:36] carré sachant qu'on peut et est-ce qu'on peut utiliser uniquement le
+[00:24:36 → 00:24:42] calcul de l'erreur absolu pour savoir si on a fait des erreurs et oui oui oui
+[00:24:42 → 00:24:47] tout à fait on peut tout à fait avoir que l'erreur absolu en fait venir calculer
+[00:24:47 → 00:24:51] l'erreur au carré ça permet d'accentuer les erreurs qui sont un peu éloignées
+[00:24:51 → 00:24:56] en fait des fois c'est quand on va avoir des modèles et qu'on se dit on
+[00:24:56 → 00:25:00] préfère qu'il se trompe un peu surtout mais qu'il fasse pas de gros
+[00:25:00 → 00:25:07] écarts de temps en temps du coup en fait comme l'amse va prendre un gros coup et
+[00:25:07 → 00:25:15] la performance va être largement moindre si par exemple sur 100 cas de test il
+[00:25:15 → 00:25:21] fait 5 ou 10 erreurs qui sont assez grosses ça va faire augmenter
+[00:25:21 → 00:25:26] énormément l'erreur au carré alors que l'erreur absolu elle va augmenter mais pas
+[00:25:26 → 00:25:31] tant que ça donc du coup ça va faire que si tu comprends plusieurs modèles qui
+[00:25:31 → 00:25:35] ont des erreurs carrés différentes celui qui va avoir l'erreur au carré la plus
+[00:25:35 → 00:25:40] basse et le modèle normalement qui en gros fait peut-être un peu d'erreur
+[00:25:40 → 00:25:46] partout mais de manière assez uniforme là ou un modèle qui a une erreur une
+[00:25:46 → 00:25:50] ms élevée c'est à peu être un modèle qui de temps en temps fait des très grosses
+[00:25:50 → 00:25:54] erreurs et du coup c'est ce qui peut faire en production ça veut dire que tu
+[00:25:54 → 00:25:59] vas voir un modèle en production qui est sur plein de cas il est ok et il est très
+[00:25:59 → 00:26:03] proche de ce qu'il faut et par contre de temps en temps il fait des très grosses
+[00:26:03 → 00:26:09] erreurs et en fait en général on préfère qu'il y ait 10% d'erreurs un peu
+[00:26:09 → 00:26:15] partout plutôt que de se dire il fait 5% d'erreur dans très souvent mais de
+[00:26:15 → 00:26:22] temps en temps il fait qu'est 60% d'erreur donc ça va dépendre de si tu
+[00:26:22 → 00:26:35] acceptes que de temps en temps il se trompe beaucoup donc ça c'est les plus
+[00:26:35 → 00:26:40] basiques à calculer les plus simples mais donc après il y a plusieurs
+[00:26:40 → 00:26:47] possibilités déjà il y a les mêmes qui existent mais en pourcentage vous avez
+[00:26:47 → 00:26:54] la mape et la ms pe qui sont au lieu de calculer juste la valeur absolue par
+[00:26:54 → 00:27:00] exemple on va calculer l'erreur en valeur absolue en pourcentage donc là
+[00:27:00 → 00:27:05] par exemple mon plus de il serait calculé en disant bah c'est plus de pour
+[00:27:05 → 00:27:13] 10 donc en gros c'est 20% d'erreur là c'est plus 3 pour 34 donc c'est de moins de
+[00:27:13 → 00:27:19] 10% d'erreur et donc vous auriez du coup une erreur qui vient en pourcentage vous
+[00:27:19 → 00:27:22] dire et du coup ça a un peu plus de sens des fois c'est plus facile en tout cas
+[00:27:22 → 00:27:26] à se représenter c'est de se dire il se trompe de 10% et ça vous permet
+[00:27:26 → 00:27:30] potentiellement aussi de mettre un seuil de confiance et de le donner aux utilisateurs
+[00:27:30 → 00:27:35] par la suite de dire bah voilà je fais une prédiction à plus ou moins 10% donc
+[00:27:35 → 00:27:41] comme ça ça peut donner une fourchette aux utilisateurs donc vous avez les deux
+[00:27:41 → 00:27:46] qui existent à un pourcentage qui peut être déjà très utile et qui ont plus de
+[00:27:46 → 00:27:55] sens sinon du coup comme maria malde le disait il y a le her de score qui l'a
+[00:27:55 → 00:28:03] bien comparé notre modèle à un modèle constant ou un modèle naïf en gros
+[00:28:03 → 00:28:08] l'idée c'est de se dire que on va choisir un modèle constant qui prédit
+[00:28:08 → 00:28:13] toujours la valeur moyenne de votre jeu d'entraînement votre y très si par
+[00:28:13 → 00:28:17] exemple en moyenne sur mon jeu d'entraînement j'ai vendu des
+[00:28:17 → 00:28:23] bières immobiliers qui étaient à 200 000 euros le modèle va prédire
+[00:28:23 → 00:28:31] toujours 200 000 et on va venir calculer et on va venir calculer l'erreur à
+[00:28:31 → 00:28:37] chaque fois entre ce que j'ai prédit et la valeur moyenne qui est calculée ici on
+[00:28:37 → 00:28:42] vient calculer la mse donc comme on a fait avant et donc on a la mse de ce
+[00:28:42 → 00:28:49] modèle constant et donc ce qui va être fait ici c'est du coup le calcul entre
+[00:28:49 → 00:29:00] la mse qui est entre la mse de votre modèle et la mse du modèle constant en gros si
+[00:29:00 → 00:29:08] votre mse vous avez du coup un her de score qui est censé être le plus proche de un
+[00:29:08 → 00:29:13] puisque l'idée c'est de se dire que votre modèle est largement meilleur qu'un modèle très naïf
+[00:29:13 → 00:29:18] en gros l'idée c'est ça va être de dire est ce que avoir fait du machine learning c'est
+[00:29:18 → 00:29:24] utile versus avoir mis l'erreur moyenne pour tout et donc quand vous calculez votre
+[00:29:24 → 00:29:30] her de score il faut qu'il soit le plus proche de un puisque ça voudrait dire que la mse de
+[00:29:30 → 00:29:45] votre modèle est largement plus petite que la mse du modèle constant puisque ça doit être
+[00:29:45 → 00:29:51] si vous avez un m et un her de score qui est proche de zéro ça veut dire que votre mse de
+[00:29:51 → 00:29:58] de la mse de votre modèle l'erreur moyenne de votre modèle est quasi la même que l'erreur
+[00:29:58 → 00:30:07] que l'erreur de votre du modèle constant d'un modèle complètement naïf donc vous laissez savoir est-ce
+[00:30:07 → 00:30:12] que vous avez est-ce que votre modèle a appris plus de choses que ce que modèle constant aurait
+[00:30:12 → 00:30:18] fait donc ça ça permet donc on calcule les mse mais ça a pas rien vous n'avez pas à calculer
+[00:30:18 → 00:30:25] vous les mse vous aurez juste à dire j'utilise comme métrique le her de score et ça va calculez
+[00:30:25 → 00:30:30] comme ça et ce qu'il faut juste savoir c'est quand vous choisissez une métrique quelle est la valeur
+[00:30:30 → 00:30:35] optimale de votre métrique donc là par exemple on va essayer d'avoir un modèle le plus proche
+[00:30:35 → 00:30:46] impossible est-ce que c'est ok du coup pour la compréhension de ce modèle là pour mettre des
+[00:30:46 → 00:31:02] juste des petits pouces si ça va et si ça va pas donc ça globalement entre les pourcentages et
+[00:31:02 → 00:31:06] tout ça c'est pas mal de métriques qui sont utilisés pour la récréation et qui sont très
+[00:31:06 → 00:31:11] utiles il en existe plein d'autres vous en avez peut-être plein d'autres dans vos rapports mais
+[00:31:11 → 00:31:17] c'est les plus connus et d'ailleurs je vais vous montrer si je vais sur celles qui clèrent
+[00:31:17 → 00:31:40] pour vous montrer à quel coin est-ce que tu aurais des exemples ancrés à nous montrer par rapport à
+[00:31:40 → 00:31:49] quoi au her de score etc. si je reprends l'exemple de mes biens et des biens immobiliers tu vas
+[00:31:49 → 00:31:55] je pourrais avoir en fait l'idée ça va être d'avoir de dire je vais filer le her de score
+[00:31:55 → 00:31:59] parce que je vais me dire je vais avoir le modèle qui a appris le plus de choses et qui est
+[00:31:59 → 00:32:05] meilleur qu'un modèle est complètement naïf et je veux dire d'avoir je veux faire du coup de la
+[00:32:05 → 00:32:11] récréation sur un modèle de prédiction qui fait de la prédiction du plus tente je vais calculer je
+[00:32:11 → 00:32:15] vais faire je vais entraîner un premier modèle qui est de la récréation linéaire simple j'entraîne
+[00:32:15 → 00:32:21] la récréation linéaire je calcule le her de score par rapport au modèle constant et j'obtiens
+[00:32:21 → 00:32:30] peut-être je sais pas 0,3 on dit ok mon modèle un modèle très simple il est à 0,3 donc il est un peu
+[00:32:30 → 00:32:35] meilleur que le modèle constant parce que sinon il sera à 0 mais il n'est pas non plus exceptionnel
+[00:32:35 → 00:32:42] par contre du coup je me dis ben voyons je comparais à notre modèle et je vais par exemple faire une
+[00:32:42 → 00:32:49] random forest qui est un des modèles classiques qu'on verra après et je vais dire me bien est-ce
+[00:32:49 → 00:32:56] qu'une random forest qui est du quoi modèle complexe a réussi à trouver plus d'information que ma
+[00:32:56 → 00:33:02] récréation linéaire et à être meilleur et à du coup mieux calculer et mieux prédire et je vais
+[00:33:02 → 00:33:09] calculer le her de score de ma random forest et je vais obtenir 0,6 ben là je sais que par
+[00:33:09 → 00:33:17] exemple si je dois mettre un modèle en production je vais mettre la random forest et pas le et
+[00:33:17 → 00:33:24] pas la récréation puisque clairement j'ai la random forest est largement meilleur que la
+[00:33:24 → 00:33:30] récréation donc en fait ça va me permettre de choisir des modèles et de savoir vers lequel je vais
+[00:33:30 → 00:33:35] et de savoir lequel je vais venir optimiser grandement ce que du coup tout à l'heure je vous
+[00:33:35 → 00:33:40] disais en fait choix du de l'algorithme choix des hyper paramètres entraînement
+[00:33:40 → 00:33:44] évaluation et en fait tout ça vous allez pouvoir boucler dessus donc par exemple au début
+[00:33:44 → 00:33:49] j'ai dit que je prenais une random forest il y a un nombre d'arbres à décider je peux avoir dit
+[00:33:49 → 00:33:54] je suis une random forest avec 50 arbres j'ai testé j'ai vu que la random forest avec 50 arbres
+[00:33:54 → 00:33:58] faisait mieux qu'une récréation linéaire mais peut-être qu'une random forest avec 100 arbres
+[00:33:58 → 00:34:03] fera encore mieux du coup en fait je viens boucler et je viens garder à chaque fois le modèle
+[00:34:03 → 00:34:10] qui a le meilleur qui a la meilleure évaluation possible donc c'est pour ça qu'il faut le
+[00:34:10 → 00:34:14] décider et il faut décider le critère d'évaluation au début comme ça ça permet de tout tout
+[00:34:14 → 00:34:21] comparer et de se dire mais là avec la régression pour exemple vous dans votre cas avec la récréation
+[00:34:21 → 00:34:29] linéaire on va choisir une métrique d'évaluation on va avoir du coup une ce qu'on appelle une base
+[00:34:29 → 00:34:34] line c'est-à-dire qu'on a un modèle assez simple à mettre en place voilà son son évaluation
+[00:34:34 → 00:34:39] voilà ses performances et l'idée ça va être maintenant de se dire est-ce que tout le travail
+[00:34:39 → 00:34:44] que je vais faire que ce soit sur le travail sur les données travail sur le choix du l'algorithme
+[00:34:44 → 00:34:50] travail sur les hyper paramètres de l'algorithme est-ce que tous ces toutes ces modifications que
+[00:34:50 → 00:34:58] je fais là est-ce qu'elles ont du sens et est-ce qu'elles sont du coup est-ce qu'elles sont du
+[00:34:58 → 00:35:05] quoi est-ce qu'ils ont est ce qu'il faut les garder ou pas et du coup ça permet de savoir et de dire
+[00:35:05 → 00:35:10] j'ai choisi cette modèle c'est bien compris c'est encore si on choisit le modèle on l'entraîne
+[00:35:10 → 00:35:17] et après on découvre pour évaluer ce modèle là c'est ça et comme ça une fois que t'as évalué un modèle
+[00:35:17 → 00:35:23] si tu test un autre modèle bah tu évaluera avec le même critère d'évaluation et comme ça tu
+[00:35:23 → 00:35:29] pourras comparer tes deux modèles et dire lequel est meilleur et ça paraît aussi de par rapport
+[00:35:29 → 00:35:33] à l'équipe métier qui va utiliser ton modèle de dire bah voilà moi j'ai fait un modèle qui
+[00:35:33 → 00:35:41] arrive à calculer par exemple les prix les prix moyens beaucoup mieux que si vous mettez
+[00:35:41 → 00:35:48] la moyenne à chaque fois en fait il y a un ajout d'information et le modèle est largement meilleur
+[00:35:48 → 00:35:55] pour des utilisateurs métier moi ce que je mettrais c'est que par exemple si je fais l'exemple
+[00:35:55 → 00:36:00] de prix des biens immobiliers je garderai le air de score pour savoir quelle modèle je garde et
+[00:36:00 → 00:36:09] peut-être que je garde je calculerai l'erreur absolue en pourcentage pour dire à l'utilisateur
+[00:36:09 → 00:36:13] ben voilà j'ai comparé plusieurs modèles je choisis celui là parce que c'est celui qui est le meilleur
+[00:36:13 → 00:36:24] et au niveau du coup de la moyenne en valeur absolue en pourcentage je suis à 5% donc en gros les
+[00:36:24 → 00:36:28] prédictions que ferait mon modèle sont bonnes à plus ou moins 100% et comme ça ça donne
+[00:36:28 → 00:36:32] une information en plus à l'utilisateur derrière et ça permet de vérifier de moi
+[00:36:32 → 00:36:42] est-ce que ton modèle est bon et de mes valeurs est-ce que est-ce que c'est pas la guerre du coup
+[00:36:42 → 00:36:56] pourquoi quand est-ce qu'on utilise c'est ouais c'est critère d'évaluation donc si je veux évoluer
+[00:36:56 → 00:37:00] notre modèle en fait le change de modèle c'est gardez quelques valeurs sur un genre
+[00:37:01 → 00:37:08] ouais exactement comme ça ça permet de les comparer et de dire ben en fait c'est vraiment les
+[00:37:08 → 00:37:15] performances du modèle c'est comme si tu devais ok bon rien à voir mais tu dois acheter je sais pas
+[00:37:15 → 00:37:19] une voiture ce que tu vas comparer à chaque fois c'est peut-être les performances de la voiture
+[00:37:19 → 00:37:24] sur un truc en particulier ben tu du coup tu te mets un critère en tête de qu'est-ce que je
+[00:37:24 → 00:37:30] dois comparer et tu vas comparer ce truc là sur toutes tes voitures et du coup tu vas choisir la
+[00:37:30 → 00:37:41] voiture qui le moteur par exemple exactement donc là c'est exactement pareil du coup après
+[00:37:41 → 00:37:46] ces critères là que nous on a besoin en mode de mathématique vraiment pour évaluer des modèles
+[00:37:46 → 00:37:51] il faut après des temps en temps pouvoir les traduire pour l'utilisateur pour que ça soit
+[00:37:51 → 00:37:55] utile pour lui et que ça lui parle au niveau métier parce que lui il s'en fiche de savoir
+[00:37:55 → 00:37:59] si c'est une régénération linéaire une radeau forest un exigé de moust ou votre modèle
+[00:37:59 → 00:38:03] ce qu'il veut savoir c'est est-ce que ça marche et comment ça marche et quelle est la
+[00:38:03 → 00:38:09] performance de ce que tu fais et est-ce qu'il peut faire confiance à ta prédiction donc là
+[00:38:09 → 00:38:16] c'est lui dire bah tu peux faire confiance à ma prédiction à plus ou moins 5% ça permet de
+[00:38:16 → 00:38:23] pouvoir faire ce genre de conclusion et de dire bah il y avait un modèle lui il était bon à
+[00:38:23 → 00:38:27] 10% près j'ai un modèle qui est bon à 10% près un modèle qui est bon à 5% près
+[00:38:27 → 00:38:50] bah je vais préférer le modèle qui est à 5% donc ouais juste pour vous montrer vite fait les
+[00:38:50 → 00:38:57] métriques qu'il y a ici donc scikit-learn c'est une bibliothèque à mon piton une librairie qui
+[00:38:57 → 00:39:04] permet d'avoir en fait vous avez quasi toutes les fonctions nécessaires pour les modèles
+[00:39:04 → 00:39:09] de machine learning qui sont scikit-learn et donc scikit-learn pour un métrix vous permet
+[00:39:09 → 00:39:17] de récupérer toutes les fonctions de score de performance donc par exemple si là on était
+[00:39:17 → 00:39:24] sur la réécution vous avez ici toutes les fonctions de performance qui sont calculées directement
+[00:39:24 → 00:39:31] par qui peuvent être calculées directement en faisant l'appel assez fonctionnel donc on retrouve
+[00:39:31 → 00:39:39] la mine absolue d'erreur ici la mine mine absolue de faire ce type d'erreur la mine square d'erreur
+[00:39:39 → 00:39:53] là le r de score ici vous avez le route mine square d'erreur si vous voulez avoir la racine carrée
+[00:39:53 → 00:40:00] et après il y en a d'autres avec des deux par exemple et si vous calculez dessus et c'est
+[00:40:00 → 00:40:12] le petit petit petit pardon est-ce qu'il y a le détail de commencer calculer mais à chaque fois par
+[00:40:12 → 00:40:17] contre sur la documentation là ça vous dit pas forcément exactement le comment c'est calculé
+[00:40:17 → 00:40:24] mais par contre vous avez le quel est le score le meilleur que vous pouvez chercher donc vers
+[00:40:24 → 00:40:27] quoi vous allez chercher à attendre par exemple des deux scores vous avez cherché à attendre
+[00:40:27 → 00:40:38] vers 1 alors du coup le r de score ici du coup le coefficient le meilleur possible c'est 1 et ça
+[00:40:38 → 00:40:46] peut être négatif puisque si votre parce que votre modèle peut être encore pire que le modèle
+[00:40:46 → 00:40:55] naïf donc en gros si vous êtes sur un r de score qui est négatif vous avez un modèle qui est très
+[00:40:55 → 00:41:00] mauvais si par contre vous avez un score qui est très proche 1 du coup vous êtes vers un modèle
+[00:41:00 → 00:41:09] qui est qui est très bon et qui est sur crédit sûrement très proche de ce qu'il faut et donc
+[00:41:09 → 00:41:14] vous les avez toutes ici qui sont mangés donc là pour la régression et vous les avez pour la
+[00:41:14 → 00:41:20] classification au dessus donc là on va vous présenter celle pour la classification en plus
+[00:41:20 → 00:41:31] en détail on retrouve la usc vous allez voir précision récolqueur rockeus et score etc tout
+[00:41:31 → 00:41:55] sans ça je vais vous les présenter donc pour de la classification par contre on est sur quelque
+[00:41:55 → 00:41:59] chose de différent à le mettant qu'on est on va faire sur la classification binaire qui va être
+[00:41:59 → 00:42:05] le cas le mieux d'en fait on va venir calculer on va venir du coup pareil avoir le y test qui
+[00:42:05 → 00:42:11] est les prédictions faites à faire mal les la réalité sur notre jeu de test et y prède qui est
+[00:42:11 → 00:42:17] les prédictions faites sur le jeu de test par notre modèle admettons que a et la classe positive
+[00:42:17 → 00:42:26] par exemple à c'est il ya une panne donc vous avez ici le il ya une panne et il y a une panne
+[00:42:26 → 00:43:19] c'est vrai qu'il n'y avait pas là quand j'ai dit pour se revoir il y avait pas vu du coup
+[00:43:19 → 00:43:55] je n'avais pas vu que c'était pas là alors je t'entends très mal mais je pense que j'ai compris que
+[00:43:55 → 00:44:04] tu étais dans la mauvaise salle donc je sais pas si c'est moi mais ouais je t'entends pas du tout
+[00:44:04 → 00:44:27] bien on n'a pas bougé de salle pour le coup en fait je pense que tu étais déconnecté parce
+[00:44:27 → 00:44:35] que tu as dû re-rentrer je sais pas trop ce qui c'est facile mais on a parlé des critères
+[00:44:35 → 00:44:39] d'évaluation pour la régression donc là on arrive pour la classification donc c'est ce qui nous
+[00:44:39 → 00:44:45] intéresse dans notre cas d'usage là donc de toute façon je mettrais le document et si tu
+[00:44:45 → 00:44:49] veux on prendra un peu de temps en début d'après-midi pour regarder ensemble le critère
+[00:44:49 → 00:45:03] d'évaluation pour la régression comme ça non j'ai pas registré parce que non mais du coup je te
+[00:45:03 → 00:45:17] referai un point de soupe à soucis ensemble non on a repris à 11h à peu près désolé j'avais pas
+[00:45:17 → 00:45:27] fait attention sur le partage des cranges du coup on parlait des critères d'évaluation donc on a
+[00:45:27 → 00:45:32] surtout détaillé les critères d'évaluation qui sont pour la régression là pour l'instant donc quand
+[00:45:32 → 00:45:38] tu dois du coup calculer une valeur continue un plaisir un bien prédire un nombre de vente
+[00:45:38 → 00:45:43] etc et là du coup on rentrait sur les critères d'évaluation pour la classification l'idée
+[00:45:43 → 00:45:50] des critères d'évaluation du coup c'est vraiment de venir calculer la performance de ton modèle
+[00:45:50 → 00:45:55] sur de la prédiction sur ton jeu de test pour pouvoir dire est-ce que le modèle est bon ou pas et est-ce
+[00:45:55 → 00:45:59] que surtout est-ce qu'il est mis ailleurs qu'un autre que tu as testé avant pour savoir lequel
+[00:45:59 → 00:46:06] tu gardes et donc ce critère d'évaluation il est à déterminer le plus tôt possible dans le projet
+[00:46:06 → 00:46:09] après vous pouvez le faire évoluer mais si vous le faites évoluer c'est à dire qu'il faut
+[00:46:09 → 00:46:25] calculer tous les modèles que vous avez testé et il est censé du coup être ok avec le besoin métier
+[00:46:25 → 00:46:33] si tu quand vous devez faire de la classification en fait les gens vont vous dire est-ce que
+[00:46:33 → 00:46:39] ils ont besoin que ça soit bon surtout pour les classes positives est-ce que ça doit être
+[00:46:39 → 00:46:45] bon dans tous les cas autant classes positifs que classes négatives etc vous avez besoin de
+[00:46:45 → 00:46:50] discuter un peu à une métier pour comprendre le besoin sur ça et après du coup pour calculer vous
+[00:46:50 → 00:46:59] avez donc on a ira test qui sont les vrais valeurs donc a par exemple panne et b tout va bien et la
+[00:46:59 → 00:47:05] prédiction a prédit j'ai prédit une panne et b j'ai prédit tout allez bien donc déjà la
+[00:47:05 → 00:47:12] première le plus facile à calculer c'est du coup la curatie on peut abri l'exactitude qui vient
+[00:47:12 → 00:47:18] regarder le pourcentage de prédiction correcte donc en gros vous venez dire en fait vous venez mettre
+[00:47:18 → 00:47:25] un compteur en disant bah si j'ai fait la bonne la bonne la bonne la bonne prédiction je mets
+[00:47:25 → 00:47:30] zéro si j'ai fait la mauvaise je mets 1 et vous faites la somme des 1 divisé par le nombre du
+[00:47:30 → 00:47:34] bout total de valeur dans votre jeu de test et ça vous donne un pourcentage de prédiction
+[00:47:34 → 00:47:40] correcte donc ça c'est le modèle le critère d'évaluation le plus simple à calculer et le
+[00:47:40 → 00:47:46] plus parlant le problème qu'on disait c'est que si jamais vous avez des données déséquilibrées c'est
+[00:47:46 → 00:47:54] à dire que vous avez peu de panne et beaucoup de tout va bien bah un modèle qui prédit ici qui
+[00:47:54 → 00:47:59] ont émis que des b bah il peut peut-être être bon dans et que vous avez juste pas 10%
+[00:47:59 → 00:48:06] de panne votre accuracy va être de 99% donc au début on se dit c'est trop bien
+[00:48:06 → 00:48:13] etc et en fait vous voyez que votre modèle il prédit tout va bien tout le temps et vous
+[00:48:13 → 00:48:19] ne prédit jamais les panne donc en fait il n'a aucun intérêt donc du coup on va passer sur des
+[00:48:19 → 00:48:27] métriques qui sont un peu plus complète qui portent plus d'information que juste le pourcentage
+[00:48:27 → 00:48:33] de prédiction correcte donc déjà pour ça il va falloir on va faire ce qu'on appelle la matrice
+[00:48:33 → 00:48:40] de confusion donc déjà vous avez de voir calculé le nombre de vrais positifs faux négatif faux
+[00:48:40 → 00:48:50] positifs très négatif à chaque fois le terme qui est à droite donc positif ou négatif c'est ce que
+[00:48:50 → 00:48:55] vous vous avez prédit est ce que vous avez prédit classe positive ou classe négative nous
+[00:48:55 → 00:49:04] notre classe positive c'est la classe j'ai il y a une panne donc positif j'ai prédit une panne
+[00:49:04 → 00:49:11] négatif j'ai prédit une non panne vrai ou fond c'est est-ce que vous avez eu juste ou est-ce que
+[00:49:11 → 00:49:17] vous vous êtes trompé donc vrai positif c'est j'ai prédit qu'il y avait une panne et il y avait
+[00:49:17 → 00:49:23] réellement une panne sur mon jeu de tests donc c'est le A1 faux négatif c'est j'ai prédit
+[00:49:23 → 00:49:28] que tout était ok et en fait je me suis trompé en fait s'il y avait vraiment une panne donc je suis
+[00:49:28 → 00:49:36] passée à côté d'une panne faux positif c'est j'ai prédit qu'il y avait une panne alors qu'en vrai
+[00:49:36 → 00:49:42] il n'y en avait pas et vrai négatif c'est j'ai prédit que tout allait bien et en vrai tout allait
+[00:49:42 → 00:49:47] bien donc ça je me suis choqué donc à chaque fois ça va être la question ça va être du
+[00:49:47 → 00:49:54] coup de venir regarder les chiffres que vous avez par rapport à ça ce qui va nous intéresser en
+[00:49:54 → 00:49:59] général c'est les trois premiers les vrais négatifs en fait un modèle un modèle naïf ne
+[00:49:59 → 00:50:07] mettraient que des vrais négatifs et donc vous allez créer ce qu'on appelle du coup la matrice de
+[00:50:07 → 00:50:12] confusion donc la matrice de confusion vous la retrouvez comme ça et donc quand vous les écrivez
+[00:50:12 → 00:50:16] il y a des certains du coup dans vos notebooks là vous les aimez afficher ça vous avez
+[00:50:16 → 00:50:22] fiché un couleur l'idée normalement si vous avez une matrice de confusion parfaite il faudrait
+[00:50:22 → 00:50:28] que vous ayez la diagonale qui part d'en haut à gauche qui va en bas à droite qui soit la plus
+[00:50:28 → 00:50:34] colorée possible ça voudrait dire que vous avez tous vos éléments qui sont répartis sur les
+[00:50:34 → 00:50:42] vrais négatifs et les vrais positifs c'est à dire que vous avez bien fait votre votre prédiction
+[00:50:43 → 00:50:48] vous retrouvez du coup les vrais négatifs donc vous avez prédit négatif et ils sont réellement
+[00:50:48 → 00:50:54] négatifs vous avez ici les faux négatifs donc ils sont vous les avez prédit négatifs mais en vrai
+[00:50:54 → 00:51:01] ils sont positifs donc là les faux négatifs c'est vous avez prédit tout allez bien alors qu'en
+[00:51:01 → 00:51:08] fait il y avait une panne donc là problématique les vrais positifs c'est vous avez prédit une
+[00:51:08 → 00:51:13] panne et il y a effectivement une panne et les faux positifs c'est vous avez prédit une panne
+[00:51:13 → 00:51:18] alors que tout va bien au plat c'est vous alerter la maintenance alors qu'en fait il n'y avait
+[00:51:18 → 00:51:26] pas de raison donc déjà vous pouvez avec cette matrice de confusion essayer de voir où est-ce
+[00:51:26 → 00:51:33] que vous pêchez et est-ce que le modèle ben en gros mais trop de tout va bien ou trop de il y a
+[00:51:33 → 00:51:40] trop de panne et déjà ça vous permet de voir comment se substitue votre modèle avec ça du
+[00:51:40 → 00:51:48] coup il y a deux métriques qui existent le récol et la précision ou le rappel et la précision
+[00:51:48 → 00:51:56] le rappel c'est du coup les vrais positifs sur les vrais positifs plus faux négatifs en
+[00:51:56 → 00:52:06] fait l'idée ça va être d'avoir le le récol le plus proche de un et donc de se dire sur toutes
+[00:52:06 → 00:52:16] les pannes qu'il y a je veux avoir le plus de détection de panne donc je veux essayer de
+[00:52:16 → 00:52:25] diminuer les pannes oubliés donc pour si je remets sur les cas des gens malades des maladies c'est
+[00:52:25 → 00:52:37] je veux avoir le plus de vrais positifs et avoir le moins de faux négatifs possible ce que je
+[00:52:37 → 00:52:42] calcule pas c'est les faux positifs donc ce qui va se passer en général c'est que si vous voulez
+[00:52:42 → 00:52:50] augmenter le récol donc vous voulez augmenter ce rapport là donc vous voulez diminuer le nombre
+[00:52:50 → 00:52:54] de faux négatifs le modèle vous dire ok tu veux pas que je prédise un négatif et que
+[00:52:54 → 00:53:02] j'oublie des pannes ou des gens malades donc je vais et le modèle va avoir tendance à prédire
+[00:53:02 → 00:53:08] plus de panne ou de gens malades qu'il en faut donc vous allez avoir le nombre de faux positifs
+[00:53:08 → 00:53:14] qui peut augmenter donc là le récol c'est dans le cas où vous vous dites je préfère alerter trop
+[00:53:14 → 00:53:20] de gens que pas assez je préfère dire à trop de gens qu'ils sont malades ou je préfère
+[00:53:20 → 00:53:25] alerter là maintenant trop de fois même si en fait il n'y a pas de panne donc ça c'est le récol
+[00:53:25 → 00:53:35] et à c'est pas la maire mais vous avez du coup de la précision qui est sur vos prédictions
+[00:53:35 → 00:53:41] positives combien sont réellement positifs et vous allez vouloir pareil aller le plus vers
+[00:53:41 → 00:53:47] impossible et donc faire en sorte de diminuer les faux positifs donc là vous allez vouloir faire
+[00:53:47 → 00:53:56] en sorte que votre quand vous dites que le modèle est que que que l'élément que l'observation
+[00:53:56 → 00:54:03] de la donnée que vous avez quand vous la prédisez positive c'est que vous êtes sur quasi à 5% que la
+[00:54:03 → 00:54:09] personne est vraiment malade ou qu'il y a vraiment une panne donc par contre vous allez accepter
+[00:54:09 → 00:54:16] d'avoir des faux négatifs donc en fait de passer à côté de certaines pannes donc le récol c'est
+[00:54:16 → 00:54:23] vous dites à trop de gens qu'ils sont malades mais au moins vous n'en oubliez aucun la précision
+[00:54:23 → 00:54:30] c'est vous quand vous dites à quelqu'un qu'il est malade c'est quasi sûr qu'il l'est vraiment
+[00:54:30 → 00:54:35] par contre vous oubliez des personnes malades il y a des personnes que vous dites non malades
+[00:54:35 → 00:54:40] alors qu'elles sont réellement malades donc ça c'est les deux et donc ça suivant les cas
+[00:54:40 → 00:54:49] vous allez vouloir ben soit utiliser le récol soit utiliser la précision par exemple nous dans notre
+[00:54:49 → 00:54:57] cas d'arrêt machine on peut se dire que un arrêt machine ça coûte extrêmement cher à l'entreprise
+[00:54:57 → 00:55:04] alors qu'une maintenance même si elle est unitile coûte beaucoup moins donc on va se dire qu'on
+[00:55:04 → 00:55:13] va préférer avoir trop d'alerte maintenance que passer à côté d'une que à passer à côté
+[00:55:13 → 00:55:22] d'une panne donc vous allez préférer ou le récol plutôt que la précision et si jamais on vous dit
+[00:55:22 → 00:55:28] ben en fait moi je veux pas faire choisir l'un ou l'autre je veux avoir essayé de optimiser les
+[00:55:28 → 00:55:33] deux en même temps dans ces cas là il ya un score qui s'appelle un fin score qui est en fait la
+[00:55:33 → 00:55:39] moyenne harmonique du récol et de la précision comme ça votre score vous allez vouloir améliorer le
+[00:55:39 → 00:55:43] score et ça va être si vous améliorer le score ça veut dire que vous allez améliorer autant
+[00:55:43 → 00:55:49] le récol enfin vous allez améliorer le récol et la précision en même temps vous faites pas un choix
+[00:55:49 → 00:55:55] de l'un ou l'autre c'est vous choisissez de prendre les deux à la fin est-ce qu'il y a des
+[00:55:55 → 00:56:01] questions sur ce sur cette matrice de confusion est-ce que c'est plus ou est-ce que c'est plus
+[00:56:01 → 00:56:06] clair du coup c'est pas clair là on se faisait confusion jusque là est-ce que ça va sur la
+[00:56:06 → 00:56:14] matrice de confusion juste pour préciser un peu si les non en fait le vrai positif c'est
+[00:56:14 → 00:56:22] quoi ce qu'on prédit qu'il y a une panne c'est vrai positif là où tu as positif à chaque fois c'est
+[00:56:22 → 00:56:27] que tu as prédit qu'il y avait une panne si c'est un vrai positif c'est que tu as prédit
+[00:56:27 → 00:56:32] qu'il y avait une panne et il y avait vraiment une panne si c'est un faux positif c'est que tu
+[00:56:32 → 00:56:37] avait prédit qu'il y avait une panne mais tu avais faux donc en vrai il n'y avait pas de panne
+[00:56:37 → 00:56:44] donc le terme à droite là le p ou le n c'est est-ce que tu as prédit une panne ou est-ce
+[00:56:44 → 00:56:52] que tu as prédit que tout allait bien panne positif et négatif tout va bien et vrai ou faux c'est
+[00:56:52 → 00:56:58] est-ce que tu es est-ce que tu es est-ce que tu es un tour est-ce que ta prédiction est bonne
+[00:56:58 → 00:57:08] ou pas donc vous allez le voir et vous allez regarder à la limite pour ceux qui ont qui ont les
+[00:57:08 → 00:57:12] matrices de confusion et ceux qui n'avaient pas fait à la limite les faire sur vos notes
+[00:57:12 → 00:57:18] boucs après et voir combien et en fait quand vous écrivez les matrices de confusion ça va vous
+[00:57:18 → 00:57:22] mettre par rapport à votre jeu de test si vous avez 100 éléments dans votre jeu de test ça va vous
+[00:57:22 → 00:57:31] dire tu as 40 éléments réellement un vrai négatif tu as 30 éléments vrais positifs et tu as 15
+[00:57:31 → 00:57:37] en vrai en faux positif et 15 en faux négatif et comme ça vous allez pouvoir voir et vous allez
+[00:57:37 → 00:57:42] pouvoir comparer aussi les modèles potentiellement et vous dire à mes je vois qu'il y en a un en
+[00:57:42 → 00:57:48] fait il prédit tout le temps que tout va bien et du coup il nous dit les les panneaux donc ça
+[00:57:48 → 00:57:53] ça va être à choisir et si vous voulez pas faire de choix entre le rycon et la précision vous choisissez
+[00:57:53 → 00:57:57] la moyenne harmonique mais dans tous les cas même si vous utilisez par exemple la moyenne harmonique
+[00:57:57 → 00:58:02] vous pouvez toujours afficher la matrice de confusion pour vous donner une idée de ce que
+[00:58:02 → 00:58:11] fait votre modèle et de quoi il prédit donc voilà donc là c'est une autre illustration de la
+[00:58:11 → 00:58:19] précision du récol mais la précision du coup ça serait sur tous les positifs quelle est la
+[00:58:19 → 00:58:24] part de vrai positif qui a été fait donc sur tout ce que je j'aurais dû mettre en panne
+[00:58:24 → 00:58:33] quelle est la vraie part que je met en panne et le récol c'est sur tous ceux qui sont réellement
+[00:58:33 → 00:58:44] sur tous ceux qui sont c'est surtout ceux qui sont prédits positifs et ça sur tous ceux qui
+[00:58:44 → 00:58:50] sont réellement positifs combien qu'elle la part donc le récol si vous voulez l'augmenter près de
+[00:58:50 → 00:58:54] 1 ça vous voudrait dire que vous auriez vous prendrez et tout ça et donc potentiellement
+[00:58:54 → 00:59:04] vous auriez plus de faux positifs donc voilà et donc après vous avez deux métriques qui sont
+[00:59:04 → 00:59:09] un peu plus complexes et qui permettent qu'ils sont basés aussi sur la matrice de confusion
+[00:59:09 → 00:59:17] c'est le roc à uc et le pr à uc le pr à uc je vous le détaillerai encore après parce que du
+[00:59:17 → 00:59:25] coup c'est celle qu'on va utiliser nous mais le roc à uc du coup c'est une idée de se dire en
+[00:59:25 → 00:59:30] fait on à uc c'est pour aria under the curve donc à chaque fois il va y avoir une courbe qui va être
+[00:59:30 → 00:59:36] créée et en fait l'idée c'est de dire est-ce que le modèle arrive bien à mettre les positifs
+[00:59:36 → 00:59:43] d'un côté et les négatifs de l'autre et à bien prédire que quand et quand lui prédit que vous
+[00:59:43 → 00:59:48] êtes dans la classe positive que vous êtes vraiment positif et que vous êtes vraiment négatif l'idée
+[00:59:48 → 00:59:56] c'est que le la uc c'est l'air sous la courbe de la roc là pour perceiving opérating caractéristiques
+[00:59:56 → 01:00:05] vous avez la roc à uc qui est là on va vouloir avoir être le plus proche de un et en fait
+[01:00:05 → 01:00:14] l'idée c'est que si vos si votre modèle arrive à bien séparer d'un côté les positifs prédit
+[01:00:14 → 01:00:18] positif et d'un côté les négatifs prédit négatif mais du coup vous allez avoir une
+[01:00:18 → 01:00:23] air sur la courbe la plus proche de l'idée c'est ça va être du coup de minimiser cette partie là
+[01:00:23 → 01:00:29] où en fait vous vous trompez à chaque fin là le modèle va se tromper il va mettre il va
+[01:00:29 → 01:00:34] peut-être prédire en ici là il prédit un négatif quelque chose qui est positif alors que
+[01:00:34 → 01:00:39] là il prédit un positif quelque chose qui est négatif alors que s'il arrive à bien les séparer
+[01:00:39 → 01:00:45] vous avez une montagne d'un côté une montagne de l'autre et du coup ça voudrait dire que le
+[01:00:45 → 01:00:49] modèle ne se trompe jamais donc le roc à uc ça permet de savoir ça est-ce que le modèle
+[01:00:49 → 01:00:58] arrive à bien séparer les vrais positifs des vrais négatifs et donc on utilise le il calcule
+[01:00:58 → 01:01:04] le vrai positif rate donc le taux de vrai positif et le taux de faux positif donc là encore il y a
+[01:01:04 → 01:01:11] un lien avec la matrice de confusion mais c'est du coup une mais c'est donc du coup une maîtrise
+[01:01:11 → 01:01:16] différente qui est un peu plus complexe et qui du coup peut être utilisé assez assez religion
+[01:01:16 → 01:01:23] donc l'idée ça serait si le votre roc à uc est égal à un ça serait que vous aurez
+[01:01:23 → 01:01:33] des tous les verts d'un côté et tous les rouges de l'autre les vrais négatifs d'un côté les
+[01:01:33 → 01:01:37] vrais positifs de l'autre et pas un endroit ou mais en fait vous savez pas où vous êtes et du
+[01:01:37 → 01:01:45] coup la probabilité que vous que le modèle se trompe est grande du coup voilà est ce qu'il y a
+[01:01:45 → 01:02:00] des questions par rapport au cémétrique là ce que je vous propose du coup c'est de reprendre
+[01:02:00 → 01:02:09] le tp d'hier et de reprendre du coup vos vos matrices de confusion et d'essayer de les lire et
+[01:02:09 → 01:02:14] du coup de même vous vous faire une petite phrase en vous disant qu'est ce qui manque à votre modèle
+[01:02:14 → 01:02:21] ou est ce qu'il pêche ou est ce qu'il est bon et où est ce qu'il est où est ce qu'il est mauvais du
+[01:02:21 → 01:02:29] coup et donc je vous laisse faire ça on continue votre le tp si si jamais si jamais vous avez
+[01:02:29 → 01:02:35] fini et que c'est compris vous pouvez le dire et me l'envoyer et m'envoyer votre notebook aussi
+[01:02:35 → 01:02:40] comme ça je vous et comme ça on peut en parler ensemble sur discord et sinon s'il n'y a pas
+[01:02:40 → 01:02:45] de question du coup je vous laisse faire ça et puis on se retrouve du coup à 13h30 ensemble sur
+[01:02:45 → 01:02:55] la sur l'autre du coup sur la session de cet après-midi je vous partage le leficier de suite
+[01:02:55 → 01:03:35] merci je mets dans ressources pareil et si vous aviez aussi trouvé d'autres métriques que vous
+[01:03:35 → 01:03:38] n'arrivez pas à expliquer et que vous avez des problèmes de compréhension sur d'autres métriques
+[01:03:38 → 01:03:39] que vous avez trouvé parce que là c'est pas
+
+---
+
+## Complément du support AELION
+
+Les diapositives ci-dessous complètent les schémas, formules et extraits de code qui ne sont pas tous lisibles dans l'audio. Elles ne modifient pas la transcription horodatée ci-dessus.
+
+### Évaluer sur un jeu de test
+
+- Le **test set** (jeu de test) représente typiquement 20 % à 30 % des données et doit être représentatif des données de production. Il sert à tester la fiabilité du modèle après son entraînement.
+- La démonstration du support entraîne le modèle sur `X_train, y_train`, prédit `y_pred = model.predict(X_test)`, puis compare `y_test` et `y_pred`, par exemple avec `metrics.accuracy_score(y_test, y_pred)` de scikit-learn.
+- Pour des observations indépendantes et identiquement distribuées, un découpage aléatoire peut être approprié. Pour des données temporelles, l'ordre chronologique doit être conservé : il ne faut pas appliquer ce tirage aléatoire au cas de maintenance prédictive vu dans le TP.
+
+### Régression
+
+Pour chaque observation, l'erreur est `y_pred - y_test`. Le support illustre ensuite deux transformations avant de calculer une moyenne :
+
+- **MAE** (*Mean Absolute Error*) : moyenne des erreurs absolues. Exemples : `-2`, `-3`, `+10` deviennent `2`, `3`, `10`.
+- **MSE** (*Mean Squared Error*) : moyenne des erreurs au carré. Ces mêmes erreurs deviennent `4`, `9`, `100` ; une forte erreur pèse donc davantage.
+- **R² score** : comparaison avec un modèle constant qui prédit toujours la moyenne de `y_train` :
+
+  `R² = 1 - MSE_notre_modele / MSE_modele_constant`
+
+  Un R² proche de 1 indique une erreur bien plus faible que celle de ce modèle de référence ; R² = 0 indique une performance équivalente ; R² peut être négatif sur le jeu de test.
+
+### Classification binaire
+
+Le support note `A` la classe positive et `B` la classe négative. Une prédiction correcte a une erreur nulle ; une erreur de classe a une erreur égale à 1. L'**accuracy** est le pourcentage de prédictions correctes, mais elle ne suffit pas lorsque la classe positive est rare.
+
+| Réalité / prédiction | Prédite négative | Prédite positive |
+| --- | --- | --- |
+| Réellement négative | TN (*true negative*) | FP (*false positive*) |
+| Réellement positive | FN (*false negative*) | TP (*true positive*) |
+
+- **Recall** (rappel) : `TP / (TP + FN)`. Parmi les positifs réels, il mesure ceux détectés.
+- **Precision** (précision) : `TP / (TP + FP)`. Parmi les positifs prédits, il mesure ceux qui sont réellement positifs.
+- **F1** est la moyenne harmonique de precision et recall : `2 × precision × recall / (precision + recall)`.
+
+### ROC-AUC et seuil de décision
+
+Le modèle attribue à une observation `x` un score `p(x)`, interprété dans le support comme une probabilité d'appartenir à la classe positive. Une prédiction dépend d'un **seuil de décision** : au-dessus du seuil, la classe positive est prédite ; au-dessous, la classe négative l'est. Déplacer ce seuil modifie le compromis entre faux positifs et faux négatifs.
+
+La courbe **ROC** représente le taux de vrais positifs (TPR, identique au recall) en fonction du taux de faux positifs (FPR) pour l'ensemble des seuils. Son **AUC** est l'aire sous la courbe : elle peut aussi se lire comme la probabilité qu'un positif reçoive un score supérieur à un négatif. Une AUC proche de 1 correspond à une bonne séparation des classes ; une AUC proche de 0,5 correspond à un classement aléatoire.

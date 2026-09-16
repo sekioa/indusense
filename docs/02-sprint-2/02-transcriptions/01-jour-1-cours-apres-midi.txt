@@ -1,0 +1,1685 @@
+# Sprint 2 — Jour 1 — Cours après-midi
+
+Transcription automatique locale, à relire pour les noms propres et passages peu audibles.
+
+Langue détectée : fr (probabilité 100%).
+
+[00:00:00 → 00:00:04] au début votre paramètre vous l'avez mis à cette valeur là donc vous avez
+
+[00:00:05 → 00:00:08] vous avez calculé une fonction de coup qui est ici
+
+[00:00:08 → 00:00:14] on peut calculer une dérivée etc pour savoir déjà dans quel sens et se dire bah du coup il est un peu trop grand
+
+[00:00:14 → 00:00:20] j'ai mis un paramètre un paramètre W ou Theta trop gros il faut que je le diminue absolument
+
+[00:00:21 → 00:00:28] et donc du coup vous allez le diminuer mais on va le diminuer petit à petit jusqu'à atterrir un minimum global
+
+[00:00:29 → 00:00:34] et donc il y a un taux d'apprentissage qui est pour le coup ça n'est pas un paramètre ça va être à vous de le fixer
+
+[00:00:34 → 00:00:36] qui dit quel est le
+
+[00:00:39 → 00:00:44] le risque c'est que si vous faites des pas beaucoup trop petit bah en fait vous allez potentiellement
+
+[00:00:45 → 00:00:50] stagner ou en tout cas descendre trop lentement et donc du coup votre entraînement sera beaucoup trop long
+
+[00:00:51 → 00:00:53] évaguerait déjà
+
+[00:00:53 → 00:00:56] si vous faites un taux d'apprentissage qui est trop grand
+
+[00:00:56 → 00:00:58] en fait si là je suis trop grand
+
+[00:00:58 → 00:01:01] bah là je sais que je dois descendre mais si je descends trop en fait je descends ici
+
+[00:01:02 → 00:01:08] ici je dois descendre mais de l'autre côté donc je descends trop je descends ici et en fait au bout d'un moment ça va faire un truc qui va venir
+
+[00:01:10 → 00:01:10] complètement
+
+[00:01:10 → 00:01:14] qui va partir complètement à l'aïe et vous allez qui va complètement diverger
+
+[00:01:14 → 00:01:17] vous allez déjà aller converger par cette phase là
+
+[00:01:18 → 00:01:23] et le taux d'apprentissage c'est quelque chose qu'on fixe avant et vous pouvez en fait tester et lancer un entraînement
+
+[00:01:23 → 00:01:25] avec un taux d'apprentissage et avec un autre
+
+[00:01:26 → 00:01:28] et voir lequel est le meilleur résultat au final
+
+[00:01:28 → 00:01:31] et donc ça le modèle fait ça pour tous les paramètres
+
+[00:01:32 → 00:01:33] donc si vous avez
+
+[00:01:33 → 00:01:35] 100 colonnes sur votre fichier Excel
+
+[00:01:36 → 00:01:38] il y a 100 paramètres qui sont
+
+[00:01:38 → 00:01:41] de qui sont mis à optimiser en même temps
+
+[00:01:42 → 00:01:46] chacun
+
+[00:01:46 → 00:01:49] vous montrez après le tour d'apprentissage comment est-ce que ça donne
+
+[00:01:51 → 00:02:21] faudra toujours retrouver j'ai un simulateur de
+
+[00:02:22 → 00:02:25] justement de taux d'apprentissage pour voir comment ça fonctionne
+
+[00:02:25 → 00:02:32] je le retrouve je vous le retrouve après
+
+[00:02:35 → 00:02:46] donc du coup c'est donc sur les règles la régression
+
+[00:02:47 → 00:02:49] linéaire du coup c'est ça qui est fait
+
+[00:02:49 → 00:02:56] donc si vous avez une convergence et du coup ce qu'on appelle l'entraînement ça va être ça ça va être avoir des poids au début
+
+[00:02:57 → 00:03:00] random et après les optimiser au fur et à mesure
+
+[00:03:00 → 00:03:04] il y a plusieurs problématiques qui sont qui arrivent dans cette
+
+[00:03:05 → 00:03:07] dans cette normalisation c'est que le taux d'apprentissage dans cette
+
+[00:03:08 → 00:03:14] dans cette descente pardon c'est que le taux d'apprentissage il est unique pour toutes les features c'est à dire que vous des
+
+[00:03:15 → 00:03:17] décidez d'un taux d'apprentissage
+
+[00:03:17 → 00:03:20] et le taux d'apprentissage là c'est pour un seul paramètre
+
+[00:03:21 → 00:03:23] il y a pas de taux d'apprentissage et fixe
+
+[00:03:24 → 00:03:26] et le même pour tous les paramètres
+
+[00:03:26 → 00:03:28] toutes les features différentes
+
+[00:03:28 → 00:03:30] vous voyez si vous avez une feature
+
+[00:03:30 → 00:03:32] ce qui est je sais pas le
+
+[00:03:32 → 00:03:34] ce qui est la surface du terrain
+
+[00:03:34 → 00:03:38] et une feature qui est le nombre de pièces
+
+[00:03:38 → 00:03:41] on n'est pas du tout sur la même échelle
+
+[00:03:41 → 00:03:44] le nombre de pièces et la taille du terrain
+
+[00:03:44 → 00:03:46] de votre bien
+
+[00:03:46 → 00:03:49] et donc si vous avez un taux d'apprentissage qui est similaire
+
+[00:03:49 → 00:03:51] un endroit ça va être probable
+
+[00:03:51 → 00:03:53] un endroit ça va être tout petit
+
+[00:03:53 → 00:03:55] c'est bien que votre convergence elle doit être très longue
+
+[00:03:55 → 00:03:58] et qu'il y ai même présentement que vous n'avez jamais trouvé
+
+[00:03:58 → 00:04:00] le niveau pour tout en accord
+
+[00:04:00 → 00:04:02] donc pour ça on va avoir
+
+[00:04:02 → 00:04:04] on va avoir
+
+[00:04:04 → 00:04:06] une de souvient et solution de voir
+
+[00:04:06 → 00:04:08] de même
+
+[00:04:08 → 00:04:10] c'est-à-dire que d'avoir des échelles différentes
+
+[00:04:10 → 00:04:12] sur chaque colonne de votre excel c'est pas gérable
+
+[00:04:12 → 00:04:14] du coup on va bien normaliser et s'avancer
+
+[00:04:14 → 00:04:16] de nous reconnaître
+
+[00:04:16 → 00:04:18] ça va nous permettre d'accéder extrêmement
+
+[00:04:18 → 00:04:20] à la convergence
+
+[00:04:20 → 00:04:22] et d'avoir du coup quelque chose
+
+[00:04:22 → 00:04:24] qui est plus uniforme
+
+[00:04:24 → 00:04:26] pour tout et d'avoir un taux d'apprentissage
+
+[00:04:26 → 00:04:28] qui est valable et qui a du sens
+
+[00:04:28 → 00:04:30] toutes les caractéristiques
+
+[00:04:30 → 00:04:32] et des features
+
+[00:04:32 → 00:04:34] donc ça vous allez en fait prendre vos données
+
+[00:04:34 → 00:04:36] au départ avant de lancer l'apprentissage
+
+[00:04:36 → 00:04:38] vous allez prendre votre gold data set
+
+[00:04:38 → 00:04:40] et vous allez faire une normalisation
+
+[00:04:40 → 00:04:42] et standardisation
+
+[00:04:42 → 00:04:44] donc
+
+[00:04:44 → 00:04:46] vous allez le faire par contre
+
+[00:04:46 → 00:04:48] ça va s'avancer vers après mais
+
+[00:04:48 → 00:04:50] par attention de normaliser
+
+[00:04:50 → 00:04:52] et standardiser
+
+[00:04:52 → 00:04:54] il faut calculer la moyenne
+
+[00:04:54 → 00:04:56] il faut le faire après avoir
+
+[00:04:56 → 00:04:58] couper votre données
+
+[00:04:58 → 00:05:00] dans le jeu d'entraînement et jeu de test
+
+[00:05:00 → 00:05:02] pour que chaque fois la moyenne
+
+[00:05:02 → 00:05:04] soit calculée seulement sur les ordonnements
+
+[00:05:06 → 00:05:08] donc du coup
+
+[00:05:08 → 00:05:10] vous allez faire une normalisation standardisation
+
+[00:05:10 → 00:05:12] et c'est à ça que ça va normaliser
+
+[00:05:12 → 00:05:14] standardisation
+
+[00:05:14 → 00:05:16] c'est quelque chose qui pour le coup
+
+[00:05:16 → 00:05:18] n'est pas utile pour tous les modèles
+
+[00:05:18 → 00:05:20] et pour tous les algorithmes
+
+[00:05:20 → 00:05:22] pour la régression de l'odinaire c'est très utile
+
+[00:05:22 → 00:05:24] pour d'autres
+
+[00:05:24 → 00:05:26] modèles qui sont par exemple la base d'armes de décision
+
+[00:05:26 → 00:05:28] ça n'a pas d'intérêt
+
+[00:05:28 → 00:05:30] mais si vous voulez comparer plusieurs modèles
+
+[00:05:30 → 00:05:32] les uns à la suite des autres
+
+[00:05:32 → 00:05:34] n'oubliez pas du coup de faire
+
+[00:05:34 → 00:05:36] cette normalisation standardisation
+
+[00:05:36 → 00:05:38] et après du coup d'utiliser
+
+[00:05:38 → 00:05:40] même pour les modèles qui en ont pas forcément besoin
+
+[00:05:40 → 00:05:42] d'utiliser
+
+[00:05:42 → 00:05:44] de comparer sur les mêmes données
+
+[00:05:44 → 00:05:46] donc ça
+
+[00:05:46 → 00:05:48] normalisation standardisation si vous faites la régression
+
+[00:05:48 → 00:05:50] c'est quasi
+
+[00:05:50 → 00:05:53] automatique
+
+[00:05:53 → 00:05:55] et ça permet du coup de mettre
+
+[00:05:55 → 00:05:57] sur la même échelle toutes vos données
+
+[00:06:01 → 00:06:03] et donc il y a quelque chose
+
+[00:06:03 → 00:06:05] sur lequel on va vouloir combattre
+
+[00:06:05 → 00:06:07] très souvent avec les modèles
+
+[00:06:07 → 00:06:09] de machine learning
+
+[00:06:09 → 00:06:11] et de deep learning aussi
+
+[00:06:11 → 00:06:13] c'est que plus vous faites
+
+[00:06:13 → 00:06:15] des modèles complexes et spécifiques
+
+[00:06:15 → 00:06:17] plus vous allez faire ce qu'on appelle
+
+[00:06:17 → 00:06:19] de l'overfitting
+
+[00:06:19 → 00:06:21] de l'overfitting c'est à dire que
+
+[00:06:21 → 00:06:23] vous donnez d'entraînement ils ont une certaine tête
+
+[00:06:24 → 00:06:26] et quand vous allez entraîner sur vos données
+
+[00:06:26 → 00:06:28] du coup le modèle va essayer de
+
+[00:06:28 → 00:06:30] le but sans but c'est qu'ils généralisent
+
+[00:06:30 → 00:06:32] mais si vous le poussez trop
+
+[00:06:32 → 00:06:34] et si vous faites le modèle un peu trop complexe
+
+[00:06:34 → 00:06:36] il va venir overfitter
+
+[00:06:36 → 00:06:38] donc il va venir être beaucoup plus
+
+[00:06:40 → 00:06:42] beaucoup plus proche
+
+[00:06:43 → 00:06:45] des données d'entraînement
+
+[00:06:45 → 00:06:47] que ce que vous aimez rien
+
+[00:06:47 → 00:06:53] à quoi ça ressemble
+
+[00:06:54 → 00:07:08] l'overfitting par exemple
+
+[00:07:08 → 00:07:15] si je prends cette image là
+
+[00:07:15 → 00:07:17] amettons que ça c'est donc
+
+[00:07:17 → 00:07:19] vos données
+
+[00:07:19 → 00:07:21] si vous êtes en underfitting
+
+[00:07:21 → 00:07:23] c'est à dire un modèle
+
+[00:07:23 → 00:07:25] trop simple, trop basique
+
+[00:07:25 → 00:07:27] qui n'arrive pas à généraliser vos données
+
+[00:07:27 → 00:07:29] le modèle il va être trop simple
+
+[00:07:29 → 00:07:31] il ne va pas être représentatif de vos données
+
+[00:07:31 → 00:07:33] comme ici et à gauche
+
+[00:07:33 → 00:07:35] donc là on va être dans ce qu'on appelle
+
+[00:07:35 → 00:07:37] de l'underfitting
+
+[00:07:38 → 00:07:40] à contrario
+
+[00:07:40 → 00:07:42] si vous avez fait un modèle trop
+
+[00:07:42 → 00:07:44] vous avez trop poussé le modèle
+
+[00:07:44 → 00:07:46] vous avez fait un modèle trop complexe
+
+[00:07:46 → 00:07:48] il va être trop spécifique
+
+[00:07:48 → 00:07:50] par rapport aux données d'entraînement
+
+[00:07:50 → 00:07:52] et du coup on va être sur ici
+
+[00:07:52 → 00:07:54] de l'overfitting
+
+[00:07:54 → 00:07:56] notre but c'est d'être entre les deux
+
+[00:07:56 → 00:07:58] c'est donc d'être sur celui là
+
+[00:07:58 → 00:08:00] ici là vous allez avoir du coup
+
+[00:08:00 → 00:08:02] une erreur de
+
+[00:08:02 → 00:08:04] une fonction de coût qui est quasi à zéro
+
+[00:08:04 → 00:08:06] parce que le modèle il arrive à prédire
+
+[00:08:06 → 00:08:09] parfaitement vos données d'entraînement
+
+[00:08:09 → 00:08:11] mais ce n'est pas généralisable
+
+[00:08:11 → 00:08:13] il a fait des choses très bizarres
+
+[00:08:13 → 00:08:15] alors qu'ici il a peut-être un peu plus d'erreur
+
+[00:08:15 → 00:08:17] dans la fonction de coût
+
+[00:08:17 → 00:08:19] mais il est plus généralisable et il sera plus ouvert
+
+[00:08:19 → 00:08:20] en production
+
+[00:08:20 → 00:08:22] là il risque de faire beaucoup plus d'erreur
+
+[00:08:23 → 00:08:25] donc on va vouloir
+
+[00:08:25 → 00:08:27] à chaque fois ça va être vrai pour tous les modèles
+
+[00:08:27 → 00:08:29] essayer d'éviter l'overfitting
+
+[00:08:30 → 00:08:32] l'underfitting
+
+[00:08:32 → 00:08:34] c'est si vous prenez
+
+[00:08:34 → 00:08:36] la première étape et que vous prenez juste une régression linéaire
+
+[00:08:36 → 00:08:38] et que vous ne changez rien
+
+[00:08:38 → 00:08:40] que vous prenez des coefficients lambda
+
+[00:08:40 → 00:08:42] au départ vous êtes forcément sur l'underfitting
+
+[00:08:42 → 00:08:44] la probabilité que ça ressemble
+
+[00:08:44 → 00:08:46] à vous donner à les casilleux
+
+[00:08:48 → 00:08:50] et par contre si vous allez trop loin
+
+[00:08:50 → 00:08:52] vous allez sur de l'overfitting
+
+[00:08:52 → 00:08:54] dans le cas de la régression linéaire
+
+[00:08:54 → 00:08:56] du coup on va avoir ce problème là
+
+[00:08:56 → 00:08:58] et du coup ce qu'on va vouloir faire
+
+[00:08:58 → 00:09:16] ce qu'on va vouloir mettre
+
+[00:09:16 → 00:09:18] c'est ce qu'on appelle de la régularisation
+
+[00:09:18 → 00:09:20] alors si il y en a qui veulent
+
+[00:09:20 → 00:09:22] rentrer dans les maths de manière complexe
+
+[00:09:22 → 00:09:24] mais c'est pas le but
+
+[00:09:24 → 00:09:26] mais c'est à dire qu'on va vouloir
+
+[00:09:26 → 00:09:28] essayer de réduire la complexité du modèle
+
+[00:09:28 → 00:09:30] pour réduire une complexité
+
+[00:09:30 → 00:09:32] sur la régularisation
+
+[00:09:32 → 00:09:34] ce que ça veut dire c'est que les paramètres tétains
+
+[00:09:34 → 00:09:36] il faut qu'ils soient les plus petits possibles
+
+[00:09:36 → 00:09:38] en gros que comme ça il n'y en a pas un
+
+[00:09:38 → 00:09:40] qui soit 100 fois plus gros que les autres
+
+[00:09:40 → 00:09:42] qui prennent beaucoup plus le pas
+
+[00:09:42 → 00:09:44] et que le modèle fasse tout par rapport à ça
+
+[00:09:44 → 00:09:46] et pour ça on va dire qu'on va faire
+
+[00:09:46 → 00:09:48] une régularisation
+
+[00:09:48 → 00:09:50] en ajoutant
+
+[00:09:50 → 00:09:52] à la fonction du coup
+
+[00:09:52 → 00:09:54] une partie qui est celle-là
+
+[00:09:54 → 00:09:56] qui vient pénaliser les gros
+
+[00:09:56 → 00:09:58] les paramètres qui sont beaucoup trop
+
+[00:09:58 → 00:10:00] c'est pour ça que vous en avez 3 différentes
+
+[00:10:00 → 00:10:02] la première c'est de dire que vous pouvez
+
+[00:10:02 → 00:10:04] nous utiliser en pénalisation
+
+[00:10:04 → 00:10:06] la régression de RIDG
+
+[00:10:06 → 00:10:08] qui est celle-ci
+
+[00:10:08 → 00:10:11] sinon il y a la laçon
+
+[00:10:11 → 00:10:13] regression
+
+[00:10:13 → 00:10:15] ou le cumul des deux qui est la stick net
+
+[00:10:15 → 00:10:17] donc ça pareil vous verrez le niveau code
+
+[00:10:17 → 00:10:19] vous n'avez pas à refaire
+
+[00:10:19 → 00:10:21] toutes ces formules etc
+
+[00:10:21 → 00:10:23] vous vous aurez juste à dire
+
+[00:10:23 → 00:10:25] je veux utiliser la
+
+[00:10:25 → 00:10:27] la régularisation
+
+[00:10:27 → 00:10:29] de tel type
+
+[00:10:29 → 00:10:31] et donc ça c'est juste un pas
+
+[00:10:31 → 00:10:33] et donc c'est ce qu'on appelle un hyper paramètre
+
+[00:10:33 → 00:10:35] à décider
+
+[00:10:35 → 00:10:37] ça c'est vous qui le fixez le modèle ne va pas modifier
+
+[00:10:37 → 00:10:39] pendant l'entraînement
+
+[00:10:39 → 00:10:44] ça sera fixe pour tout l'entraînement
+
+[00:10:44 → 00:10:46] donc tout ça c'est pour la régulation linéaire
+
+[00:10:46 → 00:10:48] le plus basique
+
+[00:10:48 → 00:10:50] et le problème
+
+[00:10:50 → 00:10:52] c'est que la régularisation de la régulation linéaire
+
+[00:10:52 → 00:10:54] toute saine elle ne permet que des fonctions à fines
+
+[00:10:54 → 00:10:56] vous pouvez avoir que des
+
+[00:10:56 → 00:10:58] que des fonctions à fines par rapport
+
+[00:10:58 → 00:11:00] à tous vos paramètres
+
+[00:11:00 → 00:11:02] pour ça ça va être si vous décomplexifiez
+
+[00:11:02 → 00:11:04] pour une régression
+
+[00:11:04 → 00:11:06] une linéaire
+
+[00:11:06 → 00:11:08] mais c'est ce qu'on va venir faire assez
+
+[00:11:08 → 00:11:10] c'est assez complexe ça va se faire assez mourd
+
+[00:11:10 → 00:11:12] donc il n'y a pas de chance que vous fassiez
+
+[00:11:12 → 00:11:14] mais vous pourrez en fait
+
+[00:11:14 → 00:11:16] en utilisant des fonctions
+
+[00:11:16 → 00:11:18] donc ouais vous devez aller
+
+[00:11:18 → 00:11:20] au lieu de dire que vous prenez juste chaque feature
+
+[00:11:20 → 00:11:22] une à la suite des autres
+
+[00:11:22 → 00:11:24] vous allez les mixer
+
+[00:11:24 → 00:11:26] faire des multipliants entre elles etc
+
+[00:11:26 → 00:11:28] pour que le modèle potentiellement
+
+[00:11:28 → 00:11:30] trouve des correlations
+
+[00:11:30 → 00:11:32] qui sont parce que sur le 2
+
+[00:11:32 → 00:11:34] par exemple
+
+[00:11:34 → 00:11:36] je sais pas si il y a le nombre de pièces
+
+[00:11:36 → 00:11:38] et le nombre de mètres carrés peut-être que
+
+[00:11:38 → 00:11:40] le rapport de pièces en mètres carrés
+
+[00:11:40 → 00:11:42] a un intérêt
+
+[00:11:42 → 00:11:44] il peut y avoir des choses comme ça
+
+[00:11:44 → 00:11:46] mais du coup c'est à vous de les créer
+
+[00:11:46 → 00:11:48] et du coup c'est plus
+
+[00:11:48 → 00:11:50] complexe et c'est un peu plus
+
+[00:11:50 → 00:11:52] des fois au pif
+
+[00:11:52 → 00:11:54] qu'on vient créer plein
+
+[00:11:54 → 00:11:56] et qu'on vient voir lesquels sont
+
+[00:11:56 → 00:11:58] lesquels sont intéressants
+
+[00:11:58 → 00:12:02] donc ça c'est surtout ce qui est régression
+
+[00:12:02 → 00:12:04] et du coup la régression linéaire
+
+[00:12:04 → 00:12:06] c'est fait pour faire de la régression
+
+[00:12:06 → 00:12:08] donc détecter et prédire
+
+[00:12:08 → 00:12:10] une valeur
+
+[00:12:10 → 00:12:12] continue
+
+[00:12:12 → 00:12:14] on va voir si
+
+[00:12:16 → 00:12:18] non
+
+[00:12:18 → 00:12:20] si vous voulez faire de la classification
+
+[00:12:20 → 00:12:22] on va modifier ça
+
+[00:12:22 → 00:12:24] en disant que la valeur cible
+
+[00:12:24 → 00:12:26] il faut pas que ça soit une variète
+
+[00:12:26 → 00:12:28] continue entre moins la finie et plus la finie
+
+[00:12:28 → 00:12:30] il faut que ça soit une probabilité
+
+[00:12:30 → 00:12:32] à un chiffre entre 0 et 1
+
+[00:12:32 → 00:12:34] pour que ça soit
+
+[00:12:34 → 00:12:36] ça puisse être
+
+[00:12:36 → 00:12:38] interprété comme une probabilité
+
+[00:12:38 → 00:12:40] d'apportir à la classe positive
+
+[00:12:40 → 00:12:42] ce qu'on appelle la classe positive
+
+[00:12:42 → 00:12:44] à chaque fois c'est la classe que vous voulez
+
+[00:12:44 → 00:12:46] absolument détecter
+
+[00:12:46 → 00:12:48] par exemple si je vous détecte des pannes
+
+[00:12:48 → 00:12:50] c'est pas positif qu'il y ait une panne mais ça sera notre classe positive
+
+[00:12:50 → 00:12:52] parce que c'est quand il y a de la tête
+
+[00:12:52 → 00:12:54] c'est ce qu'on cherche
+
+[00:12:54 → 00:12:56] à prédire
+
+[00:12:56 → 00:12:58] donc en fait ce qu'on va faire
+
+[00:12:58 → 00:13:00] c'est qu'on va faire une régression linéaire
+
+[00:13:00 → 00:13:02] et ensuite la sortie qui est comprise
+
+[00:13:02 → 00:13:04] entre moins la finie et plus la finie
+
+[00:13:04 → 00:13:06] on va la transformer
+
+[00:13:06 → 00:13:08] pour la faire passer entre 0 et 1
+
+[00:13:08 → 00:13:10] et ça c'est fait avec une fonction
+
+[00:13:10 → 00:13:12] qui s'appelle sigmoid qui permet de tout mettre entre 0 et 1
+
+[00:13:12 → 00:13:14] et c'est comme ça que du coup
+
+[00:13:14 → 00:13:16] vous allez avoir
+
+[00:13:16 → 00:13:18] en fait la réagression logistique
+
+[00:13:18 → 00:13:20] devient une régression linéaire
+
+[00:13:20 → 00:13:22] plus une petite fonction à la suite
+
+[00:13:22 → 00:13:24] c'est ça que sont souvent
+
+[00:13:24 → 00:13:26] très souvent cités ensemble
+
+[00:13:26 → 00:13:28] la classification en fait c'est juste
+
+[00:13:28 → 00:13:30] une régression plus
+
+[00:13:30 → 00:13:32] une autre étape
+
+[00:13:32 → 00:13:34] et ça permet
+
+[00:13:34 → 00:13:36] et après ça sera à vous de dire
+
+[00:13:36 → 00:13:38] si je suis au-dessus de 0 au 5
+
+[00:13:38 → 00:13:40] je définis que je suis dans la classe positive
+
+[00:13:40 → 00:13:42] si je suis
+
+[00:13:42 → 00:13:44] ou alors sinon si je suis au-dessus de 0 au 7
+
+[00:13:44 → 00:13:46] parce que je vais être vraiment sûre
+
+[00:13:46 → 00:13:48] là je vais être dans la classe positive etc
+
+[00:13:48 → 00:13:50] donc ce que ça a eu là sera aussi à définir
+
+[00:13:50 → 00:13:54] comme un goût et un test
+
+[00:13:54 → 00:13:56] la fonction de cours est différente mais on s'en fait
+
+[00:13:56 → 00:13:58] et justement le fait
+
+[00:13:58 → 00:14:00] de pouvoir faire du multi-class
+
+[00:14:00 → 00:14:02] jusqu'à maintenant
+
+[00:14:02 → 00:14:04] pour aller de classification
+
+[00:14:04 → 00:14:06] bilaires c'est à dire que vous avez la classe positive
+
+[00:14:06 → 00:14:08] que vous voulez détecter et la classe négative
+
+[00:14:08 → 00:14:10] et seulement de classe
+
+[00:14:10 → 00:14:12] donc panne ou pas panne
+
+[00:14:12 → 00:14:14] mais vous pouvez avoir besoin d'avoir
+
+[00:14:14 → 00:14:16] plusieurs classes différentes
+
+[00:14:16 → 00:14:18] exemple je sais pas
+
+[00:14:18 → 00:14:20] c'est facile sur les images
+
+[00:14:20 → 00:14:22] par exemple
+
+[00:14:22 → 00:14:24] quand on disait ce matin sur les images
+
+[00:14:24 → 00:14:26] il va y avoir un chat, un chien, un cheval etc
+
+[00:14:26 → 00:14:28] vous c'est du multi-class
+
+[00:14:28 → 00:14:30] c'est une classe parmi plusieurs
+
+[00:14:30 → 00:14:32] donc ça peut être peut-être pas de panne
+
+[00:14:32 → 00:14:34] tout va bien
+
+[00:14:34 → 00:14:36] la machine
+
+[00:14:36 → 00:14:38] est en état
+
+[00:14:38 → 00:14:40] de
+
+[00:14:40 → 00:14:42] je sais pas
+
+[00:14:42 → 00:14:44] il va y avoir une panne bientôt
+
+[00:14:44 → 00:14:46] ou il y a un autre cas
+
+[00:14:46 → 00:14:48] de
+
+[00:14:48 → 00:14:50] je sais pas, il y a de tout
+
+[00:14:50 → 00:14:52] je sais pas si il faut y avoir
+
+[00:14:52 → 00:14:54] parce que c'est entre panne et panne
+
+[00:14:54 → 00:14:56] devant moi
+
+[00:14:56 → 00:14:58] du coup il peut y avoir plusieurs classes
+
+[00:14:58 → 00:15:00] et pour ça on peut le faire c'est pareil
+
+[00:15:00 → 00:15:02] c'est juste dire que vous venez faire du multi-class
+
+[00:15:02 → 00:15:04] d'assumer la probabilité
+
+[00:15:04 → 00:15:06] que votre ligne n'appartienne
+
+[00:15:06 → 00:15:08] à cette classe plutôt qu'à n'importe quel autre
+
+[00:15:08 → 00:15:10] et on va obtenir la probabilité
+
+[00:15:10 → 00:15:12] si vous avez 3 classes différentes
+
+[00:15:12 → 00:15:14] on va calculer la probabilité
+
+[00:15:14 → 00:15:16] d'appartenir à la classe 1
+
+[00:15:16 → 00:15:18] versus tout le reste
+
+[00:15:18 → 00:15:20] probabilité d'appartenir à la classe 2
+
+[00:15:20 → 00:15:22] versus tout le reste
+
+[00:15:22 → 00:15:24] probabilité d'appartenir à la classe 3
+
+[00:15:24 → 00:15:26] versus tout le reste et on va garder
+
+[00:15:26 → 00:15:28] seulement la majoritaire
+
+[00:15:28 → 00:15:30] ou la majoritaire elle peut être régale
+
+[00:15:30 → 00:15:32] à 0,9 comme elle peut être régale
+
+[00:15:32 → 00:15:34] à 0,4, 0,3
+
+[00:15:34 → 00:15:36] donc
+
+[00:15:36 → 00:15:40] pour la régression
+
+[00:15:40 → 00:15:42] Est-ce qu'il y a des questions par rapport à ça
+
+[00:15:42 → 00:15:44] est-ce que ça vous paraît
+
+[00:15:44 → 00:15:46] clair dans le mécanisme
+
+[00:15:46 → 00:15:48] et dans le fonctionnement
+
+[00:15:48 → 00:15:50] de comment fonctionne le modèle
+
+[00:15:50 → 00:15:52] enfin ce qui se passe pendant l'entraînement
+
+[00:15:54 → 00:15:58] est-ce que c'est bon pour tout le monde pour cette partie
+
+[00:15:58 → 00:16:03] c'est quoi c'est le
+
+[00:16:03 → 00:16:05] est-ce qu'il y a
+
+[00:16:05 → 00:16:07] des questions ou est-ce que c'est le principe
+
+[00:16:07 → 00:16:12] juste de
+
+[00:16:12 → 00:16:17] les poids
+
+[00:16:17 → 00:16:19] les poids
+
+[00:16:19 → 00:16:21] oui mais ça justement
+
+[00:16:21 → 00:16:23] c'est le modèle
+
+[00:16:23 → 00:16:25] qui va le faire
+
+[00:16:25 → 00:16:32] de lui-même
+
+[00:16:32 → 00:16:34] je vais essayer de trouver une illustration qui permet
+
+[00:16:34 → 00:16:36] de montrer ce qui se passe
+
+[00:16:36 → 00:16:38] dans le modèle en fait lui-même
+
+[00:16:38 → 00:17:08] en fait c'est le modèle
+
+[00:17:08 → 00:17:10] nous ce qu'on va décider
+
+[00:17:10 → 00:17:12] c'est quel type d'algorithme
+
+[00:17:12 → 00:17:14] donc on va nous dire
+
+[00:17:14 → 00:17:16] j'ai un problème simple
+
+[00:17:16 → 00:17:18] j'ai un problème tabulaire
+
+[00:17:18 → 00:17:20] de machine learning
+
+[00:17:20 → 00:17:22] je veux
+
+[00:17:22 → 00:17:24] faire une
+
+[00:17:24 → 00:17:26] je vais faire de la prédiction
+
+[00:17:26 → 00:17:28] quel type d'algorithme
+
+[00:17:28 → 00:17:30] je peux tester
+
+[00:17:30 → 00:17:32] un type d'algorithme en mettant je sais pas que je vais faire de la régression
+
+[00:17:32 → 00:17:34] donc je vais prédire une valeur continue
+
+[00:17:34 → 00:17:36] je veux tester
+
+[00:17:36 → 00:17:38] la régression
+
+[00:17:38 → 00:17:40] la régression je vais dire du coup
+
+[00:17:40 → 00:17:42] voilà mes données d'entraînement
+
+[00:17:42 → 00:17:44] voilà l'algorithme que je choisis
+
+[00:17:44 → 00:17:46] donc la régression
+
+[00:17:46 → 00:17:48] entraîne-toi
+
+[00:17:48 → 00:17:50] donc il faut que la régression
+
+[00:17:50 → 00:17:52] lise toutes les données
+
+[00:17:52 → 00:17:54] d'entraînement
+
+[00:17:54 → 00:17:56] pour trouver les paramètres
+
+[00:17:56 → 00:17:58] les plus optimaux qui représentent le mieux
+
+[00:17:58 → 00:18:00] là
+
+[00:18:00 → 00:18:02] qui représentent le mieux
+
+[00:18:02 → 00:18:16] du coup mes données
+
+[00:18:16 → 00:18:18] comment ?
+
+[00:18:18 → 00:18:20] moi qui pense
+
+[00:18:20 → 00:19:01] exemple la surface d'un bien
+
+[00:19:01 → 00:19:03] y le prix
+
+[00:19:03 → 00:19:05] en gros ça c'est votre historique
+
+[00:19:05 → 00:19:07] votre idée ça serait d'avoir
+
+[00:19:07 → 00:19:09] si on prend la régression linéaire
+
+[00:19:09 → 00:19:11] simple et qu'on ne modifie pas les features
+
+[00:19:11 → 00:19:13] de juste avoir mais en fait la ligne
+
+[00:19:13 → 00:19:15] qui passe au milieu qui est la plus proche de tout
+
+[00:19:15 → 00:19:17] de toutes nos données d'entraînement
+
+[00:19:17 → 00:19:19] et qui du coup modélise assez bien notre historique
+
+[00:19:21 → 00:19:23] quand on va passer du coup
+
+[00:19:23 → 00:19:25] ce qui va se passer pendant l'entraînement
+
+[00:19:25 → 00:19:27] c'est que vous vous avez dit
+
+[00:19:27 → 00:19:29] que vous preniez la régression linéaire
+
+[00:19:29 → 00:19:31] donc le modèle après va
+
+[00:19:31 → 00:19:33] il va y avoir initialisation
+
+[00:19:33 → 00:19:35] au départ
+
+[00:19:35 → 00:19:37] des paramètres
+
+[00:19:37 → 00:19:39] de la fonction donc là
+
+[00:19:39 → 00:19:41] comme on est une fonction où il n'y a qu'une feature
+
+[00:19:41 → 00:19:43] qu'une caractéristique
+
+[00:19:43 → 00:19:45] c'est comme si vous avez
+
+[00:19:45 → 00:19:47] y égal à x plus b
+
+[00:19:47 → 00:19:49] et vous avez A et B
+
+[00:19:51 → 00:19:53] donc A et B qui peuvent
+
+[00:19:53 → 00:19:55] varier et c'est les seuls et le bidet
+
+[00:19:55 → 00:19:57] c'est de trouver les deux meilleurs
+
+[00:19:57 → 00:19:59] donc au début
+
+[00:20:04 → 00:20:06] si je le lance
+
+[00:20:06 → 00:20:08] il a choisi au début de manière aléatoire
+
+[00:20:08 → 00:20:10] puis il va les modifier petit à petit
+
+[00:20:10 → 00:20:12] en fait il va se dire
+
+[00:20:12 → 00:20:14] maintenant A il était trop bas
+
+[00:20:14 → 00:20:16] donc je le remonte
+
+[00:20:16 → 00:20:18] puis il remonte et ça
+
+[00:20:18 → 00:20:20] il permet de le bouger au fur et à mesure
+
+[00:20:20 → 00:20:22] ce qui n'a pas bougé par contre
+
+[00:20:22 → 00:20:24] enfin ce qui n'a pas bougé
+
+[00:20:24 → 00:20:26] ce qu'on voit ici à droite
+
+[00:20:26 → 00:20:28] c'est la courbe de l'os
+
+[00:20:28 → 00:20:30] qui est du coup la différence entre
+
+[00:20:30 → 00:20:32] la prédiction que vous feriez
+
+[00:20:32 → 00:20:34] si vous étiez sur la courbe violette
+
+[00:20:34 → 00:20:36] et la vraie valeur
+
+[00:20:36 → 00:20:38] donc à chaque fois là c'est les trioranges qui permettent
+
+[00:20:38 → 00:20:40] de mesurer
+
+[00:20:40 → 00:20:42] de mesurer ça et c'est la somme combien
+
+[00:20:42 → 00:20:44] et là on voit qu'au bout
+
+[00:20:44 → 00:20:46] d'un certain temps
+
+[00:20:46 → 00:20:48] au bout d'un certain nombre d'iterration
+
+[00:20:48 → 00:20:50] ben là ça ne bouge plus
+
+[00:20:50 → 00:20:52] on est quasi à
+
+[00:20:52 → 00:20:54] très peu et on va
+
+[00:20:54 → 00:20:56] du coup on va devoir arrêter le
+
+[00:20:56 → 00:20:58] enfin le modèle va s'arrêter
+
+[00:20:58 → 00:21:00] au bout d'un moment parce qu'il n'y a pas de grande
+
+[00:21:00 → 00:21:02] amélioration dans la
+
+[00:21:02 → 00:21:05] l'os qui est ici
+
+[00:21:05 → 00:21:07] et cette phase d'entraînement du coup c'est automatiquement
+
+[00:21:07 → 00:21:09] c'est toi qui lance en disant
+
+[00:21:09 → 00:21:11] je veux entraîner telle algorithme sur telle
+
+[00:21:11 → 00:21:13] donnée et cette optimisation
+
+[00:21:13 → 00:21:15] comme ça de venir bouger la droite
+
+[00:21:15 → 00:21:17] pour la mettre au bon endroit
+
+[00:21:17 → 00:21:23] ça va se faire automatiquement
+
+[00:21:23 → 00:21:25] est-ce que c'est un peu plus clair avec ça
+
+[00:21:25 → 00:21:32] si je fais ça du coup
+
+[00:21:32 → 00:21:34] et que
+
+[00:21:34 → 00:21:36] que je réinitialise
+
+[00:21:36 → 00:21:40] au début
+
+[00:21:40 → 00:21:42] au début il a mis une droite qui était très basse
+
+[00:21:42 → 00:21:44] et qui était très en dessous
+
+[00:21:44 → 00:21:46] et du coup petit à petit
+
+[00:21:46 → 00:21:48] il vient quand même
+
+[00:21:48 → 00:21:50] améliorer la pente etc
+
+[00:21:50 → 00:21:52] au tout début du coup il y a des gros gâpes
+
+[00:21:52 → 00:21:54] au départ
+
+[00:21:54 → 00:21:56] au tout début
+
+[00:21:56 → 00:21:58] en une ou deux fois
+
+[00:21:58 → 00:22:00] ça améliore grandement le résultat
+
+[00:22:00 → 00:22:02] puis en part de quelque chose complètement aléatoire
+
+[00:22:02 → 00:22:04] le coup est très gros
+
+[00:22:04 → 00:22:06] donc en fait on va avoir une grosse sétap
+
+[00:22:06 → 00:22:08] une grosse amélioration et par contre
+
+[00:22:08 → 00:22:10] au bout d'un moment mais ça finit par se stabiliser
+
+[00:22:10 → 00:22:13] et le taux d'apprentissage
+
+[00:22:13 → 00:22:17] je vais l'arranger
+
+[00:22:17 → 00:22:19] celle-là avec un truc d'apprentissage
+
+[00:22:19 → 00:22:21] qui est assez gros donc là ça va assez vite
+
+[00:22:21 → 00:22:23] je vais vous montrer
+
+[00:22:23 → 00:22:25] si je fais un taux d'apprentissage beaucoup plus petit
+
+[00:22:25 → 00:22:27] ce qui se passe
+
+[00:22:27 → 00:22:29] là vous voyez
+
+[00:22:29 → 00:22:31] les époques c'est le nombre de fois où le modèle
+
+[00:22:31 → 00:22:33] a changé les coefficients
+
+[00:22:33 → 00:22:35] donc là en 31 changements
+
+[00:22:35 → 00:22:37] il a une
+
+[00:22:37 → 00:22:39] une erreur moyenne qui est de 0,06
+
+[00:22:39 → 00:22:41] qui est très bon
+
+[00:22:41 → 00:22:43] si je mets
+
+[00:22:43 → 00:22:45] un taux d'apprentissage
+
+[00:22:45 → 00:22:47] beaucoup plus petit
+
+[00:22:47 → 00:22:51] j'étais quoi ?
+
+[00:22:51 → 00:22:53] ça c'est un notebook à python
+
+[00:22:53 → 00:22:55] alors non je lui ai demandé à Claude directement
+
+[00:22:55 → 00:22:57] de le faire
+
+[00:22:57 → 00:22:59] mais
+
+[00:22:59 → 00:23:01] parce que je ne retrouve pas le site où j'avais l'illustration
+
+[00:23:01 → 00:23:03] mais vous pouvez le faire
+
+[00:23:03 → 00:23:05] mais pour le coup
+
+[00:23:05 → 00:23:07] quand vous allez lancer
+
+[00:23:07 → 00:23:09] du coup sur votre code
+
+[00:23:09 → 00:23:11] sur
+
+[00:23:11 → 00:23:13] enfin quand vous allez
+
+[00:23:13 → 00:23:15] lancer sur vos données
+
+[00:23:15 → 00:23:17] vous pouvez le faire varier
+
+[00:23:17 → 00:23:19] vous pouvez lui montrer
+
+[00:23:19 → 00:23:21] de montrer ses fermes
+
+[00:23:21 → 00:23:23] de faire une illustration un peu de
+
+[00:23:23 → 00:23:25] ce qui a été fait et de comment ça a évolué
+
+[00:23:25 → 00:23:27] par rapport à vos données
+
+[00:23:27 → 00:23:29] la difficulté c'est que nous on n'a pas
+
+[00:23:29 → 00:23:31] vous avez des dizaines de colonnes
+
+[00:23:31 → 00:23:33] donc en fait visuellement
+
+[00:23:33 → 00:23:35] ça peut être beaucoup plus compliqué
+
+[00:23:35 → 00:23:37] il faut choisir une filter
+
+[00:23:37 → 00:23:39] qui vous intéresse à la limite
+
+[00:23:39 → 00:23:41] pour que ça soit visuel
+
+[00:23:41 → 00:23:46] sinon dans un espace à 10 dimensions
+
+[00:23:46 → 00:23:48] et là
+
+[00:23:48 → 00:23:51] si je modifie le taux d'apprentissage
+
+[00:23:51 → 00:23:53] on va dire qu'elle est assez loin comme ça
+
+[00:23:53 → 00:23:55] vous voyez
+
+[00:23:55 → 00:23:57] avec le taux d'apprentissage du coup ça bouge
+
+[00:23:57 → 00:23:59] beaucoup moins
+
+[00:23:59 → 00:24:01] parce qu'en fait ce que je lui demande c'est de faire
+
+[00:24:01 → 00:24:03] beaucoup plus petit donc des modifications
+
+[00:24:03 → 00:24:05] de coefficient beaucoup plus petits
+
+[00:24:05 → 00:24:07] ce qui fait que là mon entraînement
+
+[00:24:07 → 00:24:09] il est toujours pas fini
+
+[00:24:09 → 00:24:11] et je suis pas du tout proche encore
+
+[00:24:11 → 00:24:13] de ce qu'il y a
+
+[00:24:13 → 00:24:15] donc là le taux d'apprentissage fait
+
+[00:24:15 → 00:24:17] que je rallonge énormément mon temps
+
+[00:24:17 → 00:24:19] d'apprentissage
+
+[00:24:19 → 00:24:21] pour avoir
+
+[00:24:21 → 00:24:23] une
+
+[00:24:23 → 00:24:25] courbe
+
+[00:24:25 → 00:24:27] qui est bien représentative
+
+[00:24:27 → 00:24:29] si vous voyez tout à l'heure on avait
+
+[00:24:29 → 00:24:31] une courbe qui l'a MSU
+
+[00:24:31 → 00:24:33] donc la loose elle descendait
+
+[00:24:33 → 00:24:35] et puis après ça stagne
+
+[00:24:35 → 00:24:37] là ça fait 128 fois que ça fait des changements
+
+[00:24:37 → 00:24:39] et je suis encore pas un truc
+
+[00:24:39 → 00:24:41] qui est exceptionnel
+
+[00:24:41 → 00:24:43] quand est-ce qu'on va utiliser
+
+[00:24:43 → 00:24:45] de faire le taux d'apprentissage
+
+[00:24:45 → 00:24:47] d'apprentissage
+
+[00:24:47 → 00:24:49] ?
+
+[00:24:49 → 00:24:51] le truc c'est qu'il y a
+
+[00:24:51 → 00:24:53] un juste milieu
+
+[00:24:53 → 00:24:55] à trouver un taux d'apprentissage
+
+[00:24:55 → 00:24:57] trop petit
+
+[00:24:57 → 00:24:59] parce que si tu vas trop petit
+
+[00:24:59 → 00:25:01] tu mets trop de temps
+
+[00:25:01 → 00:25:03] et du coup ça met 10 ans etc
+
+[00:25:03 → 00:25:05] mais par contre c'est très précis
+
+[00:25:05 → 00:25:07] c'est à dire que à la fin
+
+[00:25:07 → 00:25:09] ça va vraiment arriver à quelque chose de très proche
+
+[00:25:09 → 00:25:11] et de très précis
+
+[00:25:11 → 00:25:13] si je fais la même chose
+
+[00:25:13 → 00:25:15] mais que je mets un taux d'apprentissage
+
+[00:25:15 → 00:25:17] très très gros
+
+[00:25:17 → 00:25:19] en fait il va jamais trouver la solution
+
+[00:25:21 → 00:25:23] où il y a peu de chance
+
+[00:25:23 → 00:25:25] là encore potentiellement il va trouver
+
+[00:25:25 → 00:25:27] là il te trouve
+
+[00:25:27 → 00:25:29] mais il y a des cas où ça fait tellement
+
+[00:25:29 → 00:25:31] des écarts dans un sens et dans l'autre
+
+[00:25:31 → 00:25:33] qu'en fait ça diverge et qu'on trouve
+
+[00:25:33 → 00:25:35] jamais la solution
+
+[00:25:35 → 00:25:37] parce que c'est assez simple
+
+[00:25:37 → 00:25:39] en fait
+
+[00:25:39 → 00:25:41] si on a plusieurs dimensions et tout
+
+[00:25:41 → 00:25:43] là
+
+[00:25:43 → 00:25:45] en fait c'est qu'il faut pas
+
+[00:25:45 → 00:25:47] être trop petit pour pas mettre trop de temps
+
+[00:25:47 → 00:25:49] mais en fait plus t'es petit
+
+[00:25:49 → 00:25:51] plus t'es précis
+
+[00:25:51 → 00:25:53] mais si c'est trop gros
+
+[00:25:53 → 00:25:55] tu peux complètement diverger
+
+[00:25:55 → 00:25:57] donc partir et ne jamais avoir
+
+[00:25:57 → 00:25:59] il y a juste un souci aussi
+
+[00:25:59 → 00:26:01] si on est sur
+
+[00:26:01 → 00:26:03] des taux d'apprentissage trop petit
+
+[00:26:03 → 00:26:05] c'est que des fois la courbe
+
+[00:26:05 → 00:26:07] en fait tu peux potentiellement stagner
+
+[00:26:07 → 00:26:09] un endroit parce qu'il y a un petit minimum local
+
+[00:26:09 → 00:26:11] un endroit
+
+[00:26:11 → 00:26:13] et le pas est pas assez grand pour se rendre
+
+[00:26:13 → 00:26:15] compte qu'en fait il peut
+
+[00:26:15 → 00:26:17] la courbe de l'os
+
+[00:26:17 → 00:26:19] il va descendre encore
+
+[00:26:19 → 00:26:21] il y a moyen
+
+[00:26:21 → 00:26:23] il va jamais trouver
+
+[00:26:23 → 00:26:25] là le taux d'apprentissage est trop gros
+
+[00:26:25 → 00:26:27] et là c'est parti trop loin et il arrivera
+
+[00:26:27 → 00:26:29] jamais
+
+[00:26:29 → 00:26:31] à revenir à approche
+
+[00:26:31 → 00:26:33] parce que chaque fois il doit faire des pas qui sont trop grands
+
+[00:26:33 → 00:26:35] ce qui fait qu'il va d'un côté de l'autre
+
+[00:26:35 → 00:26:37] et au fur et à mesure ça part
+
+[00:26:37 → 00:26:47] là il ne fait que augmenter
+
+[00:26:47 → 00:26:49] est-ce que ça vous paraît un peu plus clair
+
+[00:26:49 → 00:26:51] sur comment fonctionne la régression
+
+[00:26:51 → 00:26:53] mais du coup comment tu détectes quand t'es
+
+[00:26:53 → 00:26:55] un feu trop élevé
+
+[00:26:55 → 00:26:57] un feu trop élevé tu vas vite le voir
+
+[00:26:57 → 00:26:59] c'est le plus facile à voir le feu trop élevé
+
+[00:26:59 → 00:27:01] parce que justement tu vas avoir
+
+[00:27:01 → 00:27:03] si tu monitors ta courbe
+
+[00:27:03 → 00:27:05] on va nous monitérer la perte
+
+[00:27:05 → 00:27:07] au fur et à mesure
+
+[00:27:07 → 00:27:09] parce que c'est pas parce que le modèle se fait automatiquement
+
+[00:27:09 → 00:27:11] l'optimisation se fait toute seule
+
+[00:27:11 → 00:27:13] que nous on n'a accès à rien donc on peut par exemple
+
+[00:27:13 → 00:27:15] avoir dans les logs
+
+[00:27:15 → 00:27:17] la courbe
+
+[00:27:17 → 00:27:19] de la loss
+
+[00:27:19 → 00:27:21] et si tu vois que la loss ne fait qu'augmenter
+
+[00:27:21 → 00:27:23] c'est que tu as divergé donc
+
+[00:27:23 → 00:27:25] une des raisons les plus probables
+
+[00:27:25 → 00:27:27] c'est que ton tour d'apprentissage était trop gros
+
+[00:27:27 → 00:27:32] donc ça on va le voir comme ça
+
+[00:27:32 → 00:27:34] donc tu veux toujours
+
+[00:27:34 → 00:27:36] tu veux toujours du monitory avec la loss
+
+[00:27:36 → 00:27:38] c'est un peu bien
+
+[00:27:38 → 00:27:40] oui on va toujours le faire
+
+[00:27:40 → 00:27:42] parce qu'on va être visuellement
+
+[00:27:42 → 00:27:44] on ne peut pas forcément le voir surtout
+
+[00:27:44 → 00:27:46] par contre avec la perte
+
+[00:27:46 → 00:27:48] la loss on peut le voir à chaque fois
+
+[00:27:48 → 00:27:51] je suis pas certain d'avoir compris
+
+[00:27:51 → 00:27:53] le tour d'apprentissage
+
+[00:27:53 → 00:27:55] qui est plus gros c'est parce que
+
+[00:27:55 → 00:27:57] on
+
+[00:27:57 → 00:27:59] on apprend pas assez vite
+
+[00:27:59 → 00:28:01] ou c'est plutôt d'inverse
+
+[00:28:01 → 00:28:03] non, tour d'apprentissage
+
+[00:28:03 → 00:28:05] c'est juste
+
+[00:28:05 → 00:28:07] c'est que tu sais sur
+
+[00:28:07 → 00:28:09] ah non je crois que sur la courbe
+
+[00:28:09 → 00:28:11] là que j'avais tout à l'heure
+
+[00:28:11 → 00:28:21] le tour d'apprentissage
+
+[00:28:21 → 00:28:23] il apparaît ici en fait quand
+
+[00:28:23 → 00:28:25] là si j'étais dans l'exemple que j'avais
+
+[00:28:25 → 00:28:27] j'avais une seule feature
+
+[00:28:27 → 00:28:29] et le coup de
+
+[00:28:29 → 00:28:31] la loss qui est ici donc ça
+
+[00:28:31 → 00:28:33] c'est la valeur de ma feature
+
+[00:28:33 → 00:28:35] ici là le W
+
+[00:28:35 → 00:28:37] et le W c'est la valeur
+
+[00:28:37 → 00:28:39] de la perte
+
+[00:28:39 → 00:28:41] nous ce qu'on veut faire c'est
+
+[00:28:41 → 00:28:43] minimiser la perte donc c'est
+
+[00:28:43 → 00:28:45] trouver le paramètre W
+
+[00:28:45 → 00:28:47] pour lequel en fait celui qui est ici
+
+[00:28:47 → 00:28:49] pour lequel on a la place
+
+[00:28:49 → 00:28:51] au début ça prend quelque chose de random
+
+[00:28:51 → 00:28:53] et ça se dit je calcule le gradien
+
+[00:28:53 → 00:28:55] ça me permet de savoir
+
+[00:28:55 → 00:28:57] dans quel sens je suis
+
+[00:28:57 → 00:28:59] est-ce que
+
+[00:28:59 → 00:29:01] il faut que je diminue
+
+[00:29:01 → 00:29:03] mon W ou est-ce qu'il faut que je l'augmente
+
+[00:29:03 → 00:29:05] et ça donne un petit
+
+[00:29:05 → 00:29:07] et le W
+
+[00:29:07 → 00:29:09] c'est quelle valeur déjà
+
+[00:29:09 → 00:29:11] c'est le paramètre
+
+[00:29:11 → 00:29:13] c'est le paramètre
+
+[00:29:13 → 00:29:15] sinon dit Teta
+
+[00:29:15 → 00:29:17] c'est le poids ou le paramètre
+
+[00:29:17 → 00:29:19] du modèle donc là c'est par exemple
+
+[00:29:19 → 00:29:21] si on est sur AX plus B
+
+[00:29:21 → 00:29:23] comme une fonction en disant qu'on a
+
+[00:29:23 → 00:29:25] plus une feature ça serait ton A
+
+[00:29:25 → 00:29:27] d'accord on essaie de déterminer
+
+[00:29:27 → 00:29:29] la valeur de A dans ce cas
+
+[00:29:29 → 00:29:31] on peut trouver
+
+[00:29:31 → 00:29:33] qu'A est trop grand trop petit
+
+[00:29:33 → 00:29:35] selon les variations que
+
+[00:29:35 → 00:29:37] au début on met un A aléatoire
+
+[00:29:37 → 00:29:39] donc là on est dit
+
+[00:29:39 → 00:29:41] je sais pas il a mis un A aléatoire
+
+[00:29:41 → 00:29:43] il a calculé le gradien
+
+[00:29:43 → 00:29:45] par rapport à la fonction de
+
+[00:29:45 → 00:29:47] perte
+
+[00:29:47 → 00:29:49] et il se rend compte que le A est trop grand
+
+[00:29:49 → 00:29:51] donc il va le diminuer
+
+[00:29:51 → 00:29:53] mais à chaque fois on va pas juste le diminuer
+
+[00:29:53 → 00:29:55] de un petit quelque chose
+
+[00:29:55 → 00:29:57] on va le diminuer de une dérivée
+
+[00:29:57 → 00:29:59] qui va multiplier par
+
+[00:29:59 → 00:30:01] le taux d'apprentissage
+
+[00:30:01 → 00:30:03] et donc en gros si le taux d'apprentissage est trop petit
+
+[00:30:03 → 00:30:05] en fait à chaque fois on va diminuer
+
+[00:30:05 → 00:30:07] de tout petit petit
+
+[00:30:07 → 00:30:09] en fait on ferait ça
+
+[00:30:09 → 00:30:11] hop
+
+[00:30:11 → 00:30:13] ça ça n'en serait un
+
+[00:30:13 → 00:30:15] ça ça n'en serait un deuxième
+
+[00:30:15 → 00:30:17] ça ça n'en serait un troisième
+
+[00:30:17 → 00:30:19] quatrième etc et donc c'est très long
+
+[00:30:19 → 00:30:21] mais si on fait du trop gros
+
+[00:30:21 → 00:30:23] et si on a un taux d'apprentissage qui est trop gros
+
+[00:30:23 → 00:30:25] on sait qu'on va devoir qu'on est ici
+
+[00:30:25 → 00:30:27] on doit diminuer notre W donc on doit aller vers la gauche
+
+[00:30:27 → 00:30:29] mais si on sait qu'on doit diminuer
+
+[00:30:29 → 00:30:31] je ne sais pas de
+
+[00:30:31 → 00:30:33] je ne sais pas on doit diminuer de 3
+
+[00:30:33 → 00:30:35] on va dire et qu'on a
+
+[00:30:35 → 00:30:37] un taux d'apprentissage qui est très gros
+
+[00:30:37 → 00:30:39] on va nous dire mais on diminue de
+
+[00:30:39 → 00:30:41] on diminue comme ça
+
+[00:30:41 → 00:30:43] et puis après on diminue comme ça
+
+[00:30:43 → 00:30:45] et puis après on diminue et en fait
+
+[00:30:45 → 00:30:47] ce qui se passe la plupart du temps
+
+[00:30:47 → 00:30:49] quand le taux d'apprentissage est trop gros
+
+[00:30:49 → 00:30:51] c'est que du coup ça part ici
+
+[00:30:51 → 00:30:53] et ça ne revient jamais
+
+[00:30:53 → 00:30:57] donc c'est à ça que sert le taux d'apprentissage
+
+[00:30:57 → 00:31:00] si il est trop petit
+
+[00:31:00 → 00:31:02] ça va être un apprentissage
+
+[00:31:02 → 00:31:04] du coup le temps d'apprentissage etc
+
+[00:31:04 → 00:31:06] va être très long
+
+[00:31:06 → 00:31:08] et il y a un petit risque que
+
+[00:31:08 → 00:31:10] si j'avais eu ma
+
+[00:31:10 → 00:31:14] admettons
+
+[00:31:14 → 00:31:16] si j'avais eu ma courbe ici qui faisait
+
+[00:31:16 → 00:31:18] au lieu d'être plate comme ça
+
+[00:31:18 → 00:31:20] elle faisait comme ça un petit rebord
+
+[00:31:20 → 00:31:22] et puis après un redescend
+
+[00:31:22 → 00:31:24] si j'ai un taux d'apprentissage
+
+[00:31:24 → 00:31:26] qui est trop petit
+
+[00:31:26 → 00:31:28] en fait
+
+[00:31:28 → 00:31:34] ce que je vais faire
+
+[00:31:34 → 00:31:36] c'est que je vais descendre un peu là
+
+[00:31:36 → 00:31:38] un peu là
+
+[00:31:38 → 00:31:40] et puis là
+
+[00:31:40 → 00:31:42] je vais peut-être avoir l'impression
+
+[00:31:42 → 00:31:44] que je stagne et le modèle va peut-être dire
+
+[00:31:44 → 00:31:46] ah mais c'est bon la fonction de coup
+
+[00:31:46 → 00:31:49] elle peut pas redescendre plus donc je m'arrête
+
+[00:31:49 → 00:31:51] alors que du coup si t'avais un taux d'apprentissage
+
+[00:31:51 → 00:31:53] un peu plus haut tu serais passé directement de là
+
+[00:31:53 → 00:31:55] à là et tu aurais qu'on curie
+
+[00:31:55 → 00:31:59] que tu pouvais encore descendre par ici
+
+[00:31:59 → 00:32:01] donc du coup il faut être ni trop petit
+
+[00:32:01 → 00:32:03] ni trop gros
+
+[00:32:03 → 00:32:05] et donc vous allez pouvoir en tester
+
+[00:32:05 → 00:32:07] plusieurs et ça fait partie
+
+[00:32:07 → 00:32:09] des hyper paramètres
+
+[00:32:09 → 00:32:11] qui sont des choses que nous on a
+
+[00:32:11 → 00:32:13] à modifier et qui peuvent avoir
+
+[00:32:13 → 00:32:15] un vrai impact sur votre phase d'entraînement
+
+[00:32:15 → 00:32:17] et sur vos résultats
+
+[00:32:17 → 00:32:19] de prédiction derrière
+
+[00:32:19 → 00:32:21] parce que si je m'arrête ici
+
+[00:32:21 → 00:32:23] parce que j'ai fait un truc trop petit
+
+[00:32:23 → 00:32:25] si je m'arrête avec un paramètre là
+
+[00:32:25 → 00:32:27] je suis peut-être
+
+[00:32:27 → 00:32:29] très bonne en fait au lieu d'avoir
+
+[00:32:29 → 00:32:31] 0,05 en erreur
+
+[00:32:31 → 00:32:33] j'ai peut-être 0,15
+
+[00:32:33 → 00:32:35] et dans des cas du coup mon modèle
+
+[00:32:35 → 00:32:44] est moins bon pour prix
+
+[00:32:44 → 00:32:46] est-ce que ça va paraître un peu plus clair
+
+[00:32:46 → 00:32:50] pour tout le monde du coup
+
+[00:32:50 → 00:33:02] ce truc là ou pas
+
+[00:33:02 → 00:33:04] propose c'est du coup
+
+[00:33:04 → 00:33:06] avant qu'on voit les autres modèles
+
+[00:33:06 → 00:33:08] c'est du coup vous preniez
+
+[00:33:08 → 00:33:10] en main
+
+[00:33:10 → 00:33:12] sur un vote donné
+
+[00:33:12 → 00:33:14] avec du code juste avec la régression
+
+[00:33:14 → 00:33:16] pour voir ce que ça fait
+
+[00:33:16 → 00:33:18] et pour voir du coup comment
+
+[00:33:18 → 00:33:20] les résultats que vous avez
+
+[00:33:20 → 00:33:22] voir l'utilisation
+
+[00:33:22 → 00:33:24] et ensuite on verra
+
+[00:33:24 → 00:33:26] pour comparer avec d'autres modèles
+
+[00:33:28 → 00:33:30] normalement
+
+[00:33:30 → 00:33:32] votre goal
+
+[00:33:32 → 00:33:34] de data set
+
+[00:33:34 → 00:33:36] il est dans le dossier
+
+[00:33:36 → 00:33:38] data
+
+[00:33:38 → 00:33:40] il est dans le dossier data
+
+[00:33:40 → 00:33:42] oui je pense il faut regarder
+
+[00:33:42 → 00:33:44] dans le document partagé
+
+[00:33:44 → 00:33:46] au fil
+
+[00:33:46 → 00:33:48] dans data
+
+[00:33:48 → 00:33:50] il y a le goal data set
+
+[00:33:50 → 00:33:52] oui
+
+[00:33:52 → 00:33:54] sinon j'allais dire je crois que j'allais quelque part
+
+[00:33:54 → 00:33:56] du coup il y est
+
+[00:33:56 → 00:33:58] donc vous pouvez repartir
+
+[00:33:58 → 00:34:00] s'il y en a qui a un goal data set
+
+[00:34:00 → 00:34:02] qui était propre etc vous pouvez
+
+[00:34:02 → 00:34:04] partir du vote sinon partez tous du même
+
+[00:34:04 → 00:34:06] comme ça on sera sur de comparer
+
+[00:34:06 → 00:34:08] ou même chose
+
+[00:34:08 → 00:34:28] je vous envoie un conseil
+
+[00:34:28 → 00:34:30] peut-être renommé le fichier
+
+[00:34:30 → 00:34:32] ou en tout cas être sûr que vous prenez le bon
+
+[00:34:32 → 00:34:34] goal de data set
+
+[00:34:34 → 00:34:36] goal data set

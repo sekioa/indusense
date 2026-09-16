@@ -1,0 +1,183 @@
+# Sprint 2 — Jour 2 : introduction
+
+Transcription locale automatique en français, avec horodatages.
+Les hésitations et formulations orales sont conservées autant que possible ;
+une relecture humaine reste nécessaire pour une citation exacte.
+
+Langue détectée : fr (probabilité : 1.00)
+
+[00:00:00–00:00:04] qui permettent tous les deux de faire de la régression, donc vider du modèle de
+[00:00:04–00:00:09] régression linéaire, ça va être de trouver la droite qui ressemble le plus à vos données,
+[00:00:09–00:00:11] directement comme ça.
+[00:00:11–00:00:17] Régression logistique, c'était pas classification ?
+[00:00:17–00:00:24] Si, pardon, oui, pardon, c'est régression polinomielle.
+[00:00:24–00:00:28] Mais régression logistique, en même régression linéaire, c'est quand vous connaissez simple,
+[00:00:28–00:00:37] régression polinomielle, si vous faites des multiplications entre les colonnes, etc.
+[00:00:37–00:00:41] Et régression logistique, qui est de la classification.
+[00:00:41–00:00:47] Donc c'est un modèle de régression, mais qui permet de faire la classification et dans
+[00:00:47–00:00:49] sa construction.
+[00:00:49–00:00:54] C'est vraiment une étape de régression, on vient chercher une courbe qui correspond à vos données.
+[00:00:54–00:01:00] Et ensuite, il y a une étape qui vient mettre votre toute la courbe entre 0 et 1,
+[00:01:00–00:01:07] pour que vous puissiez interpréter du coup la sortie du modèle comme étant une probabilité
+[00:01:07–00:01:10] d'appartenir à la classe positive.
+[00:01:10–00:01:14] Et du coup, ce qu'on appelle la classe positive, c'est la classe que vous venez chercher en général.
+[00:01:14–00:01:19] Donc dans un cas où vous venez, par exemple, vous voulez trouver des pannes,
+[00:01:19–00:01:26] votre classe positive sera être une panne et la classe négative sera il n'y a pas de problème.
+[00:01:26–00:01:34] Et il y a classification de côté, régression de l'autre, qui sont des types de modèles
+[00:01:34–00:01:38] et qui sont des types d'objectifs, on va dire même.
+[00:01:38–00:01:42] Et ensuite, dans les modèles possibles, vous avez la régression linéaire et la régression logistique,
+[00:01:42–00:01:45] qui sont les modèles les plus basiques.
+[00:01:45–00:01:49] Vous avez parlé aussi de régression polinomielle ou simple ?
+[00:01:49–00:01:55] Ouais, régression polinomielle, c'est parce que c'est se dire que la régression linéaire,
+[00:01:55–00:02:01] en fait, c'est on fait une combinaison linéaire de toutes nos caractéristiques,
+[00:02:01–00:02:03] donc de toutes nos colombes d'entrée.
+[00:02:03–00:02:06] Donc si je reprends l'exemple du prix de vente de biens immobiliers,
+[00:02:06–00:02:16] j'ai la surface, le nombre de pièces, la taille du terrain, la localisation, etc.
+[00:02:17–00:02:22] Et donc, une régression linéaire classique,
+[00:02:22–00:02:29] ça va être un coefficient fois la surface, plus un coefficient fois le nombre de pièces,
+[00:02:29–00:02:36] plus un coefficient fois la taille du terrain, etc.
+[00:02:36–00:02:40] Et en fait, ce qui peut être intéressant, c'est des fois,
+[00:02:40–00:02:43] du coup, ça fait une espèce de combinaison linéaire,
+[00:02:43–00:02:46] et donc dans les problèmes antiques que vous pouvez trouver,
+[00:02:46–00:02:49] vous pouvez trouver seulement des choses qui sont linéaires,
+[00:02:49–00:02:58] et ça n'explique pas du tout tous les patterns qu'on peut trouver dans nos problèmes de machinade.
+[00:03:00–00:03:03] Donc pour ça, il faut venir complexifier un peu le sujet,
+[00:03:03–00:03:07] et des fois, du coup, on va venir faire de la régression polinomielle,
+[00:03:07–00:03:11] et pour ça, vous allez créer de nouvelles caractéristiques
+[00:03:11–00:03:15] qui sont des composés, des caractéristiques que vous avez au départ,
+[00:03:15–00:03:18] de votre colonne de tableau.
+[00:03:18–00:03:20] Donc par exemple, vous allez vous dire,
+[00:03:20–00:03:27] mais ça va être intéressant de savoir le nombre de moyens de mettre carré par pièce
+[00:03:27–00:03:31] dans votre bien que vous avez.
+[00:03:31–00:03:33] Donc là, du coup, mettre carré par pièce,
+[00:03:33–00:03:39] comment vous allez le calculer en faisant la taille du coup global du bien divisé par le nombre de pièces.
+[00:03:39–00:03:45] C'est comme si on s'est créé de nouvelles caractéristiques, mais avec les anciennes.
+[00:03:45–00:03:49] Donc il y a plusieurs méthodes pour la régression polinomielle comme ça.
+[00:03:49–00:03:51] Soit vous avez une bonne connaissance du métier,
+[00:03:51–00:03:57] du coup, vous créez des caractéristiques qui ont du sens côté de l'étude,
+[00:03:57–00:03:59] et qui peuvent aider le modèle,
+[00:03:59–00:04:06] et que vous savez que ça va l'aider à trouver des choses particulières.
+[00:04:06–00:04:09] Soit on fait un bif entre les mines,
+[00:04:09–00:04:14] c'est-à-dire qu'on va faire énormément de multiplications les unes entre les autres, etc.
+[00:04:14–00:04:17] Et après, on va avoir un nettoyage, un peu des features,
+[00:04:17–00:04:21] parce que potentiellement vous allez créer énormément, énormément de features,
+[00:04:21–00:04:28] et essayer de faire du traitement statistique pour trouver celles qui sont du bruit.
+[00:04:28–00:04:30] Si un dame sont beaucoup trop corrélées entre elles,
+[00:04:30–00:04:34] ça ne sert à rien de regarder les deux, on va regarder qu'une, etc.
+[00:04:34–00:04:38] Donc la régression polinomielle, c'est ce qu'on fait,
+[00:04:38–00:04:44] et du coup ça demande énormément de travail sur la création des caractéristiques.
+[00:04:44–00:04:50] Et du coup, ce travail-là peut être complexe, et très long,
+[00:04:50–00:04:57] et du coup, ce n'est pas forcément la solution la plus simple et qui prend le mois de temps,
+[00:04:57–00:04:59] et pour le coup, ce n'est pas un temps d'entraînement,
+[00:04:59–00:05:02] ce n'est pas un temps de machine où vous lancez ces longs,
+[00:05:02–00:05:08] c'est à vous de créer tous les features.
+[00:05:08–00:05:17] Et le but de la régression, finalement, c'est de trouver une courbe qui ressemble plus aux données.
+[00:05:17–00:05:23] C'est ça, c'est d'essayer de l'idée du machine learning pour tout,
+[00:05:23–00:05:28] c'est de trouver, alors que ce soit une courbe ou pas,
+[00:05:28–00:05:37] mais de trouver une courbe qui, par rapport aux features que vous lui donnez,
+[00:05:37–00:05:40] généralise le mieux en disant que par exemple,
+[00:05:40–00:05:45] je ne sais pas, l'idée, c'est que votre modèle, après, il soit capable de vous donner.
+[00:05:45–00:05:52] Vous avez un courbe au centre-ville de Toulouse qui fait 30 m²,
+[00:05:52–00:06:00] qui a deux ou trois pièces et qui n'a pas de balcon,
+[00:06:00–00:06:08] d'après l'historique et d'après la courbe que j'ai tracé grâce à l'historique,
+[00:06:08–00:06:12] je peux dire directement que le prix estimé sera de tel prix.
+[00:06:12–00:06:20] Donc la régression vient créer une courbe et après vous aurez des modèles qui seront non linéaires,
+[00:06:20–00:06:23] donc on verra comment ils sont faits, mais l'idée c'est ça,
+[00:06:23–00:06:26] c'est que suivant les valeurs que vous donnez en entrée,
+[00:06:26–00:06:35] il est capable de se repérer sur ce qu'il a été entraîné pour donner un résultat estimé,
+[00:06:35–00:06:38] et du coup c'est le propre d'imaginer, un learning ça de se dire,
+[00:06:38–00:06:43] plutôt que de donner toutes les règles qui disent je suis dans tel quartier donc le prix à peu près de temps,
+[00:06:43–00:06:48] comme j'ai un balcon, j'augmente de temps, mon prix, etc.
+[00:06:48–00:06:54] Là vous n'avez aucune règle à donner, vous donnez tout l'historique plus un algorithme,
+[00:06:54–00:07:00] du coup un petit peu près dans la progression, et les deux ça vient créer la meilleure courbe possible,
+[00:07:00–00:07:03] la plus proche de vos données historiques qui permet de généraliser.
+[00:07:03–00:07:08] Donc on va encore de trouver un pattern dans les données ?
+[00:07:08–00:07:13] C'est ça, le modèle va venir trouver toutes les correlations, toutes les patterns qu'il peut,
+[00:07:13–00:07:18] et du coup potentiellement trouver plus de correlations que ce que nous on connaît et ce que nous on sait,
+[00:07:19–00:07:24] mais il va venir chercher un pattern pour venir généraliser le modèle par rapport à votre historique.
+[00:07:24–00:07:29] D'où l'importance d'avoir un historique très représentatif de ce que vous voulez faire ?
+[00:07:29–00:07:38] Si vous avez un historique, déjà si vous avez par exemple trois lignes historiques,
+[00:07:38–00:07:43] on ne peut pas faire une généralité de trois lignes,
+[00:07:43–00:07:47] donc du coup on va vous dire si vous avez quelqu'un qui vient vous dire,
+[00:07:47–00:07:51] j'aimerais bien faire de la prédiction sur ce sujet-là, mais j'ai pas le donné,
+[00:07:51–00:07:55] j'ai pas encore un registré de données, vous allez dire,
+[00:07:55–00:08:01] ben revenez d'entendre dans un ordre, six mois quand vous aurez enregistré une centaine ou un millier d'ignes,
+[00:08:01–00:08:05] pour que je puisse généraliser et que le modèle puisse avoir distance.
+[00:08:05–00:08:08] Sinon si vous ne donnez pas d'infos, si vous ne donnez pas d'historique,
+[00:08:08–00:08:10] le modèle va faire du hasard, au bout d'un moment,
+[00:08:10–00:08:16] et du coup ça n'aura pas de temps qu'il faut donner assez d'exemples et des exemples
+[00:08:16–00:08:18] représentatifs pour que votre modèle soit bon.
+[00:08:18–00:08:22] Donc la data c'est vraiment le coeur du problème au départ,
+[00:08:22–00:08:28] et ensuite c'est des choix d'algorithmes, des choix de critères d'évaluation,
+[00:08:28–00:08:42] ce que quelqu'un d'autre a quelque chose à dire du coup,
+[00:08:42–00:08:51] d'autres idées ou des choses qui ne sont pas claires sur la théorie qu'on a vue,
+[00:08:51–00:08:55] et après on reprendra le TP sur la théorie.
+[00:09:09–00:09:16] Du coup sur le TP, j'ai vu que quasi,
+[00:09:16–00:09:19] enfin il y a quelqu'un qui m'a envoyé leur notebook,
+[00:09:19–00:09:24] donc je sais que vous avez terminé, pour les autres je ne sais pas.
+[00:09:24–00:09:32] Du coup l'idée ça va être maintenant,
+[00:09:32–00:09:35] alors puisque là on a fait une première version,
+[00:09:35–00:09:39] mais il y a plein de choses qui ont été faites du coup qui sont,
+[00:09:40–00:09:45] on va dire, dont on n'a pas encore parlé par exemple,
+[00:09:45–00:09:48] tout ce qui est évaluation du modèle.
+[00:09:48–00:09:59] Ce que je vous propose, que ça moi j'ai pour le faire un point avec Agard en particulier,
+[00:09:59–00:10:09] c'est de déjà regarder pour les évaluations de ce que vous avez dû faire à la fin,
+[00:10:09–00:10:19] pour vous faire en bien voir à quel point votre prédiction est bonne par rapport à la réalité.
+[00:10:19–00:10:22] Il y a plein de métriques possibles,
+[00:10:22–00:10:26] ce que je vous propose c'est de faire dans le rapport un peu comme vous avez fait hier,
+[00:10:26–00:10:32] du coup sur les modèles, sur toutes les métriques possibles,
+[00:10:33–00:10:41] et que vous essayez de vous faire un peu une map de tous les critères d'évaluation
+[00:10:41–00:10:46] que vous pouvez utiliser, que ce soit pour les récréations ou pour la classification,
+[00:10:46–00:10:52] essayez du coup de les ranger un peu partie pour qu'après derrière on puisse aller te locher derrière
+[00:10:52–00:10:59] et qu'on puisse les expliquer, et on prend du coup un parti en particulier
+[00:10:59–00:11:04] sur cette évaluation avant de repartir sur d'autres modèles.
+[00:11:04–00:11:14] J'ai du mal à voir ce qu'il faut faire, c'est quoi qu'il y a tendu du coup par rapport au...
+[00:11:14–00:11:19] En fait sur tous vos modèles, quelles que soient les modèles que vous allez faire,
+[00:11:19–00:11:27] en fait à chaque fois il va y avoir la même état. Vous allez avoir en gros création du gold data set,
+[00:11:27–00:11:36] un nettoyage des données, ça vous l'avez fait. Ensuite vous avez la partie séparation un peu des données
+[00:11:36–00:11:44] du coup en entraînement et en test, normalisation, donc fin d'une nettoyage on va dire, il y a cette
+[00:11:44–00:11:49] partie là. Ensuite vous avez le choix du modèle, donc pour ça vous avez une librairie de modèles,
+[00:11:49–00:11:54] une librairie plutôt d'algorithmes et que vous allez avoir choisir par rapport à votre type,
+[00:11:54–00:12:02] à votre objectif. Donc ça normalement on va les détailler plus tard, mais vous avez fait hier le,
+[00:12:02–00:12:12] pardon, vous avez fait hier cette bibliothèque là, du coup de tous les algorithmes possibles et donc
+[00:12:12–00:12:19] on viendra s'y référer pendant tous les projets. Donc hier on n'a d'un détaillé que 1,
+[00:12:19–00:12:24] enfin 2, régression linéaire et régression logistique. On viendra expliquer les autres
+[00:12:24–00:12:32] modèles par la suite, mais du coup garder cette bibliothèque là en tête. Une fois que vous avez
+[00:12:32–00:12:39] choisi un algorithme et que vous avez des données historiques, vous créez votre modèle avec la
+[00:12:39–00:12:46] phase d'entraînement. Donc là c'est la machine qui vient prendre l'algorithme, lire les données et
+[00:12:46–00:12:52] vient du coup charger tous les paramètres ou poids du coup de l'algorithme pour créer un modèle.
+[00:12:52–00:12:55] Le modèle c'est ce qui va venir vous créer par exemple pour le modèle le plus simple,
+[00:12:55–00:13:01] une courbe qui vient généraliser vos données et qui va pouvoir vous permettre de faire vos
+[00:13:01–00:13:06] prédictions derrière. D'arrière une fois que vous avez votre prédiction qui sont faites,
+[00:13:06–00:13:12] il va falloir, enfin vous avez un modèle qui est prêt, il va falloir évaluer votre modèle.
+[00:13:12–00:13:19] On a dit qu'on allait potentiellement tester plusieurs algorithmes différents que la
+[00:13:19–00:13:26] régression et tellement l'algorithme le plus simple. Donc il va falloir que vous ayez un moyen de
+[00:13:26–00:13:34] comparaison de ces modèles là et donc pour ça il y a plusieurs critères d'évaluation qui existent.
+[00:13:34–00:13:41] Sur le TP là je vous ai donné directement le PR à UC mais qui a des éléments,
+[00:13:41–00:13:46] un critère d'évaluation les plus complets. L'idée là c'est que du coup vous fassiez tout
+[00:13:46–00:13:55] un petit tour de toutes les évaluations qui existent et les rangez pareil par type de
+[00:13:55–00:13:59] est-ce que c'est un critère d'évaluation qui peut être utilisé pour la régression,
+[00:13:59–00:14:05] est-ce que c'est un critère d'évaluation qui peut être utilisé pour la classification,
+[00:14:05–00:14:13] quelles sont les avantages de cette métrique là, les inconvénients dans
+[00:14:13–00:14:19] quel cas vous l'utilisez absolument etc. Et c'est de vous faire pareil une bibliothèque des
+[00:14:19–00:14:27] critères d'évaluation possibles et des métriques possibles qui existent. Du coup dans le TP là
+[00:14:27–00:14:36] il y a le PR à UC qui est donné mais du coup on a parlé très rapidement hier par exemple de
+[00:14:36–00:14:43] la précision et du recall. Il y a plein de métriques comme ça que je vous laisse à la
+[00:14:43–00:14:49] nuit essayer de faire une petite recherche sur ce sujet là pour être capable après en fait quand
+[00:14:49–00:14:59] vous avez une problématique d'identifier rapidement quel algorithme vous pouvez prendre et avec quel
+[00:14:59–00:15:09] critère d'évaluation. Ça va y avoir des métriques propres pour la classification et des
+[00:15:09–00:15:18] métriques propres pour la régression. Au globalement ça va être ça et après ça va être plutôt
+[00:15:18–00:15:31] regarder essayer de le mettre en perspective par rapport à des besoins de métier, à des cas
+[00:15:31–00:15:36] d'usage pour les derniers qui étaient là hier on en a parlé rapidement du fait que par
+[00:15:36–00:15:45] exemple précision et rappel en médecine c'est faire la balance entre est-ce que je suis je préfère
+[00:15:45–00:15:53] dire à des gens qu'ils sont malades alors que c'est pas vrai mais par contre je n'oublie aucun
+[00:15:53–00:15:58] malade réellement ou est-ce ou est-ce que je préfère être sûr à 100% que quelqu'un est
+[00:15:58–00:16:05] malade pour lui dire qu'il est malade quitte à ne pas détecter des personnes qui sont
+[00:16:05–00:16:12] malades parce qu'en fait ce critère d'évaluation là suivant celui que vous choisissez vous allez
+[00:16:12–00:16:17] du coup choisir des modèles qui sont meilleurs sur ce critère d'évaluation et donc ça peut
+[00:16:17–00:16:25] avoir un impact sur les résultats et sur le fait de trop détecter de classe positive ou pas assez
+[00:16:25–00:16:34] etc. on s'est essayé de savoir un peu cette partie-là. Est-ce que c'est clair pour tout le monde?
+[00:16:34–00:16:44] Moi ce n'est pas clair j'aimerais bien des consignes comme ça je peux revenir à les liens et à mesurer.
+[00:16:44–00:18:30] Oui je m'essaie dans le discord de suivance. Du coup je viens de mettre la consigne dans le
+[00:18:30–00:18:41] discord et du coup à genre est-ce que tu confaces un poem ensemble déjà? Oui si t'appelais. Du
+[00:18:41–00:18:49] coup ce que je te vois c'est que je t'appelle sur discord en privé comme ça. Je t'appelle de suite.
