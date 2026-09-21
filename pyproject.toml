@@ -3,7 +3,7 @@ name = "indusense"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.14"
+requires-python = ">=3.12"
 dependencies = [
     "alembic>=1.19.1",
     "matplotlib>=3.11.1",
@@ -29,4 +29,10 @@ dev = [
     "ipykernel>=7.3.0",
     "nbclient>=0.10.2",
     "nbformat>=5.10.4",
+]
+dl = [
+    "albumentations>=2.0.8",
+    "pillow>=11.0",
+    "scikit-image>=0.26.0",
+    "tensorflow>=2.21.0 ; python_version < '3.14'",
 ]
