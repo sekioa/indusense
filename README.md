@@ -17,6 +17,14 @@ Les fichiers du dossier `datas/` sont considérés comme des données Bronze : i
 
 Le notebook [02-build-data-bronze.ipynb](notebooks/01-sprint-1/02-pipeline-donnees/02-build-data-bronze.ipynb) documente le passage de ces CSV vers PostgreSQL : contrat Bronze, modèles SQLAlchemy, migration Alembic, ingestion par lot et contrôle de l'idempotence.
 
+## TP : optimisation et MLflow
+
+Le [notebook 06](notebooks/02-sprint-2/01-maintenance-predictive/06-maintenance-optimisation-mlflow.ipynb) optimise la Random Forest avec une recherche aléatoire. Le [notebook 07](notebooks/02-sprint-2/01-maintenance-predictive/07-maintenance-optimisation-optuna-mlflow.ipynb) reprend le protocole avec Optuna et une expérience MLflow indépendante. La [fiche de révision](docs/revisions/mlflow-et-optimisation-reproductible.md) donne la procédure et les limites méthodologiques.
+
+Livrables Random Search : [synthèse d'une page](output/pdf/synthese-optimisation-mlflow.pdf), [synthèse éditable](docs/02-sprint-2/03-suivi/03-synthese-optimisation-mlflow.md) et [matrices de confusion](outputs/optimisation/matrices-confusion.png). Livrables Optuna : [synthèse d'une page](output/pdf/synthese-optimisation-optuna-mlflow.pdf), [synthèse éditable](docs/02-sprint-2/03-suivi/04-synthese-optimisation-optuna-mlflow.md), [comparaison des deux recherches](output/pdf/comparaison-random-search-optuna.pdf) et [matrices de confusion](outputs/optimisation-optuna/matrices-confusion-optuna.png).
+
+Depuis la racine du dépôt, après `uv sync --dev`, exécuter `./scripts/start-mlflow.ps1` dans PowerShell. Ouvrir ensuite [MLflow local](http://127.0.0.1:5000) et sélectionner l'expérience `indusense-random-search-pedagogique` ou `indusense-optuna-pedagogique`. La base, l'étude Optuna et les modèles sont conservés dans `.mlflow/`, exclu de Git. Le serveur reste local ; `Ctrl+C` l'arrête sans effacer les résultats.
+
 ## Prérequis
 
 - Git ;

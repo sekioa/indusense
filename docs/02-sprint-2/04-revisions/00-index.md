@@ -11,3 +11,5 @@ Cet index regroupe les fiches synthétiques du parcours IT.
 - [Classification binaire et découpage temporel](05-classification-binaire-et-decoupage-temporel.md)
 - [Évaluation des modèles — fiche de cours](06-evaluation-des-modeles.md)
 - [Comparaison de trois classifieurs pour la maintenance prédictive](07-comparaison-classifieurs-maintenance-predictive.md)
+- [Optimisation des hyperparamètres et validation croisée](08-optimisation-hyperparametres-et-validation-croisee.md)
+- [Arbres de décision et Random Forest](09-arbres-de-decision-et-random-forest.md)

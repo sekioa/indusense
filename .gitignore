@@ -12,3 +12,9 @@ wheels/
 # Jupyter-generated files
 .ipynb_checkpoints/
 .env
+
+# MLflow : base locale, modèles et journaux (recréés par le notebook)
+.mlflow/
+
+# Rendus intermédiaires utilisés uniquement pour le contrôle visuel local
+tmp/

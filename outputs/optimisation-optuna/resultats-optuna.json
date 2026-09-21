@@ -1,0 +1,422 @@
+{
+  "parent_run_id": "f2b7b367f3604e488883b8d8691fd909",
+  "experiment_id": "2",
+  "study_name": "indusense-optuna-tpe-20-v1",
+  "versions": {
+    "optuna": "5.0.0",
+    "mlflow": "3.16.0",
+    "scikit-learn": "1.9.1",
+    "pandas": "3.0.5",
+    "numpy": "2.5.2"
+  },
+  "dataset_sha256": "2c6ee2408d6c764e57d7c7bacf17dc755954ca7b244a274363f07bf351203eee",
+  "baseline": {
+    "params": {
+      "n_estimators": 300,
+      "max_depth": 12,
+      "min_samples_leaf": 5,
+      "min_samples_split": 2,
+      "max_features": "sqrt"
+    },
+    "sampled_params": {
+      "n_estimators": 300,
+      "max_depth": 12,
+      "min_samples_leaf": 5,
+      "min_samples_split": 2,
+      "max_features": "sqrt"
+    },
+    "scores": [
+      0.5817847357746815,
+      0.4811644771657439,
+      0.6096864123961049
+    ],
+    "train_scores": [
+      0.9754919564718916,
+      0.9035127447595691,
+      0.8624794120776116
+    ],
+    "cv_ap": 0.55754520844551,
+    "cv_std": 0.055197451467107375,
+    "train_ap": 0.9138280377696907,
+    "cv_seconds": 30.205159400007688,
+    "gap_ap": 0.35628282932418065,
+    "refit_seconds": 22.04028760001529,
+    "run_id": "0b6cc6310c94484cadedad01fe96ba1e",
+    "model_uri": "models:/m-70ed0624ff8c4de487c8fa35c32af50c"
+  },
+  "best": {
+    "params": {
+      "n_estimators": 450,
+      "max_depth": 6,
+      "min_samples_leaf": 30,
+      "min_samples_split": 2,
+      "max_features": 0.35
+    },
+    "sampled_params": {
+      "n_estimators": 450,
+      "max_depth": 6,
+      "min_samples_leaf": 30,
+      "min_samples_split": 2,
+      "max_features_choice": "35%"
+    },
+    "scores": [
+      0.5936477962167003,
+      0.48978392885390865,
+      0.6135486913844022
+    ],
+    "train_scores": [
+      0.7960156949963947,
+      0.726789919140382,
+      0.6878516410421839
+    ],
+    "cv_ap": 0.565660138818337,
+    "cv_std": 0.05426423522016123,
+    "train_ap": 0.7368857517263202,
+    "gap_ap": 0.17122561290798322,
+    "cv_seconds": 78.28790609998396,
+    "refit_seconds": 60.01013409998268,
+    "run_id": "8cab1509b4f84515ab1c753bcda074ee",
+    "model_uri": "models:/m-34e28ea2fe924c5181784fbefae97c75",
+    "trial_number": 12
+  },
+  "importance": [
+    {
+      "Hyperparamètre": "max_depth",
+      "Importance relative": 0.7294679746687295
+    },
+    {
+      "Hyperparamètre": "min_samples_leaf",
+      "Importance relative": 0.13605401384781254
+    },
+    {
+      "Hyperparamètre": "max_features_choice",
+      "Importance relative": 0.06433746499720938
+    },
+    {
+      "Hyperparamètre": "n_estimators",
+      "Importance relative": 0.035848262779365724
+    },
+    {
+      "Hyperparamètre": "min_samples_split",
+      "Importance relative": 0.03429228370688286
+    }
+  ],
+  "validation": {
+    "Référence": {
+      "AP": 0.5941047366945726,
+      "ROC_AUC": 0.7597123390566485,
+      "precision": 0.3584780810587262,
+      "recall": 0.6366039952996475,
+      "F2": 0.551090992319821,
+      "TP": 2167,
+      "FP": 3878,
+      "FN": 1237,
+      "TN": 12503,
+      "threshold": 0.3299495485219854
+    },
+    "Optuna": {
+      "AP": 0.5761624441793498,
+      "ROC_AUC": 0.7410578149673417,
+      "precision": 0.340003078343851,
+      "recall": 0.6489424206815512,
+      "F2": 0.5491473176552478,
+      "TP": 2209,
+      "FP": 4288,
+      "FN": 1195,
+      "TN": 12093,
+      "threshold": 0.3248794103999566
+    }
+  },
+  "test": {
+    "Référence": {
+      "AP": 0.6151068295113014,
+      "ROC_AUC": 0.7736931000310414,
+      "precision": 0.34735133539914415,
+      "recall": 0.6768257619321449,
+      "F2": 0.5689013485427038,
+      "TP": 2354,
+      "FP": 4423,
+      "FN": 1124,
+      "TN": 12244,
+      "threshold": 0.3299495485219854
+    },
+    "Optuna": {
+      "AP": 0.6026411126181758,
+      "ROC_AUC": 0.7747090342839492,
+      "precision": 0.32226138828633405,
+      "recall": 0.683438757906843,
+      "F2": 0.5582957534761368,
+      "TP": 2377,
+      "FP": 4999,
+      "FN": 1101,
+      "TN": 11668,
+      "threshold": 0.3248794103999566
+    }
+  },
+  "n_trials": 20,
+  "n_startup_trials": 5,
+  "fit_count": 84,
+  "elapsed_seconds": 2856.8667467999912,
+  "trials": [
+    {
+      "Trial": 12,
+      "AP CV moyenne": 0.565660138818337,
+      "Dispersion AP": 0.05426423522016123,
+      "AP train": 0.7368857517263202,
+      "Écart train-CV": 0.17122561290798322,
+      "Durée CV (s)": 78.28790609998396,
+      "n_estimators": 450,
+      "max_depth": 6,
+      "min_samples_leaf": 30,
+      "min_samples_split": 2,
+      "max_features_choice": "35%"
+    },
+    {
+      "Trial": 14,
+      "AP CV moyenne": 0.5651848017187453,
+      "Dispersion AP": 0.05352076822670721,
+      "AP train": 0.7806055342123083,
+      "Écart train-CV": 0.21542073249356297,
+      "Durée CV (s)": 90.3138132999884,
+      "n_estimators": 400,
+      "max_depth": 7,
+      "min_samples_leaf": 29,
+      "min_samples_split": 2,
+      "max_features_choice": "35%"
+    },
+    {
+      "Trial": 15,
+      "AP CV moyenne": 0.5636405290612563,
+      "Dispersion AP": 0.05235760685606266,
+      "AP train": 0.8486290378168326,
+      "Écart train-CV": 0.28498850875557635,
+      "Durée CV (s)": 58.60550279999734,
+      "n_estimators": 300,
+      "max_depth": 9,
+      "min_samples_leaf": 23,
+      "min_samples_split": 3,
+      "max_features_choice": "25%"
+    },
+    {
+      "Trial": 13,
+      "AP CV moyenne": 0.5630811077027964,
+      "Dispersion AP": 0.05150419669702422,
+      "AP train": 0.7891791897616552,
+      "Écart train-CV": 0.22609808205885884,
+      "Durée CV (s)": 89.24535259997356,
+      "n_estimators": 450,
+      "max_depth": 7,
+      "min_samples_leaf": 18,
+      "min_samples_split": 2,
+      "max_features_choice": "35%"
+    },
+    {
+      "Trial": 7,
+      "AP CV moyenne": 0.5627513789805225,
+      "Dispersion AP": 0.05367016712719721,
+      "AP train": 0.696434512642312,
+      "Écart train-CV": 0.13368313366178952,
+      "Durée CV (s)": 76.02890569998999,
+      "n_estimators": 500,
+      "max_depth": 5,
+      "min_samples_leaf": 9,
+      "min_samples_split": 2,
+      "max_features_choice": "35%"
+    },
+    {
+      "Trial": 10,
+      "AP CV moyenne": 0.5626896024459684,
+      "Dispersion AP": 0.057698383102366795,
+      "AP train": 0.6914827387290475,
+      "Écart train-CV": 0.1287931362830791,
+      "Durée CV (s)": 24.0770830999827,
+      "n_estimators": 200,
+      "max_depth": 5,
+      "min_samples_leaf": 2,
+      "min_samples_split": 2,
+      "max_features_choice": "25%"
+    },
+    {
+      "Trial": 11,
+      "AP CV moyenne": 0.5619436999716942,
+      "Dispersion AP": 0.05821619617319974,
+      "AP train": 0.691916098792943,
+      "Écart train-CV": 0.12997239882124878,
+      "Durée CV (s)": 39.90128849999746,
+      "n_estimators": 350,
+      "max_depth": 5,
+      "min_samples_leaf": 2,
+      "min_samples_split": 2,
+      "max_features_choice": "25%"
+    },
+    {
+      "Trial": 4,
+      "AP CV moyenne": 0.5617260371921978,
+      "Dispersion AP": 0.05388219300708076,
+      "AP train": 0.6950809120314577,
+      "Écart train-CV": 0.1333548748392599,
+      "Durée CV (s)": 29.73936400000821,
+      "n_estimators": 200,
+      "max_depth": 5,
+      "min_samples_leaf": 12,
+      "min_samples_split": 5,
+      "max_features_choice": "35%"
+    },
+    {
+      "Trial": 19,
+      "AP CV moyenne": 0.5599078022198111,
+      "Dispersion AP": 0.05671396386510464,
+      "AP train": 0.6586118680527576,
+      "Écart train-CV": 0.09870406583294655,
+      "Durée CV (s)": 30.251752799988026,
+      "n_estimators": 250,
+      "max_depth": 4,
+      "min_samples_leaf": 26,
+      "min_samples_split": 2,
+      "max_features_choice": "35%"
+    },
+    {
+      "Trial": 1,
+      "AP CV moyenne": 0.5595341286604625,
+      "Dispersion AP": 0.052952585250366,
+      "AP train": 0.6592892479076918,
+      "Écart train-CV": 0.09975511924722935,
+      "Durée CV (s)": 64.69691129997955,
+      "n_estimators": 400,
+      "max_depth": 4,
+      "min_samples_leaf": 28,
+      "min_samples_split": 13,
+      "max_features_choice": "50%"
+    },
+    {
+      "Trial": 6,
+      "AP CV moyenne": 0.5594502732463729,
+      "Dispersion AP": 0.05475221507899998,
+      "AP train": 0.7473015462379368,
+      "Écart train-CV": 0.1878512729915639,
+      "Durée CV (s)": 13.204200600011973,
+      "n_estimators": 100,
+      "max_depth": 7,
+      "min_samples_leaf": 2,
+      "min_samples_split": 20,
+      "max_features_choice": "15%"
+    },
+    {
+      "Trial": 2,
+      "AP CV moyenne": 0.5589133754416002,
+      "Dispersion AP": 0.0498444169552179,
+      "AP train": 0.8394980567122361,
+      "Écart train-CV": 0.28058468127063585,
+      "Durée CV (s)": 64.16813529998763,
+      "n_estimators": 250,
+      "max_depth": 8,
+      "min_samples_leaf": 9,
+      "min_samples_split": 2,
+      "max_features_choice": "35%"
+    },
+    {
+      "Trial": 17,
+      "AP CV moyenne": 0.5587975348935985,
+      "Dispersion AP": 0.0521930409812365,
+      "AP train": 0.9555276326756186,
+      "Écart train-CV": 0.39673009778202006,
+      "Durée CV (s)": 134.65031409999938,
+      "n_estimators": 450,
+      "max_depth": 13,
+      "min_samples_leaf": 24,
+      "min_samples_split": 2,
+      "max_features_choice": "35%"
+    },
+    {
+      "Trial": 9,
+      "AP CV moyenne": 0.5579233849838867,
+      "Dispersion AP": 0.055360122935062615,
+      "AP train": 0.8716853346241242,
+      "Écart train-CV": 0.3137619496402375,
+      "Durée CV (s)": 43.967567200015765,
+      "n_estimators": 350,
+      "max_depth": 10,
+      "min_samples_leaf": 7,
+      "min_samples_split": 6,
+      "max_features_choice": "15%"
+    },
+    {
+      "Trial": 16,
+      "AP CV moyenne": 0.5577295798336961,
+      "Dispersion AP": 0.04975918278650929,
+      "AP train": 0.8298041004101382,
+      "Écart train-CV": 0.2720745205764421,
+      "Durée CV (s)": 138.15524649998406,
+      "n_estimators": 450,
+      "max_depth": 8,
+      "min_samples_leaf": 30,
+      "min_samples_split": 3,
+      "max_features_choice": "50%"
+    },
+    {
+      "Trial": 8,
+      "AP CV moyenne": 0.5576827877680502,
+      "Dispersion AP": 0.050734560975726484,
+      "AP train": 0.8404517943945852,
+      "Écart train-CV": 0.2827690066265349,
+      "Durée CV (s)": 89.94273849998717,
+      "n_estimators": 400,
+      "max_depth": 8,
+      "min_samples_leaf": 6,
+      "min_samples_split": 17,
+      "max_features_choice": "35%"
+    },
+    {
+      "Trial": 0,
+      "AP CV moyenne": 0.5565208426892075,
+      "Dispersion AP": 0.053445776011846365,
+      "AP train": 0.9967600544750277,
+      "Écart train-CV": 0.44023921178582015,
+      "Durée CV (s)": 90.99791710000136,
+      "n_estimators": 250,
+      "max_depth": 20,
+      "min_samples_leaf": 14,
+      "min_samples_split": 7,
+      "max_features_choice": "35%"
+    },
+    {
+      "Trial": 5,
+      "AP CV moyenne": 0.5538790949942426,
+      "Dispersion AP": 0.053947436556160425,
+      "AP train": 0.9935743228546676,
+      "Écart train-CV": 0.43969522786042503,
+      "Durée CV (s)": 196.87578479998047,
+      "n_estimators": 500,
+      "max_depth": 17,
+      "min_samples_leaf": 14,
+      "min_samples_split": 3,
+      "max_features_choice": "35%"
+    },
+    {
+      "Trial": 18,
+      "AP CV moyenne": 0.5538589788432732,
+      "Dispersion AP": 0.04871195657588864,
+      "AP train": 0.933925047468619,
+      "Écart train-CV": 0.38006606862534587,
+      "Durée CV (s)": 113.93915099999867,
+      "n_estimators": 400,
+      "max_depth": 11,
+      "min_samples_leaf": 11,
+      "min_samples_split": 4,
+      "max_features_choice": "35%"
+    },
+    {
+      "Trial": 3,
+      "AP CV moyenne": 0.5419355836636462,
+      "Dispersion AP": 0.05016666040866404,
+      "AP train": 0.9910508172590875,
+      "Écart train-CV": 0.44911523359544125,
+      "Durée CV (s)": 107.2003035999951,
+      "n_estimators": 300,
+      "max_depth": 14,
+      "min_samples_leaf": 2,
+      "min_samples_split": 7,
+      "max_features_choice": "35%"
+    }
+  ]
+}

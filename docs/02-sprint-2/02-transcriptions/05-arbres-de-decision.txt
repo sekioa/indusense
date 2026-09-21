@@ -1,0 +1,978 @@
+# Arbres de décision
+
+Langue détectée : fr (probabilité 100.00%)
+
+> Transcription automatique locale avec le modèle `small` et des horodatages. Les hésitations et termes mal reconnus peuvent nécessiter une correction éditoriale.
+
+Supports associés : `04_Arbres_de_decisions_AELION.pdf` et `05_Random_Forests_AELION.pdf`.
+
+[00:00:00 → 00:00:10] Tout ce qui est, je vois des hyperparamètres puisque du coup ça c'est des hyper, le nombre d'arbres etc c'est des hyperparamètres de la Random Forest.
+[00:00:10 → 00:00:18] En fait on va tester, évaluer, retester une autre valeur, évaluer etc.
+[00:00:18 → 00:00:22] Il y a plusieurs techniques pour ça.
+[00:00:23 → 00:00:39] Du coup comme les régressions, les Random Forest ça mérite un peu quand il y a tard, un peu dessus, niveau technique et comment c'est créé.
+[00:00:39 → 00:00:42] Je vais vous montrer ça.
+[00:00:59 → 00:01:12] Du coup il y a pas mal de modèles aussi autres qu'il y a Random Forest mais il n'y en a pas qu'il y a XGBoost etc qui sont faits à partir d'arbres de décision.
+[00:01:12 → 00:01:18] Et c'est des modèles qui vont pouvoir être utilisés autant pour la classification que pour la régression.
+[00:01:18 → 00:01:20] On va voir comment ils se comportent pour les deux.
+[00:01:20 → 00:01:25] Et du coup l'arbre de décision est un peu à la racine de tous ces modèles là.
+[00:01:25 → 00:01:31] En tout cas ça devient un élément puisque du coup sur une Random Forest pour ceux qui ont commencé à le faire,
+[00:01:31 → 00:01:33] vous devez choisir combien il y a d'arbres.
+[00:01:33 → 00:01:36] Une Random Forest c'est une forêt, une forêt aléatoire.
+[00:01:36 → 00:01:40] Une forêt aléatoire c'est constitué de plein d'arbres de décision.
+[00:01:40 → 00:01:44] Et du coup il faut choisir combien d'arbres de décision on met.
+[00:01:44 → 00:01:50] Le principe d'un arbre de décision c'est vraiment le principe des arbres qu'on connaît tel quel.
+[00:01:50 → 00:02:00] Donc par exemple de dire on prend du coup une feature, une caractéristique de nos données.
+[00:02:00 → 00:02:05] Et on crée un nœud de décision au départ avec une condition binaire.
+[00:02:05 → 00:02:11] Donc la condition binaire c'est soit une appartenance à une classe, soit une valeur comparée à un seuil.
+[00:02:11 → 00:02:19] Donc par exemple la Random Forest peut prendre en compte les données catégorielles comme les données numériques.
+[00:02:19 → 00:02:23] Par exemple sur l'exemple des prix de vente, des biens immobiliers.
+[00:02:23 → 00:02:28] Si vous avez une colonne qui est type de biens, appartement, maison ou terrain,
+[00:02:28 → 00:02:32] du coup il peut y avoir ici, vous n'avez pas besoin de l'éclater en trois,
+[00:02:32 → 00:02:38] il va y avoir ici type égal appartement, oui, non, et ça continue comme ça.
+[00:02:38 → 00:02:40] Donc vous pouvez le directement mettre.
+[00:02:40 → 00:02:43] Donc soit appartenant à une classe soit qu'on va leur comparer à un seuil.
+[00:02:44 → 00:02:48] Et du coup vous avez le nœud qui crée de nouveaux nœuds, etc.
+[00:02:48 → 00:02:54] Et ce qu'on appelle du coup la feuille c'est au bout de votre arbre,
+[00:02:54 → 00:02:59] du coup qui contient la classe ou la valeur qui va être prédite.
+[00:02:59 → 00:03:08] Donc si on imagine qu'on a un cas ou un arbre de décision
+[00:03:08 → 00:03:14] avec fait pour nos panne par exemple, avec juste un capteur,
+[00:03:14 → 00:03:19] ça va être par exemple le capteur, est-ce qu'il est supérieur à telle température ok
+[00:03:19 → 00:03:24] et bien dans tel sens, est-ce que là et après on redivise, etc.,
+[00:03:24 → 00:03:26] jusqu'à avoir des failles.
+[00:03:26 → 00:03:28] Donc là c'est le principe des armes de décision.
+[00:03:28 → 00:03:33] Et pour faire du coup, en général pour faire la classification,
+[00:03:33 → 00:03:35] du coup ça marche très bien.
+[00:03:35 → 00:03:37] Et l'idée ça va être que l'arme de décision,
+[00:03:37 → 00:03:42] l'entraînement de tous les modèles qui sont faits à partir d'armes de décision
+[00:03:42 → 00:03:45] ça va être fait pour créer les arbres.
+[00:03:45 → 00:03:50] Qu'en gros quelles sont les nœuds de décision
+[00:03:50 → 00:03:53] qui sont les meilleurs pour pouvoir séparer les parties.
+[00:03:53 → 00:03:59] Par exemple ça c'est un sujet classique qui est pour classifier les fleurs
+[00:03:59 → 00:04:01] où vous avez des éléments sur les fleurs.
+[00:04:01 → 00:04:05] Par exemple là par exemple, vous avez les tailles des pétales
+[00:04:05 → 00:04:11] et vous avez la distribution des variétés.
+[00:04:11 → 00:04:16] Vous voyez bien qu'ici si vous séparez à partir de 0,8
+[00:04:16 → 00:04:21] vous créez une classe directement en dessous où vous êtes dans la variété Cetosa
+[00:04:21 → 00:04:25] et au dessus par contre vous pouvez être encore dans Versicolor et Virginica.
+[00:04:25 → 00:04:28] Et du coup l'arme de décision va dire
+[00:04:28 → 00:04:33] il faut que je re-splite ici pour dire etc.
+[00:04:33 → 00:04:38] Et du coup l'objectif de l'entraînement va être de trouver toutes les conditions
+[00:04:38 → 00:04:40] qui permettent de bien séparer les classes.
+[00:04:40 → 00:04:44] Et là ici on pourrait se dire on a majoritairement du bleu
+[00:04:44 → 00:04:47] donc on va dire que c'est du bleu
+[00:04:47 → 00:04:51] et donc quand on arrive ici on est sur la variété Versicolor
+[00:04:51 → 00:04:53] alors qu'ici on est sur Virginica.
+[00:04:53 → 00:04:57] Donc tout l'entraînement du modèle va être sur cette création d'arme.
+[00:04:57 → 00:05:03] Pour faire ça et pour savoir quand est-ce qu'on s'arrête
+[00:05:03 → 00:05:09] à chaque fois il va y avoir un seuil critique qui va être calculé
+[00:05:09 → 00:05:12] qui est du coup le taux de séparation.
+[00:05:12 → 00:05:15] L'idée pour un classificat originaire c'est de dire
+[00:05:15 → 00:05:19] un taux de séparation ici, le taux de séparation là il est parfait
+[00:05:19 → 00:05:23] puisque je n'ai qu'une classe qui est dans cette feuille.
+[00:05:23 → 00:05:26] Donc c'est bon je peux dire absolument que tout ce qui tombe ici est dans cette classe
+[00:05:26 → 00:05:28] il n'y a pas de débat.
+[00:05:28 → 00:05:31] Par contre ici j'ai majoritairement du bleu mais j'ai aussi un peu de vert
+[00:05:31 → 00:05:35] et du coup je vais mesurer ce critère du coup qu'on appelle
+[00:05:35 → 00:05:39] indice de Gini ou critère d'impureté
+[00:05:39 → 00:05:43] pour dire à quel point je suis un mélange de deux classes
+[00:05:43 → 00:05:46] et du coup à quel point je dois encore diviser
+[00:05:46 → 00:05:49] est-ce que je dois refaire un arbre de décision ou pas.
+[00:05:49 → 00:05:52] L'idée c'est de vous dire que si vous avez 100% d'une des classes
+[00:05:52 → 00:05:55] vous allez être soit A0 soit A1
+[00:05:55 → 00:05:58] parce que soit j'ai 100% de la classe A
+[00:05:58 → 00:06:02] et du coup un MoMP du coup 0% de la classe B
+[00:06:02 → 00:06:06] ou inversement du coup vous êtes A0 ici ou ici
+[00:06:06 → 00:06:09] soit vous avez que des A que des B
+[00:06:09 → 00:06:12] par contre si vous avez 50-50 de chaque
+[00:06:12 → 00:06:14] de chaque classe
+[00:06:14 → 00:06:17] du coup vous allez avoir un indice de Gini très haut
+[00:06:17 → 00:06:20] et donc ce qu'on va calculer ici c'est à chaque fois
+[00:06:20 → 00:06:23] un indice de Gini de chaque sous-partie
+[00:06:23 → 00:06:26] et si l'indice de Gini donc le critère d'impureté
+[00:06:26 → 00:06:29] est assez basse c'est à dire qu'on a un groupe
+[00:06:29 → 00:06:32] qui est assez homogène on s'arrête là
+[00:06:32 → 00:06:35] l'arbre de décision s'arrête et on considère
+[00:06:35 → 00:06:39] que la classe que si j'ai une nouvelle
+[00:06:39 → 00:06:41] donnée qui arrive
+[00:06:41 → 00:06:44] si la taille d'hôpital qui a 1 par exemple
+[00:06:44 → 00:06:48] du coup elle va tomber dans la classe bleue
+[00:06:48 → 00:06:51] et tout ça c'est le modèle qui va le faire
+[00:06:51 → 00:06:53] c'est l'entraînement qui va faire
+[00:06:53 → 00:06:57] cette boucle et cette arbre de décision là
+[00:06:57 → 00:06:59] du coup avec la forme en cloche
+[00:06:59 → 00:07:02] il y a d'autres critères d'impureté qui existent
+[00:07:02 → 00:07:04] donc vous pouvez les modifier
+[00:07:04 → 00:07:07] ça va être un hyper paramètre de vos modèles
+[00:07:07 → 00:07:10] mais globalement on utilise majoritairement
+[00:07:10 → 00:07:13] Gini, entropie, et puis tous ils sont
+[00:07:13 → 00:07:16] tous à peu près la même tête
+[00:07:17 → 00:07:20] du coup votre construction de l'arbre
+[00:07:20 → 00:07:23] quand vous avez vos données à vous
+[00:07:23 → 00:07:26] est ce fait que si vous avez du
+[00:07:26 → 00:07:28] là on va dire qu'on a du multiclasse
+[00:07:28 → 00:07:30] avec qu'on a plusieurs classes différentes
+[00:07:30 → 00:07:32] du coup vous avez une séparation qui se fait
+[00:07:32 → 00:07:35] et après ici on regarde le critère d'impureté
+[00:07:35 → 00:07:37] on dit bah il est pas
+[00:07:37 → 00:07:39] notre classe ici n'est pas assez pure
+[00:07:39 → 00:07:40] on redivise
+[00:07:40 → 00:07:42] vous voyez qu'ici on a redivisé un truc
+[00:07:42 → 00:07:44] ultra-pure et là qui est moitié moitié
+[00:07:44 → 00:07:47] mais là du coup la moyenne des deux
+[00:07:47 → 00:07:48] fait que c'est meilleur
+[00:07:48 → 00:07:51] pareil là on redivise etc
+[00:07:51 → 00:07:54] là on n'a pas besoin de diviser parce qu'on a que de la classe
+[00:07:54 → 00:07:57] donc c'est comme ça que l'arbre va être construit
+[00:07:57 → 00:07:59] par contre on va devoir mettre des critères d'arrêt
+[00:07:59 → 00:08:00] parce que sinon en fait
+[00:08:00 → 00:08:02] mais très bien si vous voulez continuer
+[00:08:02 → 00:08:04] bah en fait vous divisez en deux
+[00:08:04 → 00:08:05] là vous redivisez etc
+[00:08:05 → 00:08:07] et ça peut vous faire des arbres très très long
+[00:08:07 → 00:08:10] par rapport aux données que vous avez mis en entrée
+[00:08:10 → 00:08:15] donc ce que fait un modèle d'arbre
+[00:08:15 → 00:08:17] pendant l'entraînement
+[00:08:17 → 00:08:19] c'est qu'il va lister tout l'esprit possible
+[00:08:19 → 00:08:20] par feature
+[00:08:20 → 00:08:22] donc si vous avez par exemple
+[00:08:22 → 00:08:23] deux features
+[00:08:23 → 00:08:25] si je prends dans l'exemple des prix de vente
+[00:08:25 → 00:08:26] de biens immobiliers
+[00:08:26 → 00:08:28] que vous prenez par exemple
+[00:08:28 → 00:08:30] le
+[00:08:30 → 00:08:32] comment ça s'appelle
+[00:08:33 → 00:08:35] la surface du bien
+[00:08:35 → 00:08:36] et le type de bien
+[00:08:36 → 00:08:38] on va prendre pour ces deux colonnes là
+[00:08:38 → 00:08:40] bah en fait l'esprit possible c'est
+[00:08:40 → 00:08:42] le bien c'est soit un appartement
+[00:08:42 → 00:08:44] soit une maison par exemple
+[00:08:44 → 00:08:46] donc ça fait deux nœuds de décision possible
+[00:08:46 → 00:08:48] et la surface
+[00:08:48 → 00:08:50] bah vous avez par exemple
+[00:08:50 → 00:08:51] entre 10 et 12
+[00:08:51 → 00:08:52] entre 12 et 15
+[00:08:52 → 00:08:53] entre 15 et 20
+[00:08:53 → 00:08:54] entre 20 et 25
+[00:08:54 → 00:08:55] toutes les possibilités
+[00:08:55 → 00:08:56] par rapport à toutes les valeurs
+[00:08:56 → 00:08:58] que vous avez dans vos données d'entraînement
+[00:08:58 → 00:08:59] le modèle liste
+[00:08:59 → 00:09:00] tout s'explique là
+[00:09:00 → 00:09:02] il crée pour chaque
+[00:09:02 → 00:09:04] possibilité de notre décision
+[00:09:04 → 00:09:06] il crée les splits
+[00:09:06 → 00:09:08] que ça engendreurait
+[00:09:08 → 00:09:10] il mesure le critère
+[00:09:10 → 00:09:12] les critères d'impuretés
+[00:09:12 → 00:09:14] et on prend une moyenne
+[00:09:14 → 00:09:15] pondérée
+[00:09:15 → 00:09:17] et il va choisir le split
+[00:09:17 → 00:09:19] qui a le meilleur critère d'impuretés
+[00:09:19 → 00:09:20] qui a le critère d'impuretés
+[00:09:20 → 00:09:22] du coup le plus proche de zéro
+[00:09:22 → 00:09:23] notre potentiellement
+[00:09:23 → 00:09:24] bah déjà la séparation
+[00:09:24 → 00:09:26] maison ou appartement
+[00:09:26 → 00:09:27] se mettra très haut
+[00:09:27 → 00:09:28] et puis ensuite
+[00:09:28 → 00:09:30] on splitra sur autre chose
+[00:09:30 → 00:09:32] et donc le modèle c'est ça
+[00:09:32 → 00:09:34] c'est ça qui se fait
+[00:09:34 → 00:09:36] lors de la phase d'entraînement
+[00:09:36 → 00:09:38] pour une régression linéaire
+[00:09:38 → 00:09:40] on vient choisir les coefficient directeur
+[00:09:40 → 00:09:41] de votre droite
+[00:09:41 → 00:09:43] pour un modèle à base d'arbre
+[00:09:43 → 00:09:45] du coup vous venez
+[00:09:45 → 00:09:46] le modèle vient
+[00:09:46 → 00:09:47] choisir tous les splits
+[00:09:47 → 00:09:49] et créer tous les arbres
+[00:09:53 → 00:09:54] du coup c'est comme ça que ça fonctionne
+[00:09:54 → 00:09:56] ou par exemple si on a ces données là
+[00:09:56 → 00:09:58] là où on a deux features
+[00:09:58 → 00:10:00] et on a trois classes différentes
+[00:10:00 → 00:10:01] qui sont mises
+[00:10:01 → 00:10:02] le modèle va se dire
+[00:10:02 → 00:10:03] qu'elle est
+[00:10:03 → 00:10:04] déjà le premier split
+[00:10:04 → 00:10:05] qui s'épargne bien
+[00:10:05 → 00:10:06] il va se dire
+[00:10:06 → 00:10:08] bah si je fais un très
+[00:10:08 → 00:10:09] horizontal ici
+[00:10:09 → 00:10:10] et je dis que j'ai
+[00:10:10 → 00:10:11] la classe verte en bas
+[00:10:11 → 00:10:12] en haut par contre
+[00:10:12 → 00:10:14] au-dessus là je peux pas dire
+[00:10:14 → 00:10:15] qu'il y a trop d'éléments
+[00:10:15 → 00:10:16] de la classe grise
+[00:10:16 → 00:10:17] et de la classe rouge
+[00:10:17 → 00:10:18] donc j'ai re besoin de diviser
+[00:10:18 → 00:10:20] ce qui va être divisé par exemple
+[00:10:20 → 00:10:21] ici en vertical
+[00:10:22 → 00:10:23] et dire que bah si
+[00:10:23 → 00:10:25] X1 est inférieur à 0,5
+[00:10:25 → 00:10:27] on est dans la classe grise
+[00:10:27 → 00:10:28] et au-dessus
+[00:10:28 → 00:10:29] bah on continue de splitter
+[00:10:29 → 00:10:31] splitter ici etc etc
+[00:10:31 → 00:10:32] et c'est comme ça
+[00:10:32 → 00:10:35] que votre arbre est créé
+[00:10:35 → 00:10:38] le moment où vous avez ça
+[00:10:38 → 00:10:40] le premier split va être comme ça
+[00:10:40 → 00:10:42] ensuite du coup
+[00:10:42 → 00:10:43] je vais faire le split 1
+[00:10:43 → 00:10:44] et il va se dire
+[00:10:44 → 00:10:46] bah ici j'ai que de la classe
+[00:10:46 → 00:10:48] j'ai que une certaine classe
+[00:10:48 → 00:10:49] qui existe
+[00:10:49 → 00:10:50] la classe 2 on va dire
+[00:10:50 → 00:10:51] bah du coup
+[00:10:51 → 00:10:53] ça devient une feuille
+[00:10:53 → 00:10:54] au-dessus
+[00:10:54 → 00:10:56] là j'ai 2 classes
+[00:10:56 → 00:10:58] j'ai 2 feuilles différentes
+[00:10:58 → 00:11:00] et j'ai 3 feuilles différentes
+[00:11:00 → 00:11:01] et vous pouvez avoir
+[00:11:01 → 00:11:02] plusieurs feuilles
+[00:11:02 → 00:11:03] qui appartiennent
+[00:11:03 → 00:11:04] à la même classe
+[00:11:04 → 00:11:06] il y a plusieurs
+[00:11:06 → 00:11:07] il y a plusieurs moyens
+[00:11:07 → 00:11:08] d'avoir une panne
+[00:11:08 → 00:11:10] par exemple
+[00:11:10 → 00:11:11] donc du coup
+[00:11:11 → 00:11:13] je vais avoir plusieurs classes différentes
+[00:11:13 → 00:11:15] et sur plusieurs pays différents
+[00:11:15 → 00:11:16] enfin la même classe
+[00:11:16 → 00:11:20] sur plusieurs pays différents
+[00:11:20 → 00:11:22] donc ça c'est un arbre de décision
+[00:11:22 → 00:11:24] la difficulté
+[00:11:24 → 00:11:26] du coup
+[00:11:26 → 00:11:27] par contre ce qu'il faut faire attention
+[00:11:27 → 00:11:28] sur les arbres de décision
+[00:11:28 → 00:11:30] c'est que si vous avez une feuille
+[00:11:30 → 00:11:31] à la boule fin
+[00:11:31 → 00:11:32] avec peu d'éléments
+[00:11:32 → 00:11:33] ça veut dire que votre feuille
+[00:11:33 → 00:11:34] est peu généralisable
+[00:11:34 → 00:11:35] il y a peu de chance
+[00:11:35 → 00:11:36] que dans un test
+[00:11:36 → 00:11:37] vous trouviez dedans
+[00:11:37 → 00:11:38] donc pour ça
+[00:11:38 → 00:11:39] on va faire
+[00:11:39 → 00:11:40] et on va éviter de faire
+[00:11:40 → 00:11:41] des arbres infinis
+[00:11:41 → 00:11:42] qui s'arrêtent jamais
+[00:11:42 → 00:11:43] pour ça vous allez avoir
+[00:11:43 → 00:11:45] plusieurs hyper paramètres
+[00:11:45 → 00:11:47] qui vont être du coup
+[00:11:47 → 00:11:48] des critères d'arrêt
+[00:11:48 → 00:11:49] forcés
+[00:11:49 → 00:11:50] qui vous permettent
+[00:11:50 → 00:11:52] d'arrêter votre arbre
+[00:11:52 → 00:11:53] et de ne pas avoir
+[00:11:53 → 00:11:54] un truc infini
+[00:11:54 → 00:11:55] qui s'arrête jamais
+[00:11:55 → 00:11:56] et qui est trop spécifique
+[00:11:56 → 00:11:57] si on est trop
+[00:11:57 → 00:11:58] sur du spécifique
+[00:11:58 → 00:11:59] on va être
+[00:11:59 → 00:12:00] sur ce qu'on appelle
+[00:12:00 → 00:12:01] du coup de l'overfitting
+[00:12:01 → 00:12:02] vous allez être
+[00:12:02 → 00:12:03] très bon
+[00:12:03 → 00:12:04] si vous évaluez
+[00:12:04 → 00:12:05] sur vos données d'entraînement
+[00:12:05 → 00:12:06] vous êtes très bon
+[00:12:06 → 00:12:07] par contre dès que vous passez
+[00:12:07 → 00:12:08] sur
+[00:12:08 → 00:12:09] votre jeu de test
+[00:12:09 → 00:12:11] ou de prod
+[00:12:11 → 00:12:12] vous allez être clairement
+[00:12:12 → 00:12:13] moins bon
+[00:12:13 → 00:12:14] puisque votre modèle est
+[00:12:14 → 00:12:15] trop spécifique
+[00:12:15 → 00:12:16] par rapport à vos données
+[00:12:16 → 00:12:17] d'entraînement
+[00:12:17 → 00:12:18] et donc critères d'arrêt
+[00:12:18 → 00:12:19] vous avez
+[00:12:19 → 00:12:21] la profondeur maximale
+[00:12:21 → 00:12:22] donc
+[00:12:22 → 00:12:23] combien d'étages
+[00:12:23 → 00:12:24] il peut y avoir maximum
+[00:12:24 → 00:12:25] de par arbres
+[00:12:25 → 00:12:26] après ça c'est un peu
+[00:12:26 → 00:12:27] arbitraire
+[00:12:27 → 00:12:28] le nombre
+[00:12:28 → 00:12:29] minimum d'éléments
+[00:12:29 → 00:12:30] par feuilles
+[00:12:30 → 00:12:31] ça va être très intéressant
+[00:12:31 → 00:12:32] par contre de dire
+[00:12:32 → 00:12:33] bah je vais abîmer
+[00:12:33 → 00:12:34] 3 éléments par feuilles
+[00:12:34 → 00:12:35] si j'ai une feuille
+[00:12:35 → 00:12:36] de 3 éléments
+[00:12:36 → 00:12:37] bah je ne resplique pas
+[00:12:37 → 00:12:38] derrière pour avoir
+[00:12:38 → 00:12:39] 1 et 2
+[00:12:39 → 00:12:41] un nombre de nœuds maximum
+[00:12:41 → 00:12:42] c'est surtout
+[00:12:42 → 00:12:44] tout l'arbre
+[00:12:44 → 00:12:45] au global
+[00:12:45 → 00:12:46] et le gain minimum
+[00:12:46 → 00:12:47] du critère d'impureté
+[00:12:47 → 00:12:48] ça c'est celui
+[00:12:48 → 00:12:50] qui est un peu le plus
+[00:12:50 → 00:12:51] objectif
+[00:12:51 → 00:12:52] on va dire
+[00:12:52 → 00:12:53] qui est entre un étage
+[00:12:53 → 00:12:54] et l'autre
+[00:12:54 → 00:12:55] je veux gagner par exemple
+[00:12:55 → 00:12:57] 0-1 de critères d'impureté
+[00:12:57 → 00:12:58] entre chaque
+[00:12:58 → 00:12:59] je veux ça ne sert à rien
+[00:12:59 → 00:13:01] que je fais
+[00:13:01 → 00:13:03] que je split si au final
+[00:13:03 → 00:13:04] je gagne trop peu
+[00:13:04 → 00:13:05] en critères d'impureté
+[00:13:05 → 00:13:06] je peux faire rester
+[00:13:06 → 00:13:07] sur les tapos dessus
+[00:13:08 → 00:13:09] et donc tout ça
+[00:13:09 → 00:13:10] ça peut être des hyperparamètres
+[00:13:10 → 00:13:11] que vous pouvez décider
+[00:13:11 → 00:13:13] sur tous les modèles
+[00:13:13 → 00:13:14] qui ont de l'arbre de décision
+[00:13:14 → 00:13:15] à l'intérieur
+[00:13:17 → 00:13:18] et donc dans les feuilles
+[00:13:18 → 00:13:19] une fois que votre modèle
+[00:13:19 → 00:13:20] est entraîné
+[00:13:20 → 00:13:21] on donne à chaque feuille
+[00:13:21 → 00:13:22] le label
+[00:13:22 → 00:13:24] de la classe majoritaire
+[00:13:24 → 00:13:26] donc si je suis
+[00:13:26 → 00:13:28] ici par exemple
+[00:13:28 → 00:13:29] cette classe là
+[00:13:29 → 00:13:31] deviendra la classe verte
+[00:13:31 → 00:13:32] ici vert ou noir
+[00:13:32 → 00:13:33] de manière totalement
+[00:13:33 → 00:13:34] aléatoire
+[00:13:34 → 00:13:35] puisqu'il y en a autant
+[00:13:35 → 00:13:36] ici orange
+[00:13:36 → 00:13:37] ici jaune
+[00:13:37 → 00:13:38] et ici noir
+[00:13:38 → 00:13:39] donc
+[00:13:39 → 00:13:41] admettons qu'il décide de noir ici
+[00:13:42 → 00:13:43] du coup ça voudrait dire
+[00:13:43 → 00:13:44] que si vous avez une nouvelle
+[00:13:44 → 00:13:45] donnée qui arrive
+[00:13:45 → 00:13:47] elle passera dans le split
+[00:13:47 → 00:13:48] et elle ira dans la feuille
+[00:13:48 → 00:13:49] et du coup si elle tombe
+[00:13:49 → 00:13:50] ici et que j'ai dit
+[00:13:50 → 00:13:51] que c'était les noirs
+[00:13:51 → 00:13:53] du coup on va prédire
+[00:13:53 → 00:13:54] que ma donnée
+[00:13:54 → 00:13:55] et du coup
+[00:13:55 → 00:13:57] de la classe noire
+[00:13:59 → 00:14:10] donc c'est à ça
+[00:14:10 → 00:14:11] que servent
+[00:14:12 → 00:14:14] les armes de décision
+[00:14:15 → 00:14:16] et si vous voulez faire
+[00:14:16 → 00:14:17] de la régression
+[00:14:17 → 00:14:18] au lieu
+[00:14:20 → 00:14:21] de choisir du coup
+[00:14:21 → 00:14:23] quand vous avez fait les classes
+[00:14:23 → 00:14:24] au lieu de prendre
+[00:14:24 → 00:14:25] mais du coup la classe majoritaire
+[00:14:25 → 00:14:26] si on veut faire
+[00:14:26 → 00:14:27] de la régression
+[00:14:27 → 00:14:28] on prend la valeur moyenne
+[00:14:28 → 00:14:29] de la feuille
+[00:14:29 → 00:14:30] donc ça permet de faire
+[00:14:30 → 00:14:31] d'avoir
+[00:14:31 → 00:14:32] par contre ça veut dire
+[00:14:32 → 00:14:33] qu'au lieu d'avoir
+[00:14:33 → 00:14:34] par exemple
+[00:14:34 → 00:14:35] avec une régression
+[00:14:35 → 00:14:36] vous pouvez avoir
+[00:14:36 → 00:14:37] n'importe quelle valeur
+[00:14:37 → 00:14:38] là vous aurez
+[00:14:38 → 00:14:39] un nombre
+[00:14:39 → 00:14:40] discret
+[00:14:40 → 00:14:43] de valeur possible
+[00:14:43 → 00:14:44] et donc là
+[00:14:44 → 00:14:45] vous pouvez avoir
+[00:14:45 → 00:14:46] un arbre de décision
+[00:14:46 → 00:14:47] qui peut être utilisé
+[00:14:47 → 00:14:48] autant pour la classification
+[00:14:48 → 00:14:49] que pour la régression
+[00:14:51 → 00:14:52] vous avez juste par contre
+[00:14:52 → 00:14:53] suivant
+[00:14:53 → 00:14:54] du coup un effet discret
+[00:14:54 → 00:14:55] vous voyez
+[00:14:55 → 00:14:56] vous pouvez pas avoir
+[00:14:56 → 00:14:57] toutes les valeurs
+[00:14:57 → 00:14:58] qui sont ici
+[00:14:58 → 00:14:59] vous pouvez pas les donner
+[00:14:59 → 00:15:00] vous allez prédire
+[00:15:00 → 00:15:01] soit celle-là
+[00:15:01 → 00:15:02] soit celle-là
+[00:15:02 → 00:15:03] du coup c'est ce qui
+[00:15:03 → 00:15:04] rend
+[00:15:05 → 00:15:06] un peu plus compliqué
+[00:15:06 → 00:15:07] enfin un peu plus compliqué
+[00:15:07 → 00:15:08] la régression
+[00:15:08 → 00:15:11] les avantages
+[00:15:11 → 00:15:12] du coup
+[00:15:12 → 00:15:13] des armes de décision
+[00:15:13 → 00:15:14] c'est que ça va être
+[00:15:14 → 00:15:15] facile à comprendre
+[00:15:15 → 00:15:16] et interprétable
+[00:15:16 → 00:15:17] et on peut essayer
+[00:15:17 → 00:15:18] de retrouver quelle splité
+[00:15:18 → 00:15:19] à haut etc
+[00:15:19 → 00:15:20] ça permet de résister
+[00:15:20 → 00:15:21] aux valeurs aberrantes
+[00:15:21 → 00:15:22] par exemple
+[00:15:22 → 00:15:23] ici vous voyez
+[00:15:23 → 00:15:24] cette valeur qui est
+[00:15:24 → 00:15:25] elle est même pas donnée
+[00:15:25 → 00:15:26] mais par exemple
+[00:15:26 → 00:15:27] cette valeur qui est ici
+[00:15:27 → 00:15:28] elle est aberrante
+[00:15:28 → 00:15:29] par rapport
+[00:15:29 → 00:15:30] à toutes nos données
+[00:15:30 → 00:15:31] et en fait
+[00:15:31 → 00:15:32] elle va tomber
+[00:15:32 → 00:15:33] dans une feuille très particulière
+[00:15:33 → 00:15:34] et en fait
+[00:15:34 → 00:15:35] il n'y a plus rien
+[00:15:35 → 00:15:36] qui va tomber
+[00:15:36 → 00:15:37] dans cette feuille là
+[00:15:37 → 00:15:38] la probabilité
+[00:15:38 → 00:15:39] que vous retombiez dessus
+[00:15:39 → 00:15:40] elle est quasi nulle
+[00:15:40 → 00:15:41] donc du coup les outliers
+[00:15:41 → 00:15:42] donc les valeurs aberrantes
+[00:15:42 → 00:15:43] n'ont pas d'impact
+[00:15:43 → 00:15:44] sur votre modèle
+[00:15:44 → 00:15:45] dans la globalité
+[00:15:45 → 00:15:46] donc ça c'est
+[00:15:46 → 00:15:47] plutôt des avantages
+[00:15:47 → 00:15:48] on peut
+[00:15:48 → 00:15:49] contrairement à la récréation linéaire
+[00:15:49 → 00:15:50] du coup
+[00:15:50 → 00:15:51] modéliser des relations non linéaires
+[00:15:51 → 00:15:52] donc vous allez avoir
+[00:15:52 → 00:15:53] des problèmes
+[00:15:53 → 00:15:54] plus complexes
+[00:15:54 → 00:15:55] que vous pouvez gérer
+[00:15:56 → 00:15:57] vous pouvez traiter
+[00:15:57 → 00:15:58] les valeurs numériques
+[00:15:58 → 00:15:59] et catégories elles
+[00:15:59 → 00:16:00] donc ça vous ne
+[00:16:00 → 00:16:01] n'avez pas du coup
+[00:16:01 → 00:16:02] à faire tous les traitements
+[00:16:03 → 00:16:04] et pareil
+[00:16:04 → 00:16:05] il n'y a pas besoin
+[00:16:05 → 00:16:06] non plus de normaliser
+[00:16:06 → 00:16:07] standardiser les features
+[00:16:07 → 00:16:08] ce que vous disiez
+[00:16:08 → 00:16:09] le seuil
+[00:16:09 → 00:16:10] c'est entre
+[00:16:10 → 00:16:11] est-ce que ma valeur
+[00:16:11 → 00:16:13] est plus petite que 50
+[00:16:13 → 00:16:14] ou plus grande que 50
+[00:16:14 → 00:16:16] ou plus petite que 0,5
+[00:16:16 → 00:16:17] et plus grande que 0,5
+[00:16:17 → 00:16:18] parce que vous avez normalisé
+[00:16:18 → 00:16:19] ça revient en même
+[00:16:20 → 00:16:21] vous avez pas de
+[00:16:22 → 00:16:23] ça change rien ça
+[00:16:23 → 00:16:24] donc si jamais
+[00:16:24 → 00:16:25] vous savez que
+[00:16:25 → 00:16:26] vous n'allez faire que
+[00:16:26 → 00:16:27] des modèles à base d'arbre
+[00:16:28 → 00:16:29] vous pouvez
+[00:16:29 → 00:16:30] éviter la normalisation
+[00:16:32 → 00:16:33] l'inconvénient par contre
+[00:16:33 → 00:16:34] c'est que
+[00:16:34 → 00:16:35] votre modèle
+[00:16:35 → 00:16:36] est très dépendant
+[00:16:36 → 00:16:37] de vos données d'entrainement
+[00:16:38 → 00:16:39] puisque
+[00:16:39 → 00:16:40] votre arbre est créé
+[00:16:40 → 00:16:42] à partir de vos données d'entrainement
+[00:16:42 → 00:16:43] donc il peut
+[00:16:44 → 00:16:45] overfiter
+[00:16:45 → 00:16:46] très facilement
+[00:16:46 → 00:16:47] et devenir très spécifique
+[00:16:47 → 00:16:48] par rapport à vos données d'entrainement
+[00:16:48 → 00:16:49] très vite
+[00:16:49 → 00:16:50] et il y a une très forte
+[00:16:50 → 00:16:51] instabilité
+[00:16:51 → 00:16:52] parce que si vous rajoutez
+[00:16:52 → 00:16:53] une ligne d'observation
+[00:16:54 → 00:16:55] vous rajoutez potentiellement
+[00:16:55 → 00:16:56] plusieurs splits
+[00:16:56 → 00:16:57] possibles
+[00:16:57 → 00:16:58] sur chaque feature
+[00:16:59 → 00:17:00] et donc potentiellement
+[00:17:00 → 00:17:01] votre arbre
+[00:17:01 → 00:17:02] avec 2-3 lignes
+[00:17:02 → 00:17:03] en plus
+[00:17:03 → 00:17:04] dans votre jeu d'entrainement
+[00:17:04 → 00:17:05] ne ressemble plus du tout
+[00:17:05 → 00:17:06] à l'arbre
+[00:17:06 → 00:17:07] que vous avez avant
+[00:17:07 → 00:17:08] donc c'est très instable
+[00:17:09 → 00:17:10] et dernière chose
+[00:17:10 → 00:17:11] c'est qu'ils considèrent
+[00:17:11 → 00:17:12] chaque feature sépérément
+[00:17:12 → 00:17:13] les splits ne sont faits
+[00:17:13 → 00:17:14] que sur une feature
+[00:17:14 → 00:17:15] c'est pas sur des combinaisons
+[00:17:15 → 00:17:16] de feature
+[00:17:17 → 00:17:18] donc ça c'est les inconvénients
+[00:17:18 → 00:17:19] des armes de décision
+[00:17:23 → 00:17:24] est-ce que ça vous paraît
+[00:17:24 → 00:17:25] est-ce que c'est ok pour vous
+[00:17:25 → 00:17:26] sur le système
+[00:17:26 → 00:17:27] sur les armes de décision
+[00:17:28 → 00:17:29] oui merci
+[00:17:30 → 00:17:31] du coup j'ai
+[00:17:31 → 00:17:32] enchaîné vite
+[00:17:32 → 00:17:33] rapidement
+[00:17:33 → 00:17:34] sur la Random Forest
+[00:17:34 → 00:17:35] justement
+[00:17:35 → 00:17:36] après on ferait une petite pause
+[00:17:37 → 00:17:38] petite pause qu'elle fait
+[00:17:39 → 00:17:40] parce que justement
+[00:17:40 → 00:17:41] les Random Forest
+[00:17:41 → 00:17:42] sont des armes de décision
+[00:17:42 → 00:17:43] mais qu'on va avoir mis
+[00:17:43 → 00:17:44] on va n'avoir mis
+[00:17:44 → 00:17:45] plusieurs
+[00:17:46 → 00:17:47] les armes à la suite des autres
+[00:17:50 → 00:17:51] enfin et qui vont être
+[00:17:51 → 00:17:52] en parallèle en fait
+[00:17:53 → 00:17:54] qui vont faire leur prédiction
+[00:17:54 → 00:17:55] côte à côte
+[00:17:58 → 00:18:06] donc Random Forest
+[00:18:06 → 00:18:07] c'est
+[00:18:07 → 00:18:08] du coup une méthode ensemble
+[00:18:08 → 00:18:09] parce qu'on va mettre
+[00:18:09 → 00:18:11] plusieurs armes de décision
+[00:18:12 → 00:18:13] parce que les armes
+[00:18:13 → 00:18:14] de décision du coup
+[00:18:14 → 00:18:15] ils sont instables
+[00:18:15 → 00:18:16] si vous avez une égalité
+[00:18:16 → 00:18:17] dans le critère d'impureté
+[00:18:17 → 00:18:18] par exemple pour deux splits
+[00:18:18 → 00:18:19] différents
+[00:18:19 → 00:18:20] il y a exactement le
+[00:18:20 → 00:18:21] même critère d'impureté
+[00:18:21 → 00:18:22] pour les deux
+[00:18:22 → 00:18:23] du coup il va choisir de manière
+[00:18:23 → 00:18:24] totalement aléatoire
+[00:18:25 → 00:18:26] le meilleur split
+[00:18:26 → 00:18:27] pareil si vous changez
+[00:18:27 → 00:18:28] un peu votre jeu d'entraînement
+[00:18:29 → 00:18:30] ça peut totalement
+[00:18:30 → 00:18:31] changer les splits
+[00:18:31 → 00:18:32] et quel du coup
+[00:18:32 → 00:18:33] feature et
+[00:18:33 → 00:18:34] quelle ne décision
+[00:18:34 → 00:18:35] est créée etc
+[00:18:36 → 00:18:37] donc l'arbre de décision
+[00:18:37 → 00:18:38] seule
+[00:18:38 → 00:18:39] on va pas pouvoir
+[00:18:40 → 00:18:41] l'utiliser tel quel
+[00:18:42 → 00:18:43] parce qu'en plus
+[00:18:43 → 00:18:44] ils overfit beaucoup etc
+[00:18:44 → 00:18:45] donc vous n'allez pas
+[00:18:45 → 00:18:46] pouvoir les utiliser tel quel
+[00:18:47 → 00:18:48] donc pour ça
+[00:18:48 → 00:18:49] on va faire
+[00:18:49 → 00:18:50] ce qu'on appelle du bagging
+[00:18:50 → 00:18:51] de l'ensemble
+[00:18:51 → 00:18:52] c'est
+[00:18:52 → 00:18:53] dire que
+[00:18:53 → 00:18:54] on va
+[00:18:55 → 00:18:57] agréger plusieurs modèles
+[00:18:58 → 00:18:59] les uns à la suite des autres
+[00:18:59 → 00:19:00] donc on va mettre
+[00:19:00 → 00:19:01] plusieurs arbres
+[00:19:02 → 00:19:03] les uns à la suite des autres
+[00:19:03 → 00:19:04] qui vont être
+[00:19:04 → 00:19:05] tous créés
+[00:19:05 → 00:19:07] avec des sous-échantillons
+[00:19:07 → 00:19:08] de votre
+[00:19:09 → 00:19:10] de votre jeu d'entraînement
+[00:19:10 → 00:19:11] en fait
+[00:19:11 → 00:19:12] vous avez votre jeu d'entraînement
+[00:19:12 → 00:19:13] par exemple qui fait
+[00:19:13 → 00:19:14] sans
+[00:19:14 → 00:19:15] sans ligne
+[00:19:15 → 00:19:16] et dix colonnes
+[00:19:17 → 00:19:18] mais vous allez avoir
+[00:19:18 → 00:19:19] un premier ordre
+[00:19:19 → 00:19:20] qui va être créé
+[00:19:21 → 00:19:23] un deuxième ordre qui va être créé
+[00:19:23 → 00:19:24] avec
+[00:19:24 → 00:19:26] les 7 autres colonnes
+[00:19:26 → 00:19:28] et 35 lignes
+[00:19:28 → 00:19:29] un autre arbre etc
+[00:19:29 → 00:19:30] et donc il y a un nombre d'arbres
+[00:19:30 → 00:19:31] qui est créé comme ça
+[00:19:31 → 00:19:33] avec un échantillonnage
+[00:19:33 → 00:19:35] pardon qui est aléatoire
+[00:19:36 → 00:19:37] qui fait que
+[00:19:37 → 00:19:38] chaque arbre
+[00:19:38 → 00:19:39] si vous les prenez séparément
+[00:19:39 → 00:19:40] ils sont forcément
+[00:19:40 → 00:19:41] ils portent
+[00:19:41 → 00:19:42] moins d'informations
+[00:19:42 → 00:19:43] puisqu'ils sont sur
+[00:19:43 → 00:19:44] des échantillons
+[00:19:44 → 00:19:45] de données plus petits
+[00:19:46 → 00:19:47] mais par contre
+[00:19:47 → 00:19:48] ils sont très indépendants
+[00:19:48 → 00:19:49] les uns des autres
+[00:19:49 → 00:19:51] et donc du coup leurs erreurs aussi
+[00:19:51 → 00:19:53] en gros s'il y en a un qui se trompe
+[00:19:53 → 00:19:55] l'autre risque de ne pas se tromper
+[00:19:55 → 00:19:58] donc c'est ça qu'on va utiliser
+[00:19:58 → 00:19:59] et on va utiliser
+[00:19:59 → 00:20:01] c'est le théorème de Condorcet
+[00:20:01 → 00:20:02] qui dit que
+[00:20:02 → 00:20:04] si la majorité
+[00:20:04 → 00:20:05] dit une classe
+[00:20:05 → 00:20:07] la majorité a raison
+[00:20:07 → 00:20:08] donc en gros
+[00:20:08 → 00:20:09] quand vous allez faire
+[00:20:09 → 00:20:10] de la classification
+[00:20:10 → 00:20:11] c'est comme si vous métiez
+[00:20:11 → 00:20:12] plein d'arbres
+[00:20:12 → 00:20:13] côte à côte
+[00:20:13 → 00:20:14] qui ont été créés
+[00:20:14 → 00:20:15] de manière indépendante
+[00:20:15 → 00:20:16] chacun
+[00:20:16 → 00:20:19] chaque arbre fait
+[00:20:19 → 00:20:21] vote pour une certaine classification
+[00:20:21 → 00:20:23] met une certaine classe
+[00:20:23 → 00:20:24] à votre données
+[00:20:24 → 00:20:25] et on va prendre
+[00:20:25 → 00:20:28] le vote majoritaire de chaque arbre
+[00:20:28 → 00:20:29] enfin de tous les arbres
+[00:20:29 → 00:20:32] pour donner la classe finale
+[00:20:34 → 00:20:35] en gros une Random Forest
+[00:20:35 → 00:20:36] ça va être comme ça
+[00:20:36 → 00:20:37] vous avez du coup
+[00:20:37 → 00:20:38] par exemple la haine arbre
+[00:20:38 → 00:20:40] qui sont mis à la suite
+[00:20:41 → 00:20:42] et si vous avez
+[00:20:42 → 00:20:44] en majorité la classe B
+[00:20:44 → 00:20:45] qui est sortie
+[00:20:45 → 00:20:46] des arbres
+[00:20:47 → 00:20:49] on va dire que la classe finale
+[00:20:49 → 00:20:51] que la classe du coup qui est prédite
+[00:20:51 → 00:20:54] et la classe B du coup
+[00:20:54 → 00:20:55] si vous faites pareil
+[00:20:55 → 00:20:56] avec de la réagression
+[00:20:56 → 00:20:58] vous prendrez la moyenne
+[00:20:58 → 00:21:01] de toutes les prédictions
+[00:21:01 → 00:21:03] et du coup vous allez devoir
+[00:21:03 → 00:21:05] décider quel est le nombre d'arbres
+[00:21:05 → 00:21:06] que vous mettez
+[00:21:06 → 00:21:07] si vous mettez seulement
+[00:21:07 → 00:21:08] deux arbres
+[00:21:08 → 00:21:09] deux ou trois arbres
+[00:21:09 → 00:21:10] vous allez avoir quelque chose
+[00:21:10 → 00:21:12] qui reste quand même très instable
+[00:21:12 → 00:21:13] puisque vous avez
+[00:21:13 → 00:21:15] peu de
+[00:21:15 → 00:21:17] enfin des arbres est instable
+[00:21:17 → 00:21:18] chacun
+[00:21:18 → 00:21:19] deux ou trois arbres
+[00:21:19 → 00:21:20] ça suffit pas
+[00:21:20 → 00:21:22] pour faire une forêt globalement
+[00:21:22 → 00:21:24] donc vous allez devoir
+[00:21:24 → 00:21:26] faire avec beaucoup plus d'arbres
+[00:21:26 → 00:21:27] ce qui fait que par contre
+[00:21:27 → 00:21:29] du coup beaucoup plus de calculs
+[00:21:29 → 00:21:30] etc
+[00:21:30 → 00:21:31] mais on va faire du coup
+[00:21:31 → 00:21:32] des forêts avec
+[00:21:32 → 00:21:34] 50, 100, 200, 300 arbres
+[00:21:35 → 00:21:37] et pour décider ce nombre-là
+[00:21:37 → 00:21:39] ce que vous demandez
+[00:21:39 → 00:21:41] en fait vous allez tester
+[00:21:41 → 00:21:42] avec 100
+[00:21:42 → 00:21:44] une Random Forest avec 100
+[00:21:44 → 00:21:46] regarder les performances
+[00:21:46 → 00:21:48] et vous allez tester après
+[00:21:48 → 00:21:50] une Random Forest avec
+[00:21:50 → 00:21:52] 200 par exemple
+[00:21:52 → 00:21:54] l'entraîner avec 200
+[00:21:54 → 00:21:56] et du coup
+[00:21:57 → 00:21:59] mesurer les performances
+[00:21:59 → 00:22:01] et du coup comparer
+[00:22:01 → 00:22:03] et il y a des méthodes
+[00:22:03 → 00:22:04] d'optimisation pour aller chercher
+[00:22:04 → 00:22:06] tous ces paramètres-là
+[00:22:06 → 00:22:07] pour que vous l'ancier
+[00:22:07 → 00:22:08] vous du code
+[00:22:08 → 00:22:09] ça teste
+[00:22:09 → 00:22:10] le modèle va tester
+[00:22:10 → 00:22:12] et va entraîner
+[00:22:12 → 00:22:13] tout seul
+[00:22:13 → 00:22:14] plusieurs Random Forest
+[00:22:14 → 00:22:16] avec des hyper paramètres différents
+[00:22:16 → 00:22:17] et va vous donner
+[00:22:17 → 00:22:18] et va sauvegarder le modèle
+[00:22:18 → 00:22:20] qui est le plus performant
+[00:22:20 → 00:22:22] donc ça je vous laisserai le regarder
+[00:22:22 → 00:22:24] pour l'instant mais si vous voulez chercher
+[00:22:24 → 00:22:25] tout ce qui est
+[00:22:25 → 00:22:26] random search
+[00:22:26 → 00:22:27] grid search
+[00:22:27 → 00:22:29] ou optuna
+[00:22:29 → 00:22:30] c'est des techniques différentes
+[00:22:30 → 00:22:31] qui vous permettent
+[00:22:31 → 00:22:34] d'optimiser ces hyper paramètres
+[00:22:34 → 00:22:35] sans vous avoir
+[00:22:35 → 00:22:37] à venir modifier
+[00:22:37 → 00:22:38] à chaque fois les valeurs
+[00:22:40 → 00:22:41] nous en le verra plus tard
+[00:22:41 → 00:22:42] mais s'il y en a qui veulent le lancer
+[00:22:42 → 00:22:43] dès maintenant vous pouvez
+[00:22:46 → 00:22:48] donc les Random Forest c'est ça
+[00:22:48 → 00:22:50] c'est des arbres de décision
+[00:22:50 → 00:22:52] les uns à côté des autres
+[00:22:52 → 00:22:53] et donc on utilise
+[00:22:53 → 00:22:54] l'instabilité des arbres
+[00:22:54 → 00:22:55] pour avoir des modèles
+[00:22:55 → 00:22:56] qui sont indépendants
+[00:22:56 → 00:22:57] et en fait ça va améliorer
+[00:22:57 → 00:22:59] d'avoir pleins de modèles
+[00:22:59 → 00:23:00] indépendants
+[00:23:00 → 00:23:01] ça va améliorer les performances
+[00:23:01 → 00:23:02] et même si ils sont instables
+[00:23:02 → 00:23:03] et qu'il y en a quelques uns
+[00:23:03 → 00:23:04] qui font des erreurs
+[00:23:04 → 00:23:05] en fait le fait
+[00:23:05 → 00:23:06] qu'ils soient pleins
+[00:23:06 → 00:23:08] va venir corriger l'instabilité
+[00:23:08 → 00:23:10] et les charentonnages qui y est fait
+[00:23:10 → 00:23:12] c'est fait pendant l'entraînement
+[00:23:12 → 00:23:13] de manière aléatoire
+[00:23:13 → 00:23:14] autant sur vos colonnes
+[00:23:14 → 00:23:15] que sur vos lignes
+[00:23:15 → 00:23:17] donc autant sur vos données
+[00:23:17 → 00:23:18] que sur vos features
+[00:23:18 → 00:23:20] donc ça choisit un échantillon
+[00:23:20 → 00:23:21] ça crée un arbre de décision
+[00:23:21 → 00:23:22] sur cette échantillon-là
+[00:23:22 → 00:23:25] et puis ça crée un deuxième arbre
+[00:23:25 → 00:23:26] de décision
+[00:23:26 → 00:23:27] sur notre échantillon etc
+[00:23:27 → 00:23:32] et donc le Random Forest
+[00:23:32 → 00:23:34] ça a en général de bons résultats
+[00:23:34 → 00:23:35] sur tout type de données
+[00:23:35 → 00:23:36] l'avantage c'est
+[00:23:36 → 00:23:37] que vous pouvez prendre
+[00:23:37 → 00:23:38] des données catégorielles
+[00:23:38 → 00:23:40] des données numériques
+[00:23:40 → 00:23:42] vous pouvez faire de la classification
+[00:23:42 → 00:23:44] vous pouvez faire de la régression
+[00:23:44 → 00:23:46] il n'y a pas tant d'hyperparamètres
+[00:23:46 → 00:23:48] que ça par rapport à d'autres modèles
+[00:23:48 → 00:23:50] et c'est plutôt rapide à calculer
+[00:23:50 → 00:23:51] puisque part à l'élisable
+[00:23:51 → 00:23:52] parce qu'en fait
+[00:23:52 → 00:23:53] chaque modèle est indépendant
+[00:23:53 → 00:23:55] donc peut être calculé
+[00:23:55 → 00:23:56] indépendamment
+[00:23:56 → 00:23:57] et ensuite
+[00:23:57 → 00:23:58] il faut juste attendre
+[00:23:58 → 00:23:59] que chacun soit fini
+[00:23:59 → 00:24:01] mais ça gère très bien
+[00:24:01 → 00:24:02] du coup le temps de calcul
+[00:24:02 → 00:24:03] le temps d'entraînement
+[00:24:03 → 00:24:04] est beaucoup plus court
+[00:24:04 → 00:24:06] que pour d'autres modèles
+[00:24:07 → 00:24:08] et comme du coup
+[00:24:08 → 00:24:09] pour les armes de décision
+[00:24:09 → 00:24:11] ça gère très bien les données catégorielles
+[00:24:12 → 00:24:14] ça gère très bien les outliers
+[00:24:14 → 00:24:15] et ça gère très bien
+[00:24:15 → 00:24:16] si vous avez énormément de colonnes
+[00:24:16 → 00:24:18] avec peu de valeur possible par future
+[00:24:18 → 00:24:21] ça va être le cas d'usage le plus pratique
+[00:24:21 → 00:24:23] pour les Random Forest
+[00:24:23 → 00:24:24] parce que ça fait un nombre
+[00:24:24 → 00:24:26] du coup de split possible
+[00:24:26 → 00:24:29] qui est assez pratique à faire
+[00:24:30 → 00:24:31] et pour le coup
+[00:24:31 → 00:24:33] autant les armes de décision
+[00:24:33 → 00:24:34] ont une grosse tendance
+[00:24:34 → 00:24:36] à faire de l'overfitting
+[00:24:36 → 00:24:40] autant les Random Forest
+[00:24:40 → 00:24:42] vu que vous avez plein d'armes de décision
+[00:24:42 → 00:24:43] et que vous compenser
+[00:24:43 → 00:24:44] les réserveurs des autres
+[00:24:44 → 00:24:46] il y a une faible tendance
+[00:24:46 → 00:24:47] à l'overfitting
+[00:24:47 → 00:24:49] normalement vous devriez être bon
+[00:24:49 → 00:24:51] donc c'est un modèle
+[00:24:51 → 00:24:52] que vous pouvez voir
+[00:24:52 → 00:24:53] apparaître très souvent
+[00:24:53 → 00:24:55] dans les résultats
+[00:24:55 → 00:24:57] de data scientist
+[00:24:57 → 00:24:58] si vous voulez voir
+[00:24:58 → 00:25:00] il y a des sujets type
+[00:25:00 → 00:25:01] Kaggle
+[00:25:01 → 00:25:02] qui est une plateforme
+[00:25:02 → 00:25:04] de challenge
+[00:25:04 → 00:25:06] en fait de sujet IA
+[00:25:06 → 00:25:07] vous pouvez vous entraîner
+[00:25:07 → 00:25:08] il vous donne les données
+[00:25:08 → 00:25:10] il vous donne ce qu'il faut prédire
+[00:25:10 → 00:25:11] il vous donne en général
+[00:25:11 → 00:25:13] la métrique d'évaluation
+[00:25:13 → 00:25:14] et vous pouvez voir
+[00:25:14 → 00:25:15] il y a plein de gens
+[00:25:15 → 00:25:16] qui laissent leurs codes etc
+[00:25:16 → 00:25:17] et vous pouvez voir
+[00:25:17 → 00:25:19] que Random Forest est
+[00:25:19 → 00:25:21] très souvent utilisé
+[00:25:21 → 00:25:23] puisqu'il fonctionne très bien
+[00:25:26 → 00:25:27] donc voilà
+[00:25:27 → 00:25:28] est-ce qu'il y a des questions
+[00:25:28 → 00:25:29] par rapport à la Random Forest
+[00:25:29 → 00:25:30] autre
+[00:25:30 → 00:25:31] justement si vous étiez
+[00:25:31 → 00:25:33] en train de la tester
+[00:25:33 → 00:25:41] je vais vous partager
+[00:25:41 → 00:25:42] du coup les documents
+[00:25:42 → 00:25:44] qu'on a vu là
+[00:25:46 → 00:25:51] et puis si ça vous va
+[00:25:51 → 00:25:52] on peut faire
+[00:25:52 → 00:25:54] une petite poste de café
+[00:25:54 → 00:25:55] jusqu'à 16h à peu près
+[00:25:55 → 00:25:56] comme ça on se retrouve
+[00:25:56 → 00:25:57] à 16h et on fait
+[00:25:57 → 00:25:58] l'état des lieux
+[00:25:58 → 00:25:59] de où vous en êtes
+[00:25:59 → 00:26:00] par rapport à vos modèles
+[00:26:00 → 00:26:01] justement
+[00:26:01 → 00:26:02] par rapport à ça
+[00:26:03 → 00:26:04] par rapport au TP
+[00:26:04 → 00:26:05] si c'est bon pour tout le monde
+[00:26:05 → 00:26:07] ça marche à toutes
+[00:26:08 → 00:26:09] à toutes
+[00:26:09 → 00:26:12] à toutes, merci
+[00:26:12 → 00:37:16] là que je sors
+[00:37:16 → 00:41:23] il est très mal
+[00:41:23 → 00:44:59] il me dér
+[00:44:59 → 00:45:23] très bien
+[00:45:23 → 00:47:36] mais j'aimerais bien savoir le prix
+[00:47:36 → 00:48:53] je veux pas avoir le prix s'il vous plaît
+[00:48:54 → 00:48:59] du coup je veux bien que vous me disiez
+[00:48:59 → 00:49:00] individuellement
+[00:49:00 → 00:49:01] soit par message
+[00:49:01 → 00:49:02] soit ici
+[00:49:02 → 00:49:03] ou vous en êtes
+[00:49:03 → 00:49:04] du TP
+[00:49:04 → 00:49:05] ce qu'il y en a si
+[00:49:05 → 00:49:06] ce qui sont bloqués
+[00:49:06 → 00:49:08] ou ce qui est fait
+[00:49:08 → 00:49:12] comme ça que je
+[00:49:12 → 00:49:15] que je débloque certains
+[00:49:15 → 00:49:16] ou en tout cas
+[00:49:16 → 00:49:17] si il y a des sujets à disputé
+[00:49:17 → 00:49:18] que je regarde ça
+[00:49:18 → 00:49:19] vous aimez ta
+[00:49:47 → 00:49:48] ok
+[00:49:48 → 00:49:50] pour comparer les résultats
+[00:49:50 → 00:49:51] c'était
+[00:49:51 → 00:49:53] pour rien c'était toi qui
+[00:49:54 → 00:49:56] me demandait pour les techniques
+[00:49:56 → 00:49:58] j'ai testé avec 300 armes
+[00:49:58 → 00:49:59] j'ai pas testé
+[00:50:00 → 00:50:01] autre chose pas
+[00:50:01 → 00:50:02] ok
+[00:50:02 → 00:50:03] je vais t'envoyer
+[00:50:03 → 00:50:04] de la doc
+[00:50:05 → 00:50:06] d'optimizateurs aussi
+[00:50:06 → 00:50:07] qui te permettent
+[00:50:07 → 00:50:08] de tester de manière automatique
+[00:50:08 → 00:50:09] comme ça si tu veux regarder
+[00:50:09 → 00:50:10] un peu de ce côté là
+[00:50:11 → 00:50:12] ok
+[00:50:12 → 00:50:13] et voir la différence
+[00:50:13 → 00:50:14] entre chacun
+[00:50:14 → 00:50:15] ça peut être intéressant
+[00:50:15 → 00:50:16] de les voir avant que je les présente
+[00:50:17 → 00:50:18] aux autres ventes
+[00:50:18 → 00:50:19] demain
+[00:50:19 → 00:50:20] je t'envoie ça
+[00:50:20 → 00:50:23] yes
+[00:50:24 → 00:50:25] j'ai fait les 4 étapes aussi
+[00:50:26 → 00:50:27] il a conclu que
+[00:50:27 → 00:50:29] Random Forest était cool
+[00:50:29 → 00:50:30] ok
+[00:50:30 → 00:50:31] et là je vais
+[00:50:31 → 00:50:32] je vais poursuivre avec
+[00:50:32 → 00:50:34] le Random Forest
+[00:50:34 → 00:50:35] justement pour bouger
+[00:50:35 → 00:50:36] les hyperparamètres
+[00:50:36 → 00:50:37] oui
+[00:50:37 → 00:50:38] du coup je vous envoie
+[00:50:38 → 00:50:39] à tous les deux
+[00:50:39 → 00:50:40] les techniques
+[00:50:40 → 00:50:41] que vous pouvez voir
+[00:50:41 → 00:50:42] et essayer de comparer
+[00:50:43 → 00:50:44] faites attention
+[00:50:44 → 00:50:45] du coup quand vous les utilisez
+[00:50:45 → 00:50:46] en gros ça va tester plein de
+[00:50:48 → 00:50:50] de combinaisons d'hyperparamètres
+[00:50:50 → 00:50:51] donc potentiellement
+[00:50:51 → 00:50:52] vous dire je vais tester
+[00:50:52 → 00:50:53] sans arbre avec
+[00:50:54 → 00:50:55] un critère d'arrêt à temps
+[00:50:55 → 00:50:56] etc
+[00:50:57 → 00:50:58] et si vous le lancez
+[00:50:58 → 00:50:59] qu'il y a énormément
+[00:50:59 → 00:51:00] de choses à tester
+[00:51:00 → 00:51:01] ça peut être lancé
+[00:51:01 → 00:51:02] pour 3-4 heures
+[00:51:02 → 00:51:03] quoi
+[00:51:03 → 00:51:04] ouais
+[00:51:04 → 00:51:05] donc après
+[00:51:05 → 00:51:06] si ce soir
+[00:51:06 → 00:51:07] votre ordinaire
+[00:51:07 → 00:51:08] rien prévu
+[00:51:08 → 00:51:09] vous pouvez le laisser tourner
+[00:51:09 → 00:51:10] à la limite
+[00:51:10 → 00:51:11] et vous aurez le résultat demain
+[00:51:11 → 00:51:12] ouais
+[00:51:12 → 00:51:13] mais
+[00:51:14 → 00:51:15] oui il y a ça
+[00:51:15 → 00:51:16] et après comme ça
+[00:51:16 → 00:51:17] demain je vous montrer
+[00:51:17 → 00:51:18] on parlera justement
+[00:51:18 → 00:51:19] de ces optimisateurs
+[00:51:19 → 00:51:20] et de comment
+[00:51:21 → 00:51:22] comment aussi
+[00:51:22 → 00:51:23] enregistrer
+[00:51:23 → 00:51:24] tout ce que vous faites
+[00:51:24 → 00:51:25] au final mesure
+[00:51:25 → 00:51:26] toutes les expériences que vous faites
+[00:51:27 → 00:51:28] et les comparer
+[00:51:28 → 00:51:30] mais on verra ça demain
+[00:51:30 → 00:51:31] je vous envoie
+[00:51:31 → 00:51:32] déjà les 3 trucs différents
+[00:51:33 → 00:51:34] à tous les deux

@@ -1,0 +1,1015 @@
+# Optimisation des hyperparamètres (tuning)
+
+Langue détectée : fr (probabilité 100.00%)
+
+> Transcription automatique locale avec le modèle `medium` et des horodatages. Les hésitations et termes mal reconnus peuvent nécessiter une correction éditoriale.
+
+Support associé : `09_Optimisation.pdf`.
+
+[00:00:00 → 00:00:03] Florian, du coup, est-ce que ça a tourné ?
+[00:00:07 → 00:00:12] C'est un final qui me sort.
+[00:00:12 → 00:00:17] Il a sélectionné le modèle
+[00:00:17 → 00:00:20] HistGradientBoostingClassifier,
+[00:00:20 → 00:00:23] les hyperparamètres.
+[00:00:26 → 00:00:31] Il arrive sur 200 éterrations,
+[00:00:31 → 00:00:38] `max_leaf_nodes`.
+[00:00:38 → 00:00:41] Après les autres, il fait du mal à interpréter.
+[00:00:41 → 00:00:46] Ils sont plus difficiles à visualiser
+[00:00:46 → 00:00:49] les paramètres sur ce modèle-là
+[00:00:49 → 00:00:51] que sur Random Forest.
+[00:00:51 → 00:00:53] Du coup, c'est avec Optuna que tu as fait ?
+[00:00:53 → 00:00:55] Oui, c'est ça, oui.
+[00:00:55 → 00:00:58] Ça, je vous expliquerai après.
+[00:00:58 → 00:01:01] Je laisserai chacun chercher de son côté
+[00:01:01 → 00:01:04] des manières d'optimiser,
+[00:01:04 → 00:01:07] des manières qu'on a pour venir chercher
+[00:01:07 → 00:01:12] tous les hyperparamètres du modèle.
+[00:01:12 → 00:01:15] Et comme ça, une fois que tout le monde
+[00:01:15 → 00:01:18] les aura vu, je vous les expliquerai bien.
+[00:01:18 → 00:01:23] Ajar, est-ce que tu as pu reprendre le TP ?
+[00:01:23 → 00:01:26] Oui, j'ai commencé le TP.
+[00:01:26 → 00:01:29] Je suis dans la troisième étape,
+[00:01:29 → 00:01:32] entraîné un modèle de régression
+[00:01:33 → 00:01:36] Je suis un peu en retard, j'avais besoin
+[00:01:36 → 00:01:39] de comprendre un petit peu les notions théoriques.
+[00:01:39 → 00:01:42] Pas de soucis, et si jamais il y a des questions,
+[00:01:42 → 00:01:45] n'hésite pas sur ça.
+[00:01:45 → 00:01:48] Comme ça, on va avoir de la métrique
+[00:01:48 → 00:01:50] tous ensemble après.
+[00:01:50 → 00:02:06] Ludovic ?
+[00:02:06 → 00:02:10] Ensuite, avec un petit Graser ciblé.
+[00:02:10 → 00:02:13] Et là, je suis au petit Graser ciblé.
+[00:02:13 → 00:02:15] Il a fait l'un puis l'autre ?
+[00:02:15 → 00:02:18] Très bien.
+[00:02:18 → 00:02:21] Ça permet de cibler à peu près où t'es.
+[00:02:21 → 00:02:24] Le Grid Search, tu viens tester tout à un endroit.
+[00:02:24 → 00:02:27] Ça enlevera, mais ça sera justement
+[00:02:27 → 00:02:30] une des choses à savoir expliquer.
+[00:02:30 → 00:02:33] Quelle est la différence entre
+[00:02:33 → 00:02:36] Random Search, Grid Search et Optuna ?
+[00:02:36 → 00:02:39] Ça, il faut que ça soit assez clair dans votre tête
+[00:02:39 → 00:02:42] pour que si à l'OS soutenance on vous dit
+[00:02:42 → 00:02:45] Optuna plutôt que Grid Search,
+[00:02:45 → 00:02:48] vous sachiez expliquer l'un et l'autre
+[00:02:48 → 00:02:52] et dire pourquoi vous êtes parti sur celui-là.
+[00:02:52 → 00:03:04] Avec quelle modèle ?
+[00:03:04 → 00:03:07] Le Grid Search, ça permet de trouver
+[00:03:07 → 00:03:10] des hyperparamètres d'un certain modèle.
+[00:03:10 → 00:03:13] Est-ce que t'es sur une Random Forest ?
+[00:03:13 → 00:03:16] Oui, on est sur une Random Forest.
+[00:03:16 → 00:03:19] Vous en avez testé chacun
+[00:03:19 → 00:03:22] au moins deux ou trois.
+[00:03:22 → 00:03:25] Du coup, il y en a qui ont eu des résultats différents.
+[00:03:25 → 00:03:28] Il y en a qui sont sur une Random Forest
+[00:03:28 → 00:03:31] et d'autres sur celui-là.
+[00:03:31 → 00:03:34] C'est vraiment une modèle random.
+[00:03:34 → 00:03:39] XGBoost ?
+[00:03:39 → 00:03:48] Oui.
+[00:03:48 → 00:03:53] Cyprien ?
+[00:03:53 → 00:03:56] Le modèle qui est mieux, c'est le Gradient Boost.
+[00:03:56 → 00:03:59] Je cherche CV, mais je me suis pas mal battu
+[00:03:59 → 00:04:02] avec mon ordi parce qu'il y a
+[00:04:02 → 00:04:05] un escalant ensemble qui est bloqué.
+[00:04:05 → 00:04:08] Déjà, il faut le diagnostiquer.
+[00:04:08 → 00:04:11] Je vais essayer de faire des trucs.
+[00:04:11 → 00:04:14] Tu étais bloqué ?
+[00:04:14 → 00:04:19] Oui.
+[00:04:19 → 00:04:22] Tu me dis si jamais il y a des soucis par rapport à ça.
+[00:04:22 → 00:04:29] Mariana, bonjour d'ailleurs.
+[00:04:29 → 00:04:32] Bonjour.
+[00:04:32 → 00:04:35] Moi, j'ai plutôt
+[00:04:35 → 00:04:38] revu le précédent code
+[00:04:38 → 00:04:41] sur la régression et tout.
+[00:04:41 → 00:04:44] J'essaye de mieux comprendre l'émotion
+[00:04:44 → 00:04:47] parce que le prompt pour faire
+[00:04:47 → 00:04:50] le code avec d'autres algorithmes
+[00:04:50 → 00:04:53] et regarder lequel est le mieux, pour moi,
+[00:04:53 → 00:04:56] c'est quelque chose qui valide très vite.
+[00:04:57 → 00:05:00] J'essaye de comprendre quelques blocages
+[00:05:00 → 00:05:03] avant de passer à la suite, mais je vais faire le prompt
+[00:05:03 → 00:05:06] là dans un nouveau notebook pour faire la comparaison.
+[00:05:06 → 00:05:09] Oui, pas de soucis.
+[00:05:09 → 00:05:12] Il est un peu essentiel pour moi
+[00:05:12 → 00:05:15] de comprendre ces notions d'entraînement,
+[00:05:15 → 00:05:18] d'entraînement avant d'aller en Tokyo.
+[00:05:18 → 00:05:21] Tout à fait.
+[00:05:21 → 00:05:24] D'ailleurs, est-ce que quelqu'un a des questions sur tout ça
+[00:05:24 → 00:05:27] ou est-ce qu'il y a des termes
+[00:05:27 → 00:05:32] qui ne vous paraissent pas clairs dans le TP ?
+[00:05:32 → 00:05:36] Moi, il parle beaucoup de pluie.
+[00:05:36 → 00:05:39] Oui, c'est fold.
+[00:05:39 → 00:05:42] C'est pour la cross-validation.
+[00:05:42 → 00:05:47] Je peux vous faire un point
+[00:05:47 → 00:05:50] sur la cross-validation, justement,
+[00:05:50 → 00:05:53] qui va aller avec
+[00:05:53 → 00:05:56] l'optimisation des hyperparamètres.
+[00:05:56 → 00:05:59] Et c'est, du coup, comment on entraîne.
+[00:05:59 → 00:06:02] Je vais vous parler de ça.
+[00:06:02 → 00:06:05] Peut-être qu'après, on expliquera plus tard
+[00:06:05 → 00:06:08] pour le PR à UC.
+[00:06:08 → 00:06:11] Comme ça, chaque heure après, on reprendra le TP sur ça, avec ça.
+[00:06:11 → 00:06:14] Est-ce qu'il y a d'autres questions du coup au passage ?
+[00:06:14 → 00:06:18] Je comprends que, globalement,
+[00:06:18 → 00:06:21] entraîner le modèle, c'est vraiment trouver
+[00:06:21 → 00:06:24] des valeurs mathématiques
+[00:06:24 → 00:06:27] dans un tableau
+[00:06:27 → 00:06:30] et partir de ces valeurs mathématiques
+[00:06:30 → 00:06:33] pour appliquer un nouveau nombre
+[00:06:33 → 00:06:36] pour faire la prédiction, si je résume.
+[00:06:36 → 00:06:39] Oui, c'est ça.
+[00:06:39 → 00:06:42] Des valeurs mathématiques de type
+[00:06:42 → 00:06:45] moyenne, écart type, enfin,
+[00:06:45 → 00:06:48] un peu de notions statistiques.
+[00:06:48 → 00:06:51] Ce qui va se passer pendant l'entraînement,
+[00:06:51 → 00:06:54] il y a d'abord...
+[00:06:54 → 00:06:57] Première étape, c'est qu'on choisit
+[00:06:57 → 00:07:00] un modèle qu'on va venir entraîner.
+[00:07:00 → 00:07:03] Et ensuite, du coup,
+[00:07:03 → 00:07:06] le modèle va s'entraîner lui-même.
+[00:07:06 → 00:07:09] Ce qu'il va faire, c'est qu'il va venir s'optimiser
+[00:07:09 → 00:07:12] pour trouver les meilleurs coefficients
+[00:07:12 → 00:07:15] qui représentent le mieux les données.
+[00:07:15 → 00:07:18] Par exemple, si vous êtes sur une régression linéaire,
+[00:07:18 → 00:07:21] qui représente le mieux vos données
+[00:07:21 → 00:07:24] et qui font la courbe généralisable la meilleure.
+[00:07:24 → 00:07:27] Si vous êtes sur une Random Forest,
+[00:07:27 → 00:07:30] il va prendre vos données.
+[00:07:30 → 00:07:33] Vous avez dit que vous faites une Random Forest
+[00:07:33 → 00:07:36] avec 100 arbres, par exemple.
+[00:07:36 → 00:07:39] Il va créer 100 arbres de manière aléatoire
+[00:07:39 → 00:07:42] et créer les splits,
+[00:07:42 → 00:07:45] les nœuds de décision, etc.
+[00:07:46 → 00:07:49] Avec chaque feature, etc.
+[00:07:49 → 00:07:52] Il va créer plein de petits des arbres
+[00:07:52 → 00:07:55] qui vont permettre d'être l'entraînement.
+[00:07:55 → 00:07:58] Pour le Random Forest, ce qu'il va faire,
+[00:07:58 → 00:08:01] c'est calculer pour chaque split
+[00:08:01 → 00:08:04] la possibilité de...
+[00:08:04 → 00:08:07] Pour chaque split possible, comment ça ferait un arbre,
+[00:08:07 → 00:08:10] comment une autre décision se ferait,
+[00:08:10 → 00:08:13] qu'elle ne choisit,
+[00:08:13 → 00:08:16] et ensuite, il descend en tout, etc.
+[00:08:16 → 00:08:19] Sur de la régression linéaire,
+[00:08:19 → 00:08:22] c'est du choix de paramètres de coefficient.
+[00:08:22 → 00:08:25] Sur de la Random Forest,
+[00:08:25 → 00:08:28] c'est carrément de l'arbre,
+[00:08:28 → 00:08:31] création de l'arbre, qui se fait durant l'entraînement.
+[00:08:31 → 00:08:34] Il y a une deuxième phase de l'entraînement,
+[00:08:34 → 00:08:37] qui est que chaque modèle
+[00:08:37 → 00:08:40] a des paramètres qui s'optimisent de même
+[00:08:40 → 00:08:43] pendant le point fit que vous faites directement.
+[00:08:43 → 00:08:46] Quand vous faites un modèle point fit,
+[00:08:46 → 00:08:49] l'entraînement, c'est le calcul de ces paramètres-là.
+[00:08:49 → 00:08:52] Mais il y a aussi le choix d'hyperparamètres.
+[00:08:52 → 00:08:55] Pour la Random Forest, par exemple,
+[00:08:55 → 00:08:58] vous avez combien d'arbres vous mettez côte à côte,
+[00:08:58 → 00:09:01] quelle est la profondeur maximum de chaque arbre, etc.
+[00:09:01 → 00:09:04] Et tout ça, c'est ce qu'on appelle des hyperparamètres.
+[00:09:04 → 00:09:07] C'est des choses à choisir nous.
+[00:09:07 → 00:09:10] Et pour ça, on va pouvoir le faire
+[00:09:10 → 00:09:13] en testant une première Random Forest
+[00:09:13 → 00:09:16] avec, par exemple, 100 arbres,
+[00:09:16 → 00:09:19] une deuxième Random Forest avec 200,
+[00:09:19 → 00:09:22] une troisième avec 300, et venir comparer.
+[00:09:22 → 00:09:25] Et à chaque fois, on vient comparer sur le jeu de validation,
+[00:09:25 → 00:09:28] puis sur le jeu de test,
+[00:09:28 → 00:09:31] on vient mettre les performances, double choix d'avoir une métrique,
+[00:09:31 → 00:09:34] et on vient du coup décider
+[00:09:34 → 00:09:37] quels modèles on veut garder, quels modèles les plus performants.
+[00:09:37 → 00:09:40] Donc c'est comme ça, c'est ce qui se passe pendant l'entraînement.
+[00:09:40 → 00:09:43] Tout ce qui est moyenne, médiane, etc.
+[00:09:43 → 00:09:46] ça se passe avant, parce que ça veut dire que c'est des...
+[00:09:46 → 00:09:49] Les moyennes, médiane, etc., c'est calculé
+[00:09:49 → 00:09:52] pour en général remplacer les valeurs manquantes, par exemple,
+[00:09:52 → 00:09:55] ou des choses comme ça, et ça, c'est calculé avant du coup.
+[00:09:55 → 00:09:58] C'est en amont, c'est de la fin de la préparation des données,
+[00:09:58 → 00:10:01] remplacement des valeurs manquantes.
+[00:10:01 → 00:10:06] Et normalisation et standardisation des données.
+[00:10:06 → 00:10:09] Mais ça, c'est fait avant l'entraînement du modèle.
+[00:10:09 → 00:10:12] Du coup, ça, c'est la préparation des données ?
+[00:10:12 → 00:10:15] Oui, c'est ça.
+[00:10:15 → 00:10:18] C'est venir jusqu'au gold.
+[00:10:18 → 00:10:21] Oui, et même du coup, le gold,
+[00:10:21 → 00:10:24] des fois, ça peut être, se dire le gold...
+[00:10:24 → 00:10:27] Le gold ne rentre pas forcément dans le gold
+[00:10:27 → 00:10:30] de la standardisation et normalisation,
+[00:10:30 → 00:10:33] puisque standardiser et normaliser toutes vos colonnes,
+[00:10:33 → 00:10:36] c'est un traitement que vous avez à faire
+[00:10:36 → 00:10:39] suivant le modèle que vous utilisez.
+[00:10:39 → 00:10:42] Donc, en fait, votre dataset que vous avez avant,
+[00:10:42 → 00:10:45] qui est avec des...
+[00:10:45 → 00:10:48] Seulement, du coup, avec des colonnes numériques
+[00:10:48 → 00:10:51] et avec des valeurs des chaînes différentes,
+[00:10:51 → 00:10:54] peut être très bien considéré comme un gold dataset,
+[00:10:54 → 00:10:57] parce que, par exemple, si je fais une Random Forest derrière,
+[00:10:57 → 00:11:00] je n'ai pas besoin de normaliser et standardiser.
+[00:11:00 → 00:11:03] On va très souvent normaliser et standardiser
+[00:11:03 → 00:11:06] quoi qu'il arrive, parce que, du coup,
+[00:11:06 → 00:11:09] ça va nous permettre de...
+[00:11:09 → 00:11:12] De pouvoir comparer autant de la régression linéaire
+[00:11:12 → 00:11:15] que de la Random Forest sur les mêmes données,
+[00:11:15 → 00:11:18] sans avoir à faire le retraitement.
+[00:11:18 → 00:11:21] Du coup, ça, c'est du traitement de données, cette partie-là.
+[00:11:21 → 00:11:31] Et l'entraînement du modèle vient après.
+[00:11:32 → 00:11:46] Du coup, je vais vous montrer comme ça,
+[00:11:46 → 00:11:49] ça va expliquer un peu pour ceux qui ont déjà fait
+[00:11:49 → 00:11:52] du Grid Search, Optuna, etc.
+[00:11:52 → 00:11:55] Et pour les autres, ça vous donnera les notions
+[00:11:55 → 00:11:58] que vous utiliserez aujourd'hui.
+[00:11:58 → 00:12:14] Et justement, il y a la cross-validation dedans.
+[00:12:14 → 00:12:17] Du coup, l'idée, c'est de se dire que
+[00:12:17 → 00:12:20] vous avez tous un modèle qui tourne,
+[00:12:20 → 00:12:23] même si c'est juste une régression linéaire
+[00:12:23 → 00:12:26] Mais du coup, il va falloir savoir
+[00:12:26 → 00:12:29] est-ce qu'on peut faire mieux,
+[00:12:29 → 00:12:32] chercher de meilleurs hyperparamètres.
+[00:12:32 → 00:12:35] Les hyperparamètres, c'est vous
+[00:12:35 → 00:12:38] qui les décidez.
+[00:12:38 → 00:12:41] C'est vraiment les paramètres du modèle que vous appelez
+[00:12:41 → 00:12:44] et tels qu'ils seront, et c'est vous qui les choisissez.
+[00:12:44 → 00:12:47] On va voir comment on peut faire.
+[00:12:47 → 00:12:50] Il y a plusieurs techniques
+[00:12:50 → 00:12:53] qui sont plus complémentaires,
+[00:12:53 → 00:12:56] mais on va voir ça.
+[00:12:56 → 00:12:59] Et après, on va commencer à parler
+[00:12:59 → 00:13:02] pour ceux qui veulent.
+[00:13:02 → 00:13:05] L'idée aujourd'hui, ça serait de créer
+[00:13:05 → 00:13:08] à la fin de la journée un rapport
+[00:13:08 → 00:13:11] un peu comme si vous deviez présenter ce projet-là
+[00:13:11 → 00:13:14] en disant quel modèle vous avez choisi.
+[00:13:14 → 00:13:17] Après, si c'est pas fini, on pourra le finir la semaine prochaine.
+[00:13:17 → 00:13:20] C'est-à-dire, pourquoi, comment vous avez testé
+[00:13:20 → 00:13:23] et même arriver à expliquer
+[00:13:23 → 00:13:26] comment fonctionne votre modèle.
+[00:13:26 → 00:13:29] Pour faire ça, on va voir
+[00:13:29 → 00:13:32] combien coûte l'entraînement
+[00:13:32 → 00:13:35] de votre modèle.
+[00:13:35 → 00:13:38] Un choix de modèle peut être fait avec ça.
+[00:13:41 → 00:13:44] Pourquoi cette décision ?
+[00:13:44 → 00:13:47] Essayez de comprendre un peu,
+[00:13:47 → 00:13:50] même si on a dit que les modèles de machine learning
+[00:13:50 → 00:13:53] sont des modèles qui sont un peu boîte noire,
+[00:13:53 → 00:13:56] il y a quand même un minimum d'explicabilité
+[00:13:56 → 00:13:59] que vous pouvez essayer de venir chercher.
+[00:13:59 → 00:14:02] Il y a un micro qui est ouvert.
+[00:14:02 → 00:14:05] Il y a un micro qui est ouvert.
+[00:14:05 → 00:14:10] Il y a du bruit de fond derrière.
+[00:14:10 → 00:14:13] Je n'ai pas vu qui c'était.
+[00:14:13 → 00:14:16] C'est moi qui suis en train de me faire le café, désolé.
+[00:14:16 → 00:14:19] Non, t'inquiètes.
+[00:14:19 → 00:14:23] L'idée, ça va être de comment on englobe
+[00:14:23 → 00:14:26] notre modèle, comment on choisit le meilleur modèle
+[00:14:26 → 00:14:29] et comment on l'englobe pour le présenter.
+[00:14:29 → 00:14:32] Il y a plein de sujets de machine learning
+[00:14:32 → 00:14:35] qui vont être décidés.
+[00:14:35 → 00:14:38] Vous avez des utilisateurs en pass métier
+[00:14:38 → 00:14:41] qui peuvent être un peu froids
+[00:14:41 → 00:14:44] par rapport à l'utilisation du machine learning.
+[00:14:44 → 00:14:47] Si vous faites du contrôle qualité
+[00:14:47 → 00:14:50] en fin de chaîne,
+[00:14:50 → 00:14:53] il faut leur prouver que ça fonctionne bien.
+[00:14:53 → 00:14:56] Il y a plein de justifications
+[00:14:56 → 00:15:09] qu'on va essayer de venir chercher.
+[00:15:09 → 00:15:12] Pour optimiser, il y a deux choses.
+[00:15:12 → 00:15:15] Comme on le disait,
+[00:15:15 → 00:15:18] les paramètres qui sont appris par le modèle.
+[00:15:18 → 00:15:21] Les poids du modèle qui sont pendant l'entraînement,
+[00:15:21 → 00:15:24] la structure des arbres,
+[00:15:24 → 00:15:27] que ce soit sur du XGBoost ou du Random Forest.
+[00:15:27 → 00:15:30] D'ailleurs, pour XGBoost,
+[00:15:30 → 00:15:33] ça sera un des modèles que je pourrais détailler un peu plus
+[00:15:33 → 00:15:36] parce que c'est un modèle qui est utilisé très souvent.
+[00:15:36 → 00:15:39] Tout ça, c'est les poids du modèle.
+[00:15:39 → 00:15:42] Les paramètres, c'est appris par le modèle
+[00:15:42 → 00:15:45] lors de son entraînement.
+[00:15:45 → 00:15:48] On n'y a pas accès, c'est le modèle qui va les choisir.
+[00:15:48 → 00:15:51] C'est là que le choix de vos données d'entraînement
+[00:15:51 → 00:15:54] doit être bon puisque les paramètres sont choisis sur ça.
+[00:15:54 → 00:15:57] Si vous avez trop peu d'exemples de données,
+[00:15:57 → 00:16:00] ça ne va pas fonctionner.
+[00:16:00 → 00:16:03] Ensuite, on a les hyperparamètres
+[00:16:03 → 00:16:06] qui sont choisis par le data sanitiste.
+[00:16:06 → 00:16:09] Par exemple, la profondeur de l'arbre,
+[00:16:09 → 00:16:12] le taux d'apprentissage, le nombre d'arbres.
+[00:16:12 → 00:16:15] On peut avoir tout ce qui est aussi
+[00:16:15 → 00:16:18] la fonction de coût
+[00:16:18 → 00:16:21] que vous pouvez faire varier,
+[00:16:21 → 00:16:24] la fonction de coût qui se choisit par rapport à votre objectif.
+[00:16:24 → 00:16:27] Tout ça, c'est fixé avant l'entraînement
+[00:16:27 → 00:16:30] et c'est ça que le modèle va venir optimiser.
+[00:16:30 → 00:16:33] La fonction de coût, c'est plutôt quelque chose que vous pouvez modifier
+[00:16:33 → 00:16:36] mais qui n'est pas considéré comme un hyperparamètre.
+[00:16:36 → 00:16:39] Tout ce qui est profondeur, taux d'apprentissage, nombre d'arbres, etc.
+[00:16:39 → 00:16:42] C'est des choses qui peuvent être modifiées.
+[00:16:42 → 00:16:45] Après, c'est savoir entre une Random Forest
+[00:16:45 → 00:16:48] à 50 arbres et une Random Forest avec 500 arbres.
+[00:16:48 → 00:16:51] Comme ça, vous ne pouvez pas savoir
+[00:16:51 → 00:16:54] laquelle sera la meilleure.
+[00:16:54 → 00:16:57] Il va falloir tester, choisir,
+[00:16:57 → 00:17:00] mesurer la performance,
+[00:17:00 → 00:17:05] comparer et choisir par la suite.
+[00:17:06 → 00:17:09] Le tuning, qui est de choisir
+[00:17:09 → 00:17:12] les hyperparamètres, ça va venir chercher
+[00:17:12 → 00:17:15] la meilleure combinaison d'hyperparamètres.
+[00:17:18 → 00:17:21] Ce n'est pas du gradient avec de la descente directement.
+[00:17:21 → 00:17:24] On va faire des tests,
+[00:17:24 → 00:17:27] les uns à la suite des autres.
+[00:17:27 → 00:17:30] Si vous le faites à la main,
+[00:17:30 → 00:17:33] ça peut être lent et biaisé.
+[00:17:33 → 00:17:36] Si vous le faites à la main,
+[00:17:36 → 00:17:39] je vais tester une Random Forest avec 50 arbres,
+[00:17:39 → 00:17:42] une Random Forest avec 100 arbres,
+[00:17:42 → 00:17:45] une Random Forest avec 200.
+[00:17:45 → 00:17:48] Pourquoi vous avez choisi ces nombres ?
+[00:17:48 → 00:17:51] C'est complètement arbitraire.
+[00:17:51 → 00:17:54] En plus, ça peut être lent.
+[00:17:54 → 00:17:57] Ça veut dire que vous allez avoir à relancer à chaque fois
+[00:17:57 → 00:18:00] un nouveau modèle.
+[00:18:01 → 00:18:04] Si on a deux hyperparamètres,
+[00:18:04 → 00:18:07] pour le Random Forest,
+[00:18:07 → 00:18:10] le nombre d'arbres,
+[00:18:10 → 00:18:13] la profondeur maximale de l'arbre,
+[00:18:13 → 00:18:16] si je veux tester
+[00:18:16 → 00:18:19] un nombre d'arbres 50 et 100
+[00:18:19 → 00:18:22] et que je veux tester une profondeur max
+[00:18:22 → 00:18:25] de 3 et 5,
+[00:18:25 → 00:18:28] il faut que je fasse tester toutes les combinaisons.
+[00:18:28 → 00:18:31] Il faut que vous écriviez toutes les combinaisons possibles
+[00:18:31 → 00:18:34] et que vous lanciez les tests.
+[00:18:34 → 00:18:37] Ça peut être assez lent à faire
+[00:18:37 → 00:18:40] et potentiellement biaisé.
+[00:18:40 → 00:18:43] Faire une grille exhaustive où vous testez tout,
+[00:18:43 → 00:18:46] ça va vous prendre longtemps.
+[00:18:46 → 00:18:49] Il y a certains qui ont fait chauffer les machines hier.
+[00:18:49 → 00:18:52] Si vous testez toutes les possibilités,
+[00:18:52 → 00:18:55] ça voudrait dire que vous testez
+[00:18:55 → 00:18:58] entre 12, 13, 14, 15, 16,
+[00:18:58 → 00:19:01] tout ça jusqu'à 100 arbres.
+[00:19:01 → 00:19:04] Ça veut dire que le modèle doit s'entraîner à chaque fois.
+[00:19:04 → 00:19:07] On va avoir des techniques
+[00:19:07 → 00:19:10] pour faire mieux que ça,
+[00:19:10 → 00:19:13] pour venir chercher l'optimisation
+[00:19:13 → 00:19:16] des hyperparamètres
+[00:19:16 → 00:19:19] mais de manière un peu plus contrôlée
+[00:19:19 → 00:19:24] tout en étant assez large dans nos choix.
+[00:19:24 → 00:19:27] Des modèles
+[00:19:27 → 00:19:30] pour les hyperparamètres
+[00:19:30 → 00:19:33] vont utiliser la cross-validation.
+[00:19:33 → 00:19:36] C'est là qu'il y a la notion de pli qui apparaît.
+[00:19:36 → 00:19:39] Pour le cas fold, c'est plié.
+[00:19:39 → 00:19:42] L'idée, c'est de se dire que vous avez à chaque fois
+[00:19:42 → 00:19:45] un jeu d'entraînement.
+[00:19:45 → 00:19:48] Vous avez un jeu d'entraînement et de validation.
+[00:19:48 → 00:19:51] Votre jeu d'entraînement est fait par exemple sans ligne
+[00:19:51 → 00:19:54] et un jeu de validation de vernis.
+[00:19:57 → 00:20:00] C'est écrit test, mais ça serait plus validation.
+[00:20:00 → 00:20:03] Le jeu de test est un jeu qu'on a laissé de côté
+[00:20:03 → 00:20:06] directement.
+[00:20:06 → 00:20:09] Vous avez votre jeu de validation qui est ici
+[00:20:09 → 00:20:12] et tout ça, c'est votre jeu d'entraînement.
+[00:20:12 → 00:20:15] Quand vous faites un entraînement classique,
+[00:20:15 → 00:20:18] vous entraînez toujours sur la même partie
+[00:20:19 → 00:20:22] Quand on va faire des tests par paramètres,
+[00:20:22 → 00:20:25] ça veut dire que vous entraînez
+[00:20:25 → 00:20:28] à chaque fois sur les mêmes données
+[00:20:28 → 00:20:31] et vous allez valider toujours sur les mêmes données.
+[00:20:31 → 00:20:34] Ça donne une évaluation qui est toujours
+[00:20:34 → 00:20:37] sur le même jeu d'évaluation.
+[00:20:37 → 00:20:40] Pour contrevalancer, ce fait que potentiellement
+[00:20:40 → 00:20:43] il peut y avoir un peu de flux de données entre guillemets
+[00:20:43 → 00:20:46] et que surtout on peut s'entraîner beaucoup
+[00:20:46 → 00:20:49] et donc du coup faire de l'overfitting.
+[00:20:49 → 00:20:52] On va utiliser la cross-validation
+[00:20:52 → 00:20:55] et on va dire par exemple
+[00:20:55 → 00:20:58] je veux faire la cross-validation
+[00:20:58 → 00:21:01] avec un paramètre de la cross-validation
+[00:21:01 → 00:21:04] qui est le K que vous avez ici.
+[00:21:04 → 00:21:07] Et on va dire qu'ici on va
+[00:21:07 → 00:21:10] entraîner 6 fois.
+[00:21:10 → 00:21:13] Quand vous lancez un modèle
+[00:21:13 → 00:21:16] par exemple un nombre forest,
+[00:21:16 → 00:21:19] au lieu de créer les arbres
+[00:21:19 → 00:21:22] sur ce jeu d'entraînement
+[00:21:22 → 00:21:25] et d'évaluer sur ce jeu de test,
+[00:21:25 → 00:21:28] on va créer les arbres sur ce jeu d'entraînement
+[00:21:28 → 00:21:31] et évaluer sur ce jeu de validation.
+[00:21:31 → 00:21:34] Puis on va créer les arbres sur ce jeu d'entraînement
+[00:21:34 → 00:21:37] puis on va tester sur ce jeu de validation.
+[00:21:37 → 00:21:40] On va faire ça 6 fois dans notre cas ici.
+[00:21:40 → 00:21:43] On va faire 6 évaluations différentes.
+[00:21:43 → 00:21:46] Et donc on va pouvoir prendre la moyenne
+[00:21:46 → 00:21:49] et ça va nous donner une évaluation
+[00:21:49 → 00:21:52] qui est plus fiable et qui est moins dépendante
+[00:21:52 → 00:21:55] du jeu d'entraînement
+[00:21:55 → 00:21:58] et qui permet d'avoir une évaluation
+[00:21:58 → 00:22:01] plus généralisable de votre modèle.
+[00:22:01 → 00:22:04] Vous pouvez récupérer la moyenne
+[00:22:04 → 00:22:07] qui donne l'évaluation
+[00:22:07 → 00:22:10] de dire que si vous avez un PRAUC
+[00:22:10 → 00:22:13] avec un écart type de 0,1,
+[00:22:13 → 00:22:16] ça peut donner un espèce d'intervalle de confiance
+[00:22:16 → 00:22:19] en disant que vous avez une accuracy
+[00:22:19 → 00:22:22] de 90% avec 2% d'intervalle.
+[00:22:28 → 00:22:31] C'est ce qui va se faire dans la cross-validation.
+[00:22:31 → 00:22:34] C'est ce qui va être fait.
+[00:22:34 → 00:22:37] Toutes les méthodes d'optimisation des hyperparamètres,
+[00:22:37 → 00:22:40] c'est ce qui est fait quasi automatiquement à chaque fois.
+[00:22:40 → 00:22:43] Attention par contre,
+[00:22:43 → 00:22:46] au lieu d'avoir une passe d'entraînement,
+[00:22:46 → 00:22:49] ici vous en avez 6.
+[00:22:49 → 00:22:52] Donc niveau temps de calcul,
+[00:22:52 → 00:22:55] vous prenez un peu cher sur le coup.
+[00:22:55 → 00:22:58] Vous multipliez par 6 tout ce que vous faites.
+[00:22:58 → 00:23:01] D'où le fait que Simon
+[00:23:01 → 00:23:04] a un peu chauffé hier,
+[00:23:04 → 00:23:07] c'est qu'on fait beaucoup plus d'entraînement
+[00:23:07 → 00:23:10] que ce qu'on fait avec une seule passe.
+[00:23:10 → 00:23:13] Ça va permettre d'améliorer grandement.
+[00:23:13 → 00:23:16] C'est ce qu'on utilise systématiquement.
+[00:23:16 → 00:23:19] En tout cas, dès que vous voulez optimiser les hyperparamètres,
+[00:23:19 → 00:23:22] vous allez partir sur ça.
+[00:23:22 → 00:23:25] Quand vous faites votre entraînement de votre base line,
+[00:23:25 → 00:23:28] de votre premier modèle, vous n'avez pas besoin.
+[00:23:28 → 00:23:31] Vous n'avez pas besoin de faire de la creuse-validation.
+[00:23:31 → 00:23:34] La creuse-validation, c'est vraiment vous dire
+[00:23:34 → 00:23:37] je veux comparer vraiment de plusieurs modèles
+[00:23:37 → 00:23:40] ou optimiser les hyperparamètres.
+[00:23:40 → 00:23:43] Du coup, je veux être plus fin sur ma performance
+[00:23:43 → 00:23:46] et sur mes résultats.
+[00:23:46 → 00:23:51] Dans ces cas-là, vous allez venir utiliser la creuse-validation.
+[00:23:51 → 00:23:54] Si par exemple, tu dis 5 polis,
+[00:23:54 → 00:23:57] il teste les hyperparamètres
+[00:23:58 → 00:24:01] qui l'a définie.
+[00:24:01 → 00:24:04] Ça va dire 5 fois.
+[00:24:04 → 00:24:07] C'est les mêmes hyperparamètres
+[00:24:07 → 00:24:10] qui retestent 5 fois.
+[00:24:10 → 00:24:13] C'est pour ça que ça multiplie énormément.
+[00:24:13 → 00:24:16] Si tu fais un choix d'hyperparamètres,
+[00:24:16 → 00:24:19] je veux juste changer le nombre d'arbres.
+[00:24:19 → 00:24:22] Je veux tester avec 50 et sans arbres.
+[00:24:22 → 00:24:25] Je vais tester avec 50 arbres,
+[00:24:25 → 00:24:28] puis je vais tester avec 100 arbres
+[00:24:28 → 00:24:31] sur 5 ou 6 entraînements différents.
+[00:24:31 → 00:24:34] Dès que vous allez faire l'optimisation d'hyperparamètres,
+[00:24:34 → 00:24:37] vous allez dupliquer le nombre d'entraînements
+[00:24:37 → 00:24:40] parce que vous allez dupliquer les valeurs des hyperparamètres.
+[00:24:40 → 00:24:43] Déjà, vous allez faire plusieurs entraînements.
+[00:24:43 → 00:24:46] En plus, dans ces entraînements-là,
+[00:24:46 → 00:24:49] vous allez les tester,
+[00:24:49 → 00:24:52] enfin, les évaluer sur plusieurs parties
+[00:24:52 → 00:24:55] pour que ça ait du sens,
+[00:24:55 → 00:24:58] pour que l'évaluation soit beaucoup plus fiable.
+[00:24:58 → 00:25:01] Ce que je veux vous montrer, c'est par contre
+[00:25:01 → 00:25:04] la cross-validation
+[00:25:04 → 00:25:07] sur des time series
+[00:25:07 → 00:25:10] qu'on a un peu nous là,
+[00:25:10 → 00:25:13] parce que ce que vous voyez là,
+[00:25:13 → 00:25:17] c'est que si vous avez la cross-validation,
+[00:25:17 → 00:25:20] votre jeu de validation,
+[00:25:20 → 00:25:23] il est choisi de manière aléatoire,
+[00:25:23 → 00:25:26] il peut être au milieu, etc.
+[00:25:26 → 00:25:29] Nous, on ne peut pas se permettre d'avoir le jeu d'entraînement
+[00:25:29 → 00:25:32] qui est un peu avant et un peu après,
+[00:25:32 → 00:25:35] vu que nous, on a le côté chronologie qui est important.
+[00:25:35 → 00:25:40] Donc, ce que vous allez avoir,
+[00:25:40 → 00:25:54] ça, du coup, c'est la cross-validation classique.
+[00:25:54 → 00:25:57] Du coup, on s'en fiche
+[00:25:57 → 00:26:00] de où est le jeu de validation.
+[00:26:00 → 00:26:03] N'importe où, nos données sont aléatoires, etc.
+[00:26:03 → 00:26:07] Mais sur les time series, du coup,
+[00:26:07 → 00:26:10] vous ne pouvez pas,
+[00:26:10 → 00:26:13] il faut que vous gardiez votre historique à chaque fois.
+[00:26:13 → 00:26:16] Donc,
+[00:26:16 → 00:26:19] le découpage va se faire de cette manière-là.
+[00:26:19 → 00:26:22] Si par exemple, je dis que je veux faire
+[00:26:22 → 00:26:25] quatre passages, quatre plis différents,
+[00:26:25 → 00:26:28] en fait, je vais prendre un jeu d'entraînement
+[00:26:28 → 00:26:31] qui a une certaine taille, puis le jeu de validation
+[00:26:31 → 00:26:34] qui est la fin, et ensuite,
+[00:26:34 → 00:26:37] je vais allonger le jeu d'entraînement
+[00:26:37 → 00:26:40] et prendre le jeu de validation par la suite, etc.
+[00:26:40 → 00:26:43] Comme ça, vous avez toujours l'ordre,
+[00:26:43 → 00:26:46] le jeu d'entraînement est mon historique vraiment,
+[00:26:46 → 00:26:49] et le jeu de validation, c'est en temps réel.
+[00:26:49 → 00:26:52] C'est comme si vous vous mettiez au niveau temps ici.
+[00:26:52 → 00:26:55] Donc, vous le verrez,
+[00:26:55 → 00:26:58] c'est dit quand c'est des
+[00:26:58 → 00:27:01] croissants de validation time series,
+[00:27:01 → 00:27:04] il les prend en compte, et du coup, il découpe de cette manière-là.
+[00:27:04 → 00:27:09] Et pas en mode aléatoire.
+[00:27:09 → 00:27:12] Mais du coup, ça va dupliquer votre temps de calcul
+[00:27:12 → 00:27:15] pas mal, donc ça, c'est à faire attention.
+[00:27:15 → 00:27:18] Et surtout,
+[00:27:18 → 00:27:21] ça va être surtout à intégrer
+[00:27:21 → 00:27:24] et à prendre en compte.
+[00:27:24 → 00:27:27] Parce que par exemple,
+[00:27:27 → 00:27:30] si vous avez de l'exploration
+[00:27:30 → 00:27:33] de données, affaires, etc.
+[00:27:33 → 00:27:36] Et après tester des petits...
+[00:27:36 → 00:27:39] checker plusieurs
+[00:27:39 → 00:27:42] modèles, etc.
+[00:27:42 → 00:27:45] Vous savez que si vous lancez une cross-validation
+[00:27:45 → 00:27:48] et une optimisation des hyperparamètres,
+[00:27:48 → 00:27:51] vous en avez pour un moment que ça tombe.
+[00:27:51 → 00:27:54] Après, il faut limiter aussi le nombre de fois,
+[00:27:54 → 00:27:57] si vous voulez vos résultats, si vous lancez de nuit
+[00:27:57 → 00:28:00] et que vous avez toute la nuit, vous lancez avec tout.
+[00:28:00 → 00:28:05] Sinon, vous lancez avec moins, c'est juste pour avoir une idée, etc.
+[00:28:05 → 00:28:08] Donc ça, c'est sur la cross-validation.
+[00:28:08 → 00:28:11] Et du coup, après, il faut que vous vous cherchiez
+[00:28:11 → 00:28:14] les hyperparamètres.
+[00:28:14 → 00:28:17] Donc pour ça,
+[00:28:17 → 00:28:20] vous avez...
+[00:28:20 → 00:28:23] Il y en a 2 qui sont représentés, mais il y a random search aussi,
+[00:28:23 → 00:28:26] qui est du même style que grid search.
+[00:28:26 → 00:28:29] Déjà, vous voyez dans le grid search, vous avez le CV
+[00:28:29 → 00:28:32] de cross-validation. Donc vous l'avez fait sans savoir
+[00:28:32 → 00:28:35] ce que c'était, mais ça a été fait.
+[00:28:35 → 00:28:40] L'idée de grid search, c'est que vous allez lui donner
+[00:28:40 → 00:28:43] les combinaisons...
+[00:28:43 → 00:28:46] Vous allez lui donner les hyperparamètres que vous voulez tester
+[00:28:46 → 00:28:49] et vous allez donner les valeurs des hyperparamètres que vous voulez tester.
+[00:28:49 → 00:28:52] Là, par exemple, j'ai une grille de 2 hyperparamètres,
+[00:28:52 → 00:28:55] dont par exemple le nombre d'arbres avec
+[00:28:55 → 00:28:58] 50, 100, 200 et 300,
+[00:28:58 → 00:29:01] et 3 profondeurs d'arbres au maximum.
+[00:29:01 → 00:29:04] Par exemple 3, 5 et 8.
+[00:29:04 → 00:29:07] Ce que va faire le modèle, c'est du coup, vous allez lui donner ça.
+[00:29:07 → 00:29:10] Vous allez lui dire, je veux chercher pour
+[00:29:10 → 00:29:13] tel hyperparamètre sur telle valeur, sur tel hyperparamètre sur telle valeur.
+[00:29:13 → 00:29:16] Et il va du coup écrire
+[00:29:16 → 00:29:19] toutes les combinaisons possibles de vos valeurs.
+[00:29:19 → 00:29:22] Et il va du coup tester votre modèle, faire entraîner votre modèle
+[00:29:22 → 00:29:25] avec la cross-validation
+[00:29:25 → 00:29:28] pour toutes ces combinaisons. Donc ça,
+[00:29:28 → 00:29:31] forcément, ça fait pas mal de coût,
+[00:29:31 → 00:29:34] surtout si vous avez beaucoup de hyperparamètres à tester
+[00:29:34 → 00:29:37] et avec plusieurs valeurs, vous explosez très vite
+[00:29:37 → 00:29:40] le coût de votre entraînement.
+[00:29:40 → 00:29:43] Ça va tester du coup
+[00:29:43 → 00:29:46] toutes les combinaisons. Le coût va forcément exposer.
+[00:29:46 → 00:29:49] Et par contre, ça va être limité au point de la grille.
+[00:29:49 → 00:29:52] C'est-à-dire que là, ça va tester en nombre
+[00:29:52 → 00:29:55] d'arbres que les nombres que je lui ai donné moi.
+[00:29:55 → 00:29:58] Donc 50, 100, 200 et 300. Ce qui peut être un peu biaisé.
+[00:29:58 → 00:30:01] Si vous faites du
+[00:30:01 → 00:30:04] RandomizedSearchCV,
+[00:30:04 → 00:30:07] l'idée c'est de lui donner, on ne vous le donnez plus
+[00:30:07 → 00:30:10] des valeurs, mais vous lui donnez des intervalles.
+[00:30:10 → 00:30:13] Par exemple, je vais chercher un nombre d'arbres entre 50 et 200.
+[00:30:13 → 00:30:16] Et ça va venir tester
+[00:30:16 → 00:30:19] de manière aléatoire des valeurs au milieu.
+[00:30:19 → 00:30:22] Ça va venir tester par exemple 50, 73,
+[00:30:22 → 00:30:25] 85, 128 et 150.
+[00:30:25 → 00:30:28] Ça va les tester
+[00:30:28 → 00:30:31] de manière aléatoire.
+[00:30:31 → 00:30:34] Donc ça en teste moins, mais par contre,
+[00:30:34 → 00:30:37] c'est beaucoup plus aléatoire sur les combinaisons
+[00:30:37 → 00:30:40] que ça fait. Et donc il y a une autre méthode
+[00:30:40 → 00:30:43] qui est la troisième, qui est plus
+[00:30:43 → 00:30:46] un peu plus du coup guidée,
+[00:30:46 → 00:30:49] qui s'appelle Optuna.
+[00:30:49 → 00:30:52] Optuna va apprendre des essais passés.
+[00:30:52 → 00:30:55] C'est-à-dire que là, au lieu de donner
+[00:30:55 → 00:30:58] des valeurs
+[00:30:58 → 00:31:01] d'arbres que vous voulez tester,
+[00:31:01 → 00:31:04] vous allez lui donner un intervalle. Vous allez dire
+[00:31:04 → 00:31:07] il veut trouver le meilleur nombre d'arbres entre 50 et 500,
+[00:31:07 → 00:31:10] par exemple. Et c'est le modèle qui va se guider.
+[00:31:10 → 00:31:13] Il va tester des combinaisons
+[00:31:13 → 00:31:16] et il va se souvenir. Donc il va se dire
+[00:31:16 → 00:31:19] il va peut-être tester un grand nombre d'arbres.
+[00:31:19 → 00:31:22] Là, on va dire qu'il a testé un grand nombre d'arbres par ici.
+[00:31:22 → 00:31:25] Il n'a pas eu de très bons résultats. Donc il va se concentrer.
+[00:31:25 → 00:31:28] Il va se dire il faut que je diminue le nombre d'arbres
+[00:31:28 → 00:31:31] parce que j'ai de meilleurs résultats si je diminue le nombre d'arbres.
+[00:31:31 → 00:31:34] Donc il apprend des essais passés. Il se souvient des essais passés.
+[00:31:34 → 00:31:37] Et vous avez forcément par contre
+[00:31:37 → 00:31:40] un budget qui est borné. C'est-à-dire que vous lui donnez un nombre d'essais
+[00:31:40 → 00:31:43] à faire pour l'arrêter
+[00:31:43 → 00:31:46] au bout d'un certain temps. Sinon il peut énormément...
+[00:31:46 → 00:31:49] Sinon il peut boucler car il est
+[00:31:49 → 00:31:52] quasi à l'infini. Et il y a ce qu'on appelle
+[00:31:52 → 00:31:55] le pruning. Le pruning, ça permet de dire si dès le départ
+[00:31:55 → 00:31:58] d'un apprentissage, il voit qu'il est largement moins bon.
+[00:31:58 → 00:32:01] Dès le premier test, il voit qu'il est largement moins bon qu'ailleurs.
+[00:32:01 → 00:32:04] Il oublie cette combinaison d'hyperparamètre
+[00:32:04 → 00:32:07] et il va en tester une autre.
+[00:32:07 → 00:32:10] Il avorte clairement le test
+[00:32:10 → 00:32:13] de cette combinaison d'hyperparamètre
+[00:32:13 → 00:32:16] beaucoup plus tôt qu'à la fin, ce qui fait gagner
+[00:32:16 → 00:32:21] en calcul. Et là, il va explorer
+[00:32:21 → 00:32:24] l'espace continu. Vous lui donnez des intervalles.
+[00:32:24 → 00:32:27] Et au milieu, le nombre d'arbres, il sait que c'est un nombre entier.
+[00:32:27 → 00:32:30] Mais ça peut être 51,
+[00:32:30 → 00:32:33] ou 68, ou 75,
+[00:32:33 → 00:32:36] de manière totalement arbitraire.
+[00:32:36 → 00:32:39] Là où, sur GridSearch,
+[00:32:39 → 00:32:42] ça va vous tester juste les valeurs
+[00:32:42 → 00:32:45] que vous lui donnez à tester.
+[00:32:45 → 00:32:48] Donc GridSearch, vous allez tester chaque case.
+[00:32:48 → 00:32:51] Optuna, c'est il va de lui-même
+[00:32:51 → 00:32:54] savoir à peu près vers où se baser.
+[00:32:54 → 00:32:57] Donc il va être un peu plus guidé
+[00:32:57 → 00:33:00] et un peu plus intelligent
+[00:33:00 → 00:33:03] sur sa façon de tester les hyperparamètres.
+[00:33:03 → 00:33:06] Randomized Search, c'est un peu l'intermédiaire.
+[00:33:06 → 00:33:09] Puisqu'il teste comme Optuna,
+[00:33:09 → 00:33:12] il va tester sur toutes les valeurs possibles.
+[00:33:12 → 00:33:15] Et par contre, au lieu d'apprendre
+[00:33:15 → 00:33:18] et de se dire,
+[00:33:18 → 00:33:21] si j'augmente le nombre d'arbres,
+[00:33:21 → 00:33:24] je suis moins bon,
+[00:33:24 → 00:33:27] je reste sur un petit nombre d'arbres,
+[00:33:27 → 00:33:30] lui va tester complètement
+[00:33:30 → 00:33:34] de manière aléatoire les nombres d'arbres.
+[00:33:34 → 00:33:37] Donc vous avez ces trois techniques-là.
+[00:33:37 → 00:33:40] Vous pouvez faire tout à fait comme Ludovic,
+[00:33:40 → 00:33:43] qui a fait un Randomized Search
+[00:33:43 → 00:33:46] pour essayer de voir
+[00:33:46 → 00:33:49] autour des hyperparamètres qui ont les meilleurs résultats.
+[00:33:49 → 00:33:52] Ensuite, autour de là, vous pouvez refaire une petite grille.
+[00:33:52 → 00:33:55] Par exemple, ça vous a dit
+[00:33:55 → 00:33:58] que le meilleur résultat c'était 150 arbres
+[00:33:58 → 00:34:01] et 3 en profondeur maxi.
+[00:34:01 → 00:34:04] Vous pouvez dire, je veux tester, du coup faire une grid search
+[00:34:04 → 00:34:07] avec 140, 150, 160, 170 arbres
+[00:34:07 → 00:34:10] et 2, 3, 4 en profondeur
+[00:34:10 → 00:34:13] pour venir tester un peu plus profondément
+[00:34:13 → 00:34:16] ces hyperparamètres-là.
+[00:34:16 → 00:34:19] Donc il y a les trois qui existent.
+[00:34:19 → 00:34:24] Et pour Optuna,
+[00:34:24 → 00:34:27] il y a une campagne d'optimisation complète
+[00:34:27 → 00:34:30] au départ qui se lance.
+[00:34:30 → 00:34:33] Là, vous lui donnez des intervalles sur les hyperparamètres
+[00:34:33 → 00:34:36] et ensuite il passe en essai.
+[00:34:36 → 00:34:39] En essai, c'est un jeu d'hyperparamètres,
+[00:34:39 → 00:34:42] l'entraînement sur ce jeu d'hyperparamètres
+[00:34:42 → 00:34:45] et le score sur le jeu de validation.
+[00:34:45 → 00:34:48] Puisque là, c'est comme tout grid search
+[00:34:48 → 00:34:51] aussi et random search, c'est exactement pareil.
+[00:34:51 → 00:34:54] Vous avez une combinaison de hyperparamètres à tester,
+[00:34:54 → 00:34:57] vous entraînez le modèle, vous évaluez votre modèle
+[00:34:57 → 00:35:00] avec ces hyperparamètres-là
+[00:35:00 → 00:35:03] sur ce jeu d'hyperparamètres.
+[00:35:03 → 00:35:07] Ce qu'il y a chez l'optuna, c'est qu'après il y a le sampler
+[00:35:07 → 00:35:10] qui va proposer le prochain essai à partir de l'historique.
+[00:35:10 → 00:35:13] Donc lui, il va se souvenir de toutes les combinaisons
+[00:35:13 → 00:35:16] que vous avez testées avant
+[00:35:16 → 00:35:19] et il va guider vers quelles nouvelles combinaisons
+[00:35:19 → 00:35:22] d'hyperparamètres vous allez aller.
+[00:35:22 → 00:35:25] Et le pruning, c'est que le pruner va couper tôt les essais non prometteurs.
+[00:35:25 → 00:35:28] Donc s'il y a un essai qui dès le départ
+[00:35:28 → 00:35:31] l'entraînement se passe pas bien, etc.
+[00:35:31 → 00:35:34] ça va l'arrêter.
+[00:35:34 → 00:35:37] Il va y avoir une boucle sur ça
+[00:35:37 → 00:35:40] où chaque essai informe le TPE et le rajoute à l'historique
+[00:35:40 → 00:35:43] qui va lancer.
+[00:35:43 → 00:35:46] Donc il y a les essais qui sont arrivés.
+[00:35:46 → 00:35:49] Par contre, vous avez besoin de fixer
+[00:35:49 → 00:35:52] ce qu'on appelle un budget.
+[00:35:52 → 00:35:55] C'est-à-dire un nombre d'essais maximum
+[00:35:55 → 00:35:58] et un time-out.
+[00:35:58 → 00:36:01] Donc un temps
+[00:36:01 → 00:36:04] d'entraînement au global
+[00:36:04 → 00:36:07] pour pas dépasser.
+[00:36:08 → 00:36:11] Et il y a une graine aussi
+[00:36:11 → 00:36:14] qui va mettre dans le paramètre Optuna.
+[00:36:14 → 00:36:17] C'est ça la graine, vous l'avez très souvent
+[00:36:17 → 00:36:20] dans les paramètres de pas mal de fonctions.
+[00:36:20 → 00:36:23] Donc SEED.
+[00:36:23 → 00:36:26] Et ça permet de faire de la reproductivité.
+[00:36:26 → 00:36:29] C'est-à-dire que à partir du moment où
+[00:36:29 → 00:36:32] vous avez lancé un Optuna
+[00:36:32 → 00:36:35] avec une graine de reproductivité,
+[00:36:35 → 00:36:38] si vous relancez votre code depuis le début,
+[00:36:38 → 00:36:41] l'Optuna qui se passera sera globalement le même.
+[00:36:41 → 00:36:44] Du coup, ça permet des fois,
+[00:36:44 → 00:36:47] si on a perdu des informations,
+[00:36:47 → 00:36:50] de repartir sur quelque chose
+[00:36:50 → 00:36:53] qui est sensiblement pareil
+[00:36:53 → 00:36:58] et de pas avoir des résultats totalement différents.
+[00:36:58 → 00:37:01] Sur le tuning, vous avez du coup
+[00:37:01 → 00:37:04] le budget de calcul qui est borné.
+[00:37:04 → 00:37:07] Quand le gain ne vaut plus le calcul,
+[00:37:07 → 00:37:10] donc ça peut être en temps.
+[00:37:10 → 00:37:13] Après, pour le coup,
+[00:37:13 → 00:37:16] les optimisations des méthodes de machine learning
+[00:37:16 → 00:37:19] ne coûtent pas trop cher
+[00:37:19 → 00:37:22] au modèle.
+[00:37:22 → 00:37:25] Par contre, il faut choisir
+[00:37:25 → 00:37:28] une métrique d'évaluation qui correspond à votre objectif,
+[00:37:28 → 00:37:31] donc qui est claire dès le départ.
+[00:37:31 → 00:37:34] Attention aux espaces
+[00:37:34 → 00:37:37] que vous choisissez pour vous éparpérer par amètres.
+[00:37:37 → 00:37:40] Si vous choisissez
+[00:37:40 → 00:37:43] des plages resserrées,
+[00:37:43 → 00:37:46] ça vous coûtera forcément moins cher
+[00:37:46 → 00:37:49] et ça vous prendra moins de temps.
+[00:37:49 → 00:37:52] Ça sera une optimisation peut-être plus robuste,
+[00:37:52 → 00:37:57] mais il faut savoir que vous testez bien.
+[00:37:57 → 00:38:00] Reproductivité,
+[00:38:00 → 00:38:03] on va fixer la graine et stocker l'étude.
+[00:38:03 → 00:38:06] Ça, je vous présenterai aussi ML Flow.
+[00:38:06 → 00:38:09] Certains veulent commencer à regarder ML Flow
+[00:38:09 → 00:38:12] qui permet de tout sauvegarder
+[00:38:12 → 00:38:15] au fur et à mesure.
+[00:38:15 → 00:38:18] Ce qui peut se passer, c'est que vous lancez un entraînement
+[00:38:18 → 00:38:21] qui prend du temps et si vous avez
+[00:38:21 → 00:38:24] tout qui plante au bout d'un certain temps,
+[00:38:24 → 00:38:27] vous avez tout perdu si vous n'avez pas stocké au fur et à mesure.
+[00:38:27 → 00:38:30] Ça va permettre de stocker,
+[00:38:30 → 00:38:33] de pouvoir rejouer, auditer et vérifier toutes les deux.
+[00:38:33 → 00:38:36] Il peut le faire sur les trois,
+[00:38:36 → 00:38:39] sur random search et sur les trois.
+[00:38:39 → 00:38:42] Optuna ne le fait pas nativement.
+[00:38:42 → 00:38:45] De quoi ? De stocker ?
+[00:38:45 → 00:38:48] Oui.
+[00:38:48 → 00:38:51] En soi, il a un historique,
+[00:38:51 → 00:38:54] mais tu ne te stockes pas son historique à lui.
+[00:38:54 → 00:38:57] Pour une raison X ou Y.
+[00:38:57 → 00:39:00] En fait,
+[00:39:00 → 00:39:03] si ton code plante, tout est oublié.
+[00:39:03 → 00:39:06] Si tu n'as pas écrit quelque part
+[00:39:06 → 00:39:09] les résultats de ton Optuna.
+[00:39:09 → 00:39:12] On va le mettre en place
+[00:39:12 → 00:39:15] pour pouvoir lancer
+[00:39:15 → 00:39:18] et pouvoir partir et se dire
+[00:39:18 → 00:39:21] demain, quand je rentre demain matin,
+[00:39:21 → 00:39:24] le meilleur résultat est au pire d'être,
+[00:39:24 → 00:39:27] d'avoir enregistré tout ce que tu n'as fait jusque là
+[00:39:27 → 00:39:30] et d'avoir de l'info et pas rien.
+[00:39:30 → 00:39:33] Si ça plante dans la nuit, sinon tu n'as aucune information.
+[00:39:33 → 00:39:36] Sauf si tu as écrit des logs, etc.,
+[00:39:36 → 00:39:39] qui peut être une manière d'avoir de l'information.
+[00:39:39 → 00:39:42] En tout cas, il n'y a rien qui est stocké.
+[00:39:42 → 00:39:47] Sur vos jeux
+[00:39:47 → 00:39:50] d'entraînement, validation et de test,
+[00:39:50 → 00:39:53] tout ce qui est optimisation des hyperparamètres, etc.,
+[00:39:53 → 00:39:56] on le fait sur le jeu d'entraînement et de validation.
+[00:39:56 → 00:39:59] Le jeu de test, il reste vraiment une partie
+[00:39:59 → 00:40:02] de quand vous avez décidé de quel est le meilleur modèle
+[00:40:02 → 00:40:05] ou que vous pensez avoir un modèle
+[00:40:05 → 00:40:08] prometteur, on va dire.
+[00:40:08 → 00:40:11] Vous le mettez sur le jeu de test
+[00:40:11 → 00:40:14] pour évaluer, mais pas avant.
+[00:40:14 → 00:40:17] Sinon, le modèle peut
+[00:40:17 → 00:40:20] faire de l'overfitting sur votre jeu de test.
+[00:40:20 → 00:40:23] Son but, c'est de s'améliorer et d'avoir de meilleurs résultats
+[00:40:23 → 00:40:26] sur le jeu de validation.
+[00:40:26 → 00:40:29] Si vous faites ça sur le jeu de test,
+[00:40:29 → 00:40:32] il va s'améliorer grandement sur votre jeu de test,
+[00:40:32 → 00:40:35] mais votre jeu de test devient
+[00:40:35 → 00:40:38] biaisé, ou en tout cas,
+[00:40:38 → 00:40:41] il a quasi appris, en tout cas, il va avoir spécifié
+[00:40:41 → 00:40:44] son entraînement pour être bon sur votre jeu de test.
+[00:40:44 → 00:40:47] Il n'y a plus de données qui sont neutres
+[00:40:47 → 00:40:50] et qui sont des données comme en production pour évaluer votre modèle.
+[00:40:50 → 00:40:53] Donc, on reste bien sur la cross-validation,
+[00:40:53 → 00:40:56] sur les jeux d'entraînement et de validation,
+[00:40:56 → 00:40:59] et pas sur le jeu de test.
+[00:40:59 → 00:41:04] Le jeu de test, vous ne le touchez pas jusqu'à la fin.
+[00:41:04 → 00:41:09] Si vous voulez mesurer le coût,
+[00:41:09 → 00:41:12] ça, c'est quelque chose que
+[00:41:12 → 00:41:15] je me dois de vous le présenter,
+[00:41:15 → 00:41:18] un projet que je n'utilise quasiment jamais,
+[00:41:18 → 00:41:21] qui est de mesurer avec CodeCarbon
+[00:41:21 → 00:41:24] de votre entraînement.
+[00:41:24 → 00:41:27] Donc, toute l'énergie consommée, le CO2 émis, etc.
+[00:41:30 → 00:41:33] Ça vous permet de voir par run combien ça vous coûte.
+[00:41:40 → 00:41:43] C'est ce qui va être fait à cette partie-là.
+[00:41:44 → 00:41:49] Bonne pratique, donc.
+[00:41:49 → 00:41:52] Green AI, même si ça ne veut rien dire.
+[00:41:52 → 00:41:55] Le modèle le plus simple suffit.
+[00:41:55 → 00:41:58] Si vous avez deux modèles dont un qui demande un entraînement,
+[00:41:58 → 00:42:01] après, une fois que vous l'avez entraîné,
+[00:42:01 → 00:42:04] c'est bon, mais si vous avez deux modèles identiques
+[00:42:04 → 00:42:07] et qui ont les mêmes performances
+[00:42:07 → 00:42:10] et un qui est plus simple,
+[00:42:10 → 00:42:13] qui demande moins de calcul, etc.,
+[00:42:13 → 00:42:16] ça va aller vers le modèle le plus simple.
+[00:42:16 → 00:42:19] Après, vous allez voir early stopping,
+[00:42:19 → 00:42:22] si on le verra surtout pour le deep learning.
+[00:42:22 → 00:42:25] C'est l'idée de s'arrêter
+[00:42:25 → 00:42:28] et essayer de s'arrêter quand on voit
+[00:42:28 → 00:42:32] que ce qu'on fait n'améliore pas les performances.
+[00:42:32 → 00:42:35] Et mutualiser et utiliser les entraînements.
+[00:42:35 → 00:42:38] Ça va aller avec le fait de stocker les résultats
+[00:42:38 → 00:42:41] pour bien ne pas avoir à entraîner à chaque fois.
+[00:42:42 → 00:42:53] L'idée derrière,
+[00:42:53 → 00:42:56] c'est que vous allez pouvoir arbitrer aussi
+[00:42:56 → 00:42:59] vos décisions sur les résultats.
+[00:42:59 → 00:43:02] Donc si vous avez, par exemple,
+[00:43:02 → 00:43:05] des baseline
+[00:43:05 → 00:43:08] qui sont là très proches
+[00:43:08 → 00:43:11] et que par exemple,
+[00:43:11 → 00:43:14] c'est très faible d'un côté et très élevé de l'autre,
+[00:43:14 → 00:43:17] dans ces cas-là, peut-être que vous pouvez rester sur
+[00:43:17 → 00:43:20] ce modèle-là.
+[00:43:20 → 00:43:23] Enfin, un truc avec un option d'Africa.
+[00:43:23 → 00:43:26] L'idée, ça va être aussi de faire ça
+[00:43:26 → 00:43:29] au niveau des cométiers.
+[00:43:29 → 00:43:32] De calculer, évidemment, au niveau métier,
+[00:43:32 → 00:43:35] qu'est-ce que votre modèle coûte,
+[00:43:35 → 00:43:38] qu'est-ce qui coûte à, par exemple,
+[00:43:38 → 00:43:41] prédire une panne en trou,
+[00:43:41 → 00:43:44] et donc appeler de la maintenance
+[00:43:45 → 00:43:48] Donc ça, après, c'est
+[00:43:48 → 00:43:51] quelque chose que vous pouvez mettre en place
+[00:43:51 → 00:43:54] sur votre modèle.
+[00:43:56 → 00:43:59] Expliquer le modèle,
+[00:43:59 → 00:44:02] ça, je vous l'expliquerai un peu plus après.
+[00:44:02 → 00:44:06] Du coup, ce que je vous propose,
+[00:44:06 → 00:44:09] c'est que chacun prenne le CP
+[00:44:09 → 00:44:12] de voir avec les résultats que vous avez,
+[00:44:12 → 00:44:15] mettre bien un Optuna, etc.
+[00:44:15 → 00:44:18] et de commencer à préparer un rapport
+[00:44:18 → 00:44:21] comme si vous deviez présenter votre modèle
+[00:44:21 → 00:44:24] et les choix que vous avez faits, etc.
+[00:44:24 → 00:44:27] Pour ceux qui veulent commencer
+[00:44:27 → 00:44:30] à enregistrer toutes vos données,
+[00:44:30 → 00:44:33] vous pouvez mettre en place
+[00:44:33 → 00:44:36] MLflow,
+[00:44:36 → 00:44:39] qui vous permet d'enregistrer
+[00:44:39 → 00:44:42] tous vos entraînements, etc.
+[00:44:42 → 00:44:45] Je pourrais vous le présenter aussi,
+[00:44:45 → 00:44:48] peut-être cet après-midi,
+[00:44:48 → 00:44:51] mais comme ça, si vous voulez le mettre en place
+[00:44:51 → 00:44:54] déjà sur votre code, ça peut être intéressant.
+[00:44:54 → 00:44:57] Donc voilà.
+[00:44:57 → 00:45:04] Est-ce que vous avez des questions sur ça ?
+[00:45:04 → 00:45:07] Quand tu disais que la partie
+[00:45:07 → 00:45:10] étude impact carbone et tout
+[00:45:10 → 00:45:13] qu'on peut utiliser dans la vraie vie,
+[00:45:13 → 00:45:18] est-ce que tu peux en dire plus ? Pourquoi ?
+[00:45:18 → 00:45:21] Parce que, en général,
+[00:45:21 → 00:45:24] quand on te demande de faire un projet
+[00:45:24 → 00:45:27] de ML, et alors on le voit encore plus
+[00:45:27 → 00:45:30] avec les IA génératives maintenant,
+[00:45:30 → 00:45:33] je pourrais faire une apartée sur ça,
+[00:45:33 → 00:45:36] le coût carbone est rarement
+[00:45:36 → 00:45:39] un élément décideur.
+[00:45:39 → 00:45:42] C'est pas faux,
+[00:45:42 → 00:45:45] mais la performance va largement être au-dessus
+[00:45:45 → 00:45:48] du coût carbone.
+[00:45:48 → 00:45:51] En fait, si tu fais, par exemple,
+[00:45:51 → 00:45:54] maintenance prédictive,
+[00:45:54 → 00:45:57] si le client, l'utilisateur final,
+[00:45:57 → 00:46:00] tu lui dis, j'ai deux modèles,
+[00:46:00 → 00:46:03] un qui marche à 90% des cas,
+[00:46:03 → 00:46:06] mais qui fait un peu en émission carbone,
+[00:46:06 → 00:46:09] un qui coûte le plus cher à l'émission carbone,
+[00:46:09 → 00:46:12] à partir du moment où ton model est entraîné,
+[00:46:12 → 00:46:15] c'est quasi trop tard.
+[00:46:15 → 00:46:18] C'est plus que du passage dans un
+[00:46:18 → 00:46:21] norme de décision qui est créé, par exemple,
+[00:46:21 → 00:46:24] sur des Random Forest, le coût est largement moindre.
+[00:46:24 → 00:46:27] Le coût d'un projet de ML va être
+[00:46:27 → 00:46:30] majoritairement sur l'entraînement
+[00:46:30 → 00:46:33] et à l'entraînement, pour savoir quel modèle est le meilleur,
+[00:46:34 → 00:46:37] donc c'est un peu...
+[00:46:37 → 00:46:40] c'est un peu compliqué de dire que...
+[00:46:40 → 00:46:43] et en général, les gens,
+[00:46:43 → 00:46:46] enfin, nous, c'est rare...
+[00:46:46 → 00:46:49] même sur les sujets de confidentialité, etc.,
+[00:46:49 → 00:46:52] quand, au final, on fait, par exemple, des chatbots
+[00:46:52 → 00:46:55] et qu'on propose, au début, de dire qu'on fait un chatbot
+[00:46:55 → 00:46:58] confidentiel qui reste, et avec soit des modèles open source,
+[00:46:58 → 00:47:01] soit des modèles, par exemple, de Mistral, etc.,
+[00:47:01 → 00:47:04] qui sont déployables en France, etc.,
+[00:47:04 → 00:47:07] il y a un certain résultat,
+[00:47:07 → 00:47:10] il y a une certaine qualité de réponse qui est donnée,
+[00:47:10 → 00:47:13] et quand on dit, ah oui, mais il y a des problématiques,
+[00:47:13 → 00:47:16] après, on a optimisé, et peut-être qu'après un changement
+[00:47:16 → 00:47:19] de modèle peut largement améliorer, mais par contre,
+[00:47:19 → 00:47:22] ça veut dire aussi de...
+[00:47:22 → 00:47:25] oublier une partie de cette confidentialité.
+[00:47:25 → 00:47:28] Dans la majorité des cas, on nous dit,
+[00:47:28 → 00:47:31] on veut voir quand même ce que ça donne,
+[00:47:31 → 00:47:34] ah, c'est largement mieux, mais en fait,
+[00:47:34 → 00:47:37] oui, bon, au final, le prix ça va partir chez les Américains,
+[00:47:37 → 00:47:40] de toute façon, ils ont déjà tout, donc on s'affiche.
+[00:47:40 → 00:47:43] Et de toute façon, green AI,
+[00:47:43 → 00:47:46] bon...
+[00:47:46 → 00:47:49] on en prend ce qu'on veut, mais...
+[00:47:49 → 00:47:52] greenwashing très fort,
+[00:47:52 → 00:47:55] les entreprises, que ce soit Open AI, Anthropic, ou autre,
+[00:47:55 → 00:47:58] ça va chercher de la performance, coûte que coûte,
+[00:47:58 → 00:48:01] et après, le côté écologique,
+[00:48:01 → 00:48:04] après, c'est plus à l'utilisateur de se dire,
+[00:48:04 → 00:48:07] voyons, quand est-ce que je fais une requête chat GPT,
+[00:48:07 → 00:48:10] quand est-ce que je fais une requête Google classique.
+[00:48:10 → 00:48:13] Mais les Chinois travaillent quand même là-dessus.
+[00:48:13 → 00:48:16] Oui, c'est ce qu'on disait, du coup, hier, ou avant-hier,
+[00:48:16 → 00:48:19] qu'en fait, il y a un vrai...
+[00:48:19 → 00:48:22] pour le coup, il y a un vrai marché, je pense,
+[00:48:22 → 00:48:25] et en tout cas, une vraie demande aussi,
+[00:48:25 → 00:48:28] et un côté utilisateur,
+[00:48:28 → 00:48:31] d'avoir quelque chose qui marche tout aussi bien,
+[00:48:31 → 00:48:34] tout en étant sans être aussi polluant, quoi.
+[00:48:34 → 00:48:37] C'est clairement la prochaine grosse entreprise
+[00:48:37 → 00:48:40] qui émergera, celui qui va rassembler AI et écologie,
+[00:48:40 → 00:48:43] ce sera tout simplement.
+[00:48:43 → 00:48:46] C'est clairement, quoi.
+[00:48:46 → 00:48:49] Ah oui, oui, moi, je pense, je suis assez de cet avis-là.
+[00:48:49 → 00:48:52] Si la performance est quasi égale
+[00:48:52 → 00:48:55] à ce que Cloud et ChatGPT font actuellement,
+[00:48:55 → 00:48:58] je vois pas pourquoi les gens ne basculeraient pas
+[00:48:58 → 00:49:01] sur une version...
+[00:49:01 → 00:49:04] Il faut faire les actions directes.
+[00:49:04 → 00:49:07] Oui, c'est ça. Il faut aller chez DeepSec.
+[00:49:07 → 00:49:10] Mais franchement, moi, mes retours là,
+[00:49:10 → 00:49:13] c'est que DeepSec, c'est vraiment pas négligeable.
+[00:49:13 → 00:49:16] Ah non, c'est vraiment un très bon modèle.
+[00:49:16 → 00:49:19] Pour le coup, c'est vraiment un très bon modèle.
+[00:49:19 → 00:49:22] Après, il y a toujours, pour le coup,
+[00:49:22 → 00:49:25] le problème de confidentialité,
+[00:49:25 → 00:49:28] et ça devient aussi un problème géopolitique
+[00:49:28 → 00:49:31] entre utiliser un modèle chinois ou un modèle américain.
+[00:49:31 → 00:49:34] Oui, parce qu'on a fait avec nos voitures...
+[00:49:34 → 00:49:37] Ça les a pas gênés dans l'automobile,
+[00:49:37 → 00:49:40] ça les a pas gênés ailleurs.
+[00:49:40 → 00:49:43] Non, déjà, ça sera pas des modèles européens,
+[00:49:43 → 00:49:46] donc après...
+[00:49:46 → 00:49:49] Et puis ils sont en avance aujourd'hui sur leur téléphone,
+[00:49:49 → 00:49:52] donc ils te l'applient, et nous, c'est vers ce modèle-là
+[00:49:52 → 00:49:55] qu'on va aussi malgré...
+[00:49:55 → 00:49:58] Oui, mais là, DeepSec a fait des très bonnes avancées,
+[00:49:58 → 00:50:01] des gros trucs, alors après, c'est sûr que là,
+[00:50:01 → 00:50:04] le ChatGPT Astra qui est sorti,
+[00:50:04 → 00:50:07] ça a des faits wow forts,
+[00:50:07 → 00:50:10] mais dans beaucoup d'utilisations,
+[00:50:10 → 00:50:13] quand vous faites des sujets, des projets IA génératifs,
+[00:50:13 → 00:50:16] en général, l'utilisation de l'IA génératif
+[00:50:16 → 00:50:19] peut être cachée par l'utilisateur.
+[00:50:19 → 00:50:22] Un outil de réponse à l'appel d'offre,
+[00:50:22 → 00:50:25] vous n'êtes pas connecté sur ChatGPT à affaire,
+[00:50:25 → 00:50:28] c'est que vous avez une nouvelle interface
+[00:50:28 → 00:50:31] où vous donnez des documents, il y a une lecture des documents,
+[00:50:31 → 00:50:34] une extraction, du coup, on fait des appels API.
+[00:50:34 → 00:50:37] Et dans ces conditions-là,
+[00:50:37 → 00:50:40] le ChatGPT est un vrai modèle à prendre en compte
+[00:50:40 → 00:50:43] et à pas oublier.
+[00:50:43 → 00:50:46] Et Astra, sa grosse nouveauté, c'est parce que ça eggblog,
+[00:50:46 → 00:50:49] qu'on peut faire des applications complètes, non ?
+[00:50:49 → 00:50:52] C'est ça, c'est que ça va se... du coup, bouger,
+[00:50:52 → 00:50:55] en gros, ça va bouger sur ton écran, quoi.
+[00:50:55 → 00:50:58] Ça va lire si tu...
+[00:50:58 → 00:51:01] Moi, on l'a testé sur mon truc en 10 ans,
+[00:51:01 → 00:51:04] ben voilà, j'ai tel Event Bank
+[00:51:04 → 00:51:07] qui a été rajouté sur tel calendrier,
+[00:51:07 → 00:51:10] va sur mon calendrier Gmail,
+[00:51:10 → 00:51:13] qui est un calendrier commun, le rajouter, etc.
+[00:51:13 → 00:51:16] Et on voit, du coup, la souris bouger
+[00:51:16 → 00:51:19] et faire toutes les attaches.
+[00:51:19 → 00:51:22] Et ils ont aussi vendu, c'est ce qu'ils ont vendu
+[00:51:22 → 00:51:25] sur leur vidéo de sortie,
+[00:51:25 → 00:51:28] c'est que c'est le bond vocal.
+[00:51:28 → 00:51:31] De dire, en gros, de dire, va faire ça,
+[00:51:32 → 00:51:35] va chercher dans mon compte, va chercher sur mes mails,
+[00:51:35 → 00:51:38] va chercher sur... en fait, c'est qu'il peut aller dans ton ordi partout
+[00:51:38 → 00:51:41] et que la commande vocal est quand même très forte.
+[00:51:41 → 00:51:44] Donc, potentiellement, bientôt, on sera tous dans nos bureaux
+[00:51:44 → 00:51:47] ou dans nos open space à discuter avec nos ordis et puis voilà.
+[00:51:47 → 00:51:50] Oui, oui.
+[00:51:50 → 00:51:53] Sur l'open space, ça va être très sympa.
+[00:51:53 → 00:51:56] Ça va être super sympa.
+[00:51:56 → 00:52:06] On va adorer.
+[00:52:06 → 00:52:09] Du coup, je vous laisse reprendre le TP
+[00:52:09 → 00:52:12] et du coup, potentiellement,
+[00:52:12 → 00:52:15] rajoutez les hyperparamètres.
+[00:52:15 → 00:52:18] Je mets la consigne sur Discord de suite
+[00:52:18 → 00:52:21] et du coup, je mets une petite phrase pour MLflow
+[00:52:21 → 00:52:24] pour ceux qui veulent passer,
+[00:52:24 → 00:52:27] mettre MLflow aussi en place
+[00:52:27 → 00:52:30] et je vous présenterai
+[00:52:30 → 00:54:07] un peu plus de détails après.
+[00:54:07 → 00:54:10] Sur l'espace plausible,
+[00:54:10 → 00:54:13] j'ai du mal à avoir un exemple en tête
+[00:54:13 → 00:54:16] qui pourrait m'aider à me comprendre si c'est parti.
+[00:54:16 → 00:54:20] Attends, je t'entends pas.
+[00:54:20 → 00:54:23] C'est chez moi.
+[00:54:23 → 00:54:26] C'est moi, j'avais le micro coupé.
+[00:54:26 → 00:54:29] Du coup, espace plausible, c'est que si tu mets,
+[00:54:29 → 00:54:34] par exemple, si je fais choisir
+[00:54:34 → 00:54:37] pour Optuna, du coup, je vais lui donner un nombre d'essais.
+[00:54:38 → 00:54:41] Si je lui dis que je dois tester entre
+[00:54:41 → 00:54:44] par exemple 50 et 1000 arbres,
+[00:54:44 → 00:54:47] du coup, la plage de recherche est beaucoup plus grande.
+[00:54:47 → 00:54:50] Du coup, il va aller chercher un peu partout
+[00:54:50 → 00:54:53] et le résultat qu'il va avoir
+[00:54:53 → 00:54:56] sera globalement vers là où tu dois aller,
+[00:54:56 → 00:54:59] mais ce ne sera peut-être pas aussi détaillé.
+[00:54:59 → 00:55:02] Alors que si tu dis le nombre d'arbres
+[00:55:02 → 00:55:05] en général, c'est de dizaines à centaines,
+[00:55:05 → 00:55:08] si tu dis que je teste entre 50 et 300,
+[00:55:08 → 00:55:11] tu as largement diminué le range
+[00:55:11 → 00:55:14] d'hyperparamètres qu'il peut choisir.
+[00:55:14 → 00:55:17] Du coup, les tests qu'il va pouvoir faire,
+[00:55:17 → 00:55:20] il va pouvoir en faire plus vers là
+[00:55:20 → 00:55:23] où c'est à réellement des résultats.
+[00:55:23 → 00:55:26] Du coup, il y a des chances que tes résultats soient meilleurs
+[00:55:26 → 00:55:29] et que ton optimisation soit beaucoup plus robuste
+[00:55:29 → 00:55:32] que ce que tu aurais avec
+[00:55:33 → 00:55:36] des intervalles beaucoup plus grands.
+[00:55:36 → 00:55:39] OK, d'accord, je vois.
