@@ -13,3 +13,5 @@ Cet index regroupe les fiches synthétiques du parcours IT.
 - [Comparaison de trois classifieurs pour la maintenance prédictive](07-comparaison-classifieurs-maintenance-predictive.md)
 - [Optimisation des hyperparamètres et validation croisée](08-optimisation-hyperparametres-et-validation-croisee.md)
 - [Arbres de décision et Random Forest](09-arbres-de-decision-et-random-forest.md)
+- [Préparation des données images pour un auto-encodeur de détection d'anomalies (MVTec AD)](10-preparation-donnees-images-mvtec-ad.md)
+- [Auto-encodeur de détection d'anomalies : TensorFlow vs PyTorch, CPU vs GPU](11-autoencodeur-anomalies-tensorflow-pytorch-cpu-gpu.md)
