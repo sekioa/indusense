@@ -33,6 +33,24 @@ Implémentation de référence : [`dataset.py`](../../../src/indusense/vision/da
 - Augmentation retenue : `HorizontalFlip`, `VerticalFlip`, `Rotate(±15°)`, `Affine` (translation/échelle légères), `RandomBrightnessContrast`, avec un `border_mode` en réflexion (`cv2.BORDER_REFLECT_101`) pour prolonger la texture au lieu d'ajouter une bordure noire artificielle.
 - Justification : `wood` n'a pas de défaut lié à une orientation (contrairement au `flip` de `metal_nut`), donc les flips et rotations légères sont pertinents. La rotation reste limitée à ±15° (pas 90°/180°) pour ne pas déformer le grain de façon irréaliste, et les variations de luminosité/contraste restent modérées.
 
+## Généralisation : pièges de découpage, déséquilibre et versioning
+
+Le support de séance « Préparation d'un dataset d'images » (S15) présente ces notions de façon plus générale, au-delà du seul cas de l'auto-encodeur InduSense — utile pour toute vision industrielle, y compris une approche supervisée avec défauts annotés.
+
+- **Pièges du découpage train/validation/test**, à vérifier systématiquement : fuite de données (*data leakage*) entre les jeux ; images d'une même pièce ou série réparties dans plusieurs jeux (une pièce doit rester entière dans un seul jeu) ; proportions non représentatives de la réalité terrain.
+- **Redimensionnement** : préserver le ratio quand c'est possible (padding plutôt que déformation), choisir une résolution suffisante pour que le défaut reste visible après redimensionnement, et documenter la méthode d'interpolation utilisée (bilinéaire, bicubique, plus proche voisin).
+- **Stratégies génériques face au déséquilibre** (au-delà de l'approche par auto-encodeur qui le contourne en n'apprenant que le normal) : suréchantillonnage ou augmentation ciblée des défauts, pondération des classes dans la fonction de coût, et choix de métriques adaptées (rappel, F1) plutôt que l'accuracy — voir la [fiche métriques](03-metriques-evaluation-modeles-machine-learning.md).
+- **Qualité des étiquettes** : une étiquette est une vérité terrain dont la qualité plafonne celle du modèle. Distinguer les niveaux d'annotation (étiquette image, boîte englobante, masque pixel — MVTec AD fournit ce dernier niveau), définir une convention claire de ce qu'est un défaut, et faire arbitrer les cas ambigus par un expert métier. En détection d'anomalies non supervisée (l'approche retenue ici), peu ou pas d'étiquettes de défaut sont nécessaires à l'entraînement — seulement à l'évaluation.
+- **Versionner un dataset image** : au-delà du code, versionner les images (souvent hors Git, via un stockage dédié), les métadonnées (source, date, capteur, conditions de prise de vue) et les artefacts (découpage train/val/test, statistiques de normalisation, étiquettes). Outils cités : DVC, Git-LFS, ou a minima une convention de nommage stricte accompagnée d'un fichier de métadonnées. Règle d'or : un même identifiant de version doit toujours produire le même dataset. **Non mis en place dans ce dépôt** à ce jour : les images `datas/deep-learning/wood/` sont suivies par une simple archive (`wood.tar.xz`), sans DVC ni Git-LFS.
+
+### Exemples et nuances donnés à l'oral
+
+- **Similarité train / production** : le formateur cite un projet de contrôle qualité où les images d'entraînement avaient été prises dans une pièce bien éclairée, alors que la production réelle l'était moins — le modèle généralisait mal. Principe rappelé : les données d'entraînement doivent être représentatives des conditions de test **et** de production, pas seulement d'un jeu de test propre.
+- **Augmentation ciblée sur les échecs du modèle** : sur un projet de détection de plaques d'égout rondes par drone, la rotation était jugée inutile (objet sans orientation), mais le modèle échouait sur les plaques partiellement dans l'ombre. Le formateur a construit manuellement des images synthétiques avec ombre, puis démultiplié ces cas par symétries/rotations — amélioration nette des résultats. Illustration concrète du principe « augmenter sur les cas d'échec observés », plus qu'une liste générique de transformations.
+- **Cohérence physique, exemple affiné** : une bouteille photographiée debout ne doit jamais être tournée à l'horizontale ou à l'envers (jamais observée ainsi en production) ; une symétrie axiale verticale (miroir gauche-droite) reste en revanche acceptable, **sauf** si l'étiquette porte du texte, qui deviendrait alors illisible/inversé de façon irréaliste.
+- **Fuite de données lors de la standardisation** : si la normalisation va au-delà de la simple division par 255 (moyenne/écart-type par canal), ces statistiques doivent être calculées **uniquement sur le train**, puis appliquées telles quelles à la validation et au test — jamais recalculées sur ces derniers, sous peine de fuite de données.
+- **Catégories MVTec AD citées comme plus faciles à détecter** : `hazelnut` et `metal_nut` sont présentées comme donnant de bons résultats pédagogiques, `bottle` comme ayant peu de défauts bien visibles. Une indication complémentaire au choix de `wood` déjà retenu et documenté dans ce dépôt.
+
 ## Erreurs fréquentes et bonnes pratiques
 
 - Appliquer l'augmentation aux images de test ou de validation : elle doit rester réservée aux saines d'entraînement.
@@ -77,6 +95,7 @@ Implémentation de référence : [`dataset.py`](../../../src/indusense/vision/da
 - La validation (saine) sert à calibrer le seuil, pas à entraîner le modèle.
 - L'augmentation ne s'applique jamais aux images de test.
 - La pertinence d'une augmentation géométrique dépend de la nature de l'objet (centré/orienté vs texture).
+- Un dataset versionné doit toujours produire le même contenu pour un même identifiant de version.
 
 ## Points à savoir expliquer lors de la soutenance
 
@@ -85,3 +104,9 @@ Implémentation de référence : [`dataset.py`](../../../src/indusense/vision/da
 - Pourquoi une augmentation pertinente pour `metal_nut` (objet) ne l'est pas nécessairement pour `wood` (texture), et inversement.
 - Comment vérifier qu'une transformation d'augmentation ne rapproche pas une image saine d'un défaut nommé.
 - Pourquoi la partie 2 (entraînement) peut nécessiter un environnement Python différent de la partie 1.
+- Ce que versionner dans un dataset image au-delà des images elles-mêmes, et pourquoi ce n'est pas encore en place ici.
+
+## Sources du cours
+
+- `13_Preparation_dataset_images.pdf`, support Aelion « Préparation d'un dataset d'images » (Séance 15), diapositives 1 à 16.
+- [Transcription de la séance](../02-transcriptions/10-jour-3-preparation-dataset-images-autoencodeur.txt) (exemples oraux : éclairage, plaques d'égout, bouteilles, standardisation).

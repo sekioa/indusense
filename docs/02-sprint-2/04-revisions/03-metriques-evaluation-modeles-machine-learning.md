@@ -238,6 +238,20 @@ Le besoin « un arrêt d'urgence se produira-t-il dans les 24 heures ? » est un
 
 L'accuracy seule serait trompeuse si les arrêts sont rares. Le seuil `0,5` n'est pas une règle métier : il doit être choisi sur validation, puis seulement évalué une fois sur le test.
 
+### Traduire un résultat pour un Product Owner
+
+Un score technique doit se reformuler en langage métier avant restitution, par exemple (chiffres d'illustration du support Aelion, pas des résultats Indusense mesurés) :
+
+| Métrique technique | Formulation métier |
+|---|---|
+| Recall = 85 % | Sur 100 pannes, 85 sont détectées ; 15 passent inaperçues. |
+| FN = 30 (sur 200 positifs) | 30 pannes manquées = 30 arrêts non planifiés potentiels. |
+| FP = 48 | 48 fausses alarmes = 48 interventions inutiles. |
+| F1 = 0,78 | Score global de fiabilité — acceptable pour un POC. |
+| ROC-AUC = 0,92 | Le modèle distingue bien les machines saines des machines à risque. |
+
+Voir aussi la [fiche POC ML](12-poc-ml-baseline-cout-metier-plan-experience.md) pour le chiffrage du coût métier d'un FN et d'un FP (ordres de grandeur en euros).
+
 ## Erreurs fréquentes et bonnes pratiques
 
 - Optimiser plusieurs fois sur le jeu de test : cela transforme implicitement le test en validation et surestime la généralisation.
@@ -259,6 +273,12 @@ L'accuracy seule serait trompeuse si les arrêts sont rares. Le seuil `0,5` n'es
 ## À savoir expliquer lors de la soutenance
 
 Savoir justifier : la cible et la classe positive ; les conséquences d'un FP et d'un FN ; le découpage qui protège le test ; le choix de la métrique principale ; le seuil opérationnel ; et les limites du résultat. Pour Indusense, expliquer pourquoi PR-AUC, rappel et précision au seuil retenu sont plus utiles qu'une accuracy isolée.
+
+## Sources du cours
+
+- `06_Evaluation_AELION.pdf`, support Aelion.
+- `07_poc_ml.pdf`, support Aelion « POC ML & métriques métier » (Séance 11) : matrice de confusion, coût métier FN/FP, traduction technique → métier.
+- `10_metriques_ROC_PR_AUC.pdf`, support Aelion « Rappel des métriques — ROC AUC & PR AUC ».
 
 ## Références techniques
 

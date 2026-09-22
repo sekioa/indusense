@@ -15,3 +15,6 @@ Cet index regroupe les fiches synthétiques du parcours IT.
 - [Arbres de décision et Random Forest](09-arbres-de-decision-et-random-forest.md)
 - [Préparation des données images pour un auto-encodeur de détection d'anomalies (MVTec AD)](10-preparation-donnees-images-mvtec-ad.md)
 - [Auto-encodeur de détection d'anomalies : TensorFlow vs PyTorch, CPU vs GPU](11-autoencodeur-anomalies-tensorflow-pytorch-cpu-gpu.md)
+- [POC ML : choix de baseline, coût métier et plan d'expérience](12-poc-ml-baseline-cout-metier-plan-experience.md)
+- [MLflow : architecture, tracking, autolog et Model Registry](13-mlflow-tracking-autolog-model-registry.md)
+- [Réseaux de neurones : MLP, CNN et transfer learning — fondations](14-reseaux-de-neurones-mlp-cnn-transfer-learning.md)
