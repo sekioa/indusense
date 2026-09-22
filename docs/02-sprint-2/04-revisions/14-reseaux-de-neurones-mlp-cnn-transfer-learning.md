@@ -81,10 +81,13 @@ Un **auto-encodeur** est un réseau entraîné à reconstruire sa propre entrée
 
 - Fonction de coût : MSE (données continues) ou entropie croisée binaire (données dans [0, 1]) ; même optimisation qu'un réseau classique (Adam + rétropropagation).
 - Hyperparamètre clé : la dimension de l'espace latent — trop grande, le réseau « recopie » sans rien apprendre ; trop petite, la reconstruction est de mauvaise qualité.
-- Variantes : débruiteur (*denoising*, entrée bruitée → cible originale), parcimonieux (*sparse*, contrainte sur l'espace latent), **convolutif** (adapté aux images), **variationnel (VAE)** (espace latent probabiliste, modèle génératif).
-- Applications : réduction de dimension (alternative non linéaire à l'ACP), débruitage, **détection d'anomalies** (une erreur de reconstruction élevée signale une donnée atypique), pré-entraînement, génération de données (VAE), compression.
+- Variantes : débruiteur (*denoising*, entrée bruitée → cible originale, à la base des modèles génératifs d'images par diffusion), parcimonieux (*sparse*, contrainte sur l'espace latent, features plus interprétables), **convolutif** (adapté aux images), **variationnel (VAE)** (espace latent probabiliste, modèle génératif).
+- Applications : réduction de dimension (alternative non linéaire à l'ACP), débruitage (image ou signal, y compris audio), **détection d'anomalies** (une erreur de reconstruction élevée signale une donnée atypique), pré-entraînement et apprentissage de représentation (transfer learning), génération de données (VAE), compression.
+- **Entrée et sortie de types différents** : l'encodeur et le décodeur n'ont pas à porter sur le même type de donnée. Exemple : encoder une image en vecteur, puis décoder ce vecteur en légende textuelle (*image captioning*) — c'est toujours un couple encodeur-décodeur, entraîné de bout en bout, même si l'entrée est une image et la sortie du texte.
+- **Un modèle par type d'entrée** : un auto-encodeur entraîné sur un seul type d'objet (ex. des images) ne sait gérer que ce type et cette taille d'entrée à l'inférence. Pour prendre en entrée plusieurs types de données (ex. image et texte), deux options : soit entraîner un seul modèle qui encode les deux dès le départ, soit utiliser deux modèles séparés, chacun spécialisé, et aiguiller la donnée vers le bon.
+- **Encodeur seul, décodeur seul, encodeur-décodeur** : un modèle « encodeur seul » comprend pourquoi il existe (produire une représentation, ex. features pour la classification). Un modèle qualifié de « décodeur seul » — le cas des LLM, qui prédisent le texte token par token — est un abus de langage courant selon la formatrice : décoder suppose qu'une représentation a d'abord été encodée quelque part (le passage du texte en entrée vers une représentation vectorielle interne). Il y a donc toujours un encodage implicite, même dans une architecture dite « decoder-only ».
 
-**Dans ce dépôt**, l'application concrète « détection d'anomalies par auto-encodeur convolutif » sur les images InduSense (wood, MVTec AD) est détaillée dans la [fiche 11 — Auto-encodeur de détection d'anomalies](11-autoencodeur-anomalies-tensorflow-pytorch-cpu-gpu.md) : implémentation TensorFlow et PyTorch, CPU et GPU, choix du seuil de reconstruction. Cette fiche 14 n'y ajoute que le cadre théorique général.
+**Dans ce dépôt**, l'application concrète « détection d'anomalies par auto-encodeur convolutif » sur les images InduSense (wood, MVTec AD) est détaillée dans la [fiche 11 — Auto-encodeur de détection d'anomalies](11-autoencodeur-anomalies-tensorflow-pytorch-cpu-gpu.md) et dans la [fiche 15 — heatmaps, ratio de compression, SSIM, PatchCore](15-auto-encodeur-heatmaps-ratio-compression-ssim.md) : implémentation TensorFlow et PyTorch, CPU et GPU, choix du seuil de reconstruction, localisation pixel du défaut. Cette fiche 14 n'y ajoute que le cadre théorique général.
 
 ## Démarche
 
@@ -113,6 +116,8 @@ Un **auto-encodeur** est un réseau entraîné à reconstruire sa propre entrée
 - ResNet ajoute des connexions résiduelles pour permettre des réseaux plus profonds ; DenseNet réutilise les features de toutes les couches précédentes d'un bloc.
 - Le transfer learning réutilise un réseau pré-entraîné, soit comme extracteur de features figé, soit en fine-tuning partiel.
 - Un auto-encodeur est un apprentissage non supervisé dont la cible est l'entrée elle-même.
+- Un auto-encodeur entraîné sur un seul type d'entrée ne sait pas en traiter un autre à l'inférence : il faut soit l'entraîner conjointement sur les deux dès le départ, soit utiliser deux modèles séparés.
+- Qualifier un LLM de « décodeur seul » est un abus de langage : il y a toujours une étape d'encodage implicite avant tout décodage.
 
 ## Points à savoir expliquer lors de la soutenance
 
@@ -122,11 +127,14 @@ Un **auto-encodeur** est un réseau entraîné à reconstruire sa propre entrée
 - La différence entre dropout, early stopping et batch normalization, et quand utiliser chacun.
 - Pourquoi le transfer learning est pertinent quand peu de données labellisées sont disponibles.
 - Comment un auto-encodeur permet de détecter des anomalies sans exemples de défauts étiquetés (lien avec la fiche 11).
+- Pourquoi un encodeur et un décodeur peuvent porter sur deux types de données différents (ex. image en entrée, texte en sortie), avec un exemple concret (légende d'image).
+- Pourquoi une architecture LLM dite « decoder-only » comporte malgré tout un encodage implicite du texte d'entrée.
 
 ## Sources du cours
 
 - `12_Deep_Learning.pdf`, support Aelion « Deep Learning » (Parcours IA), diapositives 1 à 61.
-- [Transcription de la séance](../02-transcriptions/09-jour-3-deep-learning-reseaux-de-neurones.txt).
+- [Transcription de la séance du 21/09](../02-transcriptions/09-jour-3-deep-learning-reseaux-de-neurones.txt).
+- [Transcription du cours auto-encodeurs du 22/09](../02-transcriptions/11-jour-4-cours-auto-encodeurs.txt).
 
 ## Pour aller plus loin
 
