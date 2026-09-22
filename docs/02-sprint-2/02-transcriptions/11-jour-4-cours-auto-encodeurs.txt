@@ -1,0 +1,895 @@
+autour de ce à quoi votre objet doit ressembler.
+Et donc, il ne saura pas garder l'information essentielle
+quand il y aura un défaut.
+Ça amètra un aspect qu'il ne connaît pas,
+qu'il ne saura pas refaire.
+Et donc, il devrait normalement reconstruire votre objet sans défaut
+alors qu'il a un défaut à la base.
+C'est un peu l'idée.
+Et l'idée, après, c'est de comparer la sortie et l'entrée
+pour voir s'il y a des différences.
+Donc, l'architecture, c'est vraiment ça.
+C'est que vous avez votre image en entrée, on encode,
+on a un espace compressé et on va décoder vers une autre sortie.
+Là, du coup, nous, on fait une partie encodage-décodage sur de l'image
+et le but, c'est d'avoir l'entrée et la sortie.
+Mais ce type de modèle, ça peut être utilisé pour, par exemple,
+avoir une image en entrée et, si vous voulez,
+une légende textuelle en sortie.
+On utilise ce type de modèle avec, on encode l'image en vecteur,
+du coup, interprétable, et le vecteur en texte, ensuite.
+Donc, c'est des architectures qui sont utiles pour d'autres sujets.
+Donc, voilà.
+Et donc, il y a une question ?
+Oui, il y a une question.
+Est-ce que le type d'objet est toujours le même ?
+Est-ce qu'on peut avoir plusieurs types d'objets pour le même encodeur ?
+Pour le même encodeur ?
+Alors, en entrée, tu veux dire le même type d'objet ?
+Si l'encodeur, c'est un réseau de neurones entraînés pour prendre un objet en entrée
+et le reconstruire en sortie, est-ce qu'il sait faire un seul type d'objet
+ou il peut prendre en entrée plusieurs types d'objets pour pouvoir les reconstruire ?
+Non, quand tu vas entraîner ton modèle, tu vas l'entraîner sur un type d'objet,
+par exemple, nous, des images, et il ne va savoir gérer que les images
+et qu'ils auront la même taille que ce qu'on va lui donner, etc.
+Si tu veux faire un modèle qui prend en entrée une image et qui aussi prend du texte,
+soit il est entraîné en prenant les deux dès le départ,
+c'est-à-dire qu'il prend images et texte et il essaye d'encoder les deux en même temps,
+soit c'est deux modèles différents.
+Si ça peut te dire que tu dois faire encoder et décoder autant des images que du texte,
+il y a des chances que ce soit deux modèles différents.
+Si tu es du texte, tu pars dans un modèle, si c'est de l'image, tu pars dans l'autre.
+Par contre, dans les architectures d'autorencodeur,
+ce n'est pas parce que là, nous, dans notre cas, on a image en entrée et image en sortie,
+mais vous pouvez toujours tout à fait avoir image en entrée et texte en sortie dans les cas.
+Donc voilà comment ça va fonctionner.
+Et du coup, la fonction de coût,
+qui est ce qu'on retrouve dans tous les sujets de machine learning et deep learning pendant l'entraînement,
+ça va être un écart entre votre image de sortie et votre image d'entrée.
+Donc ça pareil, il va falloir la choisir.
+Et on va mesurer la performance de votre modèle,
+à savoir est-ce que votre image de sortie ressemble à votre image d'entrée.
+Donc en l'entraînement, la cible,
+on va vouloir du coup,
+la cible, c'est votre image en entrée,
+et on va vouloir minimiser l'erreur de reconstruction.
+Donc il y a des fonctions de coût qui sont classiques.
+La MSE par exemple, ça va venir calculer du coup la différence entre votre image et l'image de base,
+pixel par pixel en moyenne, par exemple.
+Donc vous pouvez faire comme ça.
+Il y a si vous êtes sur des données dans un O1, mais là, ce n'est pas notre cas,
+vous avez de l'entropie, etc.
+Mais vous avez du coup ce genre d'optimisation-là.
+Et ensuite, l'optimisation se fait de la même manière que tous les autres réseaux.
+C'est-à-dire que vous avez de la descente de gradient,
+on a tous les paramètres, en fait, tous les paramètres qu'il y a.
+Ici, là, à chaque fois, c'est des réseaux de neurones, c'est des couches.
+Tous les paramètres qu'il y a vont être à optimiser.
+Donc votre modèle, on va avoir votre image.
+On fait passer l'image dans tout.
+On calcule l'erreur.
+Et on vient du coup modifier les paramètres petit à petit avec la backpropagation.
+Donc on vient faire les allers-retours.
+Je donne une image, je mesure sa reconstruction,
+mais à jour les poids.
+Je refais une image, ou un batch d'images, pour faire ça.
+J'ai une question, s'il te plaît.
+Je n'ai pas très bien compris le principe.
+C'est-à-dire, l'idée, c'est de reconstruire des images en sortie
+qui sont les mêmes qu'en images en entrée
+pour bien entraîner le modèle, c'est ça ?
+C'est ça.
+Sauf que le but, c'est que tu ne donnes à ton modèle
+que des données en entrée qui sont des données normales.
+Donc, théoriquement, vous allez voir que ça va être une délimite d'ailleurs,
+mais théoriquement, il est censé du coup ne bien reproduire
+que le type d'image qu'il a déjà vue.
+Donc, que des images sans défaut.
+En fait, dans son espace latent,
+l'information, il y a un défaut ou pas,
+et comment il est, il ne l'aura jamais vue.
+Donc, il n'aura jamais encodé l'information, il y a un défaut.
+Donc, il ne va pas garder l'information.
+En fait, entre l'entrée et l'espace latent,
+c'est un résumé d'informations.
+Et par exemple, je vais caricaturer,
+mais mon image de Metal Nuts, je peux dire,
+là, les quatre espèces de petites pattes,
+elles sont vers le haut, le bas, et droite et gauche.
+C'est orienté dans tel sens, etc.
+Donc, tout ce qui est commun, en fait,
+à tous vos exemples de l'entraînement,
+ça va être des informations qu'il va essayer d'encoder.
+Mais par exemple, si à un moment,
+il y a une partie qui est manquante,
+ça, c'est quelque chose qu'il ne sait pas encoder.
+Donc, quand il devra reconstruire une image
+qui a une partie manquante,
+en fait, il va reconstruire une image
+telle qu'il la connaît d'habitude,
+donc avec la partie manquante
+remplacée par une vraie partie, en fait.
+Et du coup, on pourra calculer la différence
+entre notre vraie image et l'image de sortie.
+Et s'il y a une différence,
+ça veut dire qu'il y a un défaut quelque part.
+En fait, on apprend à notre modèle
+à reconstruire des images normales.
+Donc, si l'image a un défaut,
+le modèle va normalement reconstruire l'image
+qui a un défaut de manière normale,
+donc en fait, va effacer le défaut globalement.
+Et donc, du coup, si tu compares ton image
+avec défaut de ton image de sortie,
+du coup, tu as une erreur qui est beaucoup plus grande
+que quand tu as une image normale
+qui donne une image normale en sortie.
+C'est du coup le principe de l'auto-encodeur.
+Et ça va être aussi la limite
+parce que vous allez voir que potentiellement,
+votre modèle va être trop puissant
+et va quand même arriver à prendre en compte les défauts.
+Et à des fois, les prendre,
+enfin, les mettre et les avoir,
+et arriver à les reconstruire, en fait,
+alors qu'il n'a pas appris.
+Parce que normalement, un modèle,
+donc un réseau de neurones, etc.,
+ne sait détecter que ce qu'il a appris
+et que ce que vous lui avez appris,
+que vous lui avez donné à faire.
+Donc, il ne sait pas reconstruire de défauts.
+Il n'en a jamais vu.
+Il sait reconstruire que des images normales.
+Par contre, il y a quelque chose
+auquel il faut faire attention,
+c'est la dimension de votre espace latent ici.
+L'espace latent ici, s'il est trop gros,
+en fait, globalement,
+l'encodage, il demande à résumer l'information très peu.
+Donc, votre espace latent a quasiment
+toutes les mêmes informations
+que votre image à l'entrée.
+Donc, le réseau va juste, au final,
+recopier l'entrée sans rien apprendre.
+Il n'y a pas vraiment d'apprentissage.
+L'encodage, il recopie ce qu'il a à l'entrée
+et du coup, en sortie,
+il a juste à recopier ce qu'il a à l'encodage.
+Par contre, si votre modèle,
+si votre espace latent est beaucoup trop petit,
+vous résumez beaucoup trop l'information
+et du coup, pour reconstruire,
+vous ne donnez pas assez d'informations
+à votre modèle pour reconstruire une image.
+En fait, ce qu'il faut imaginer un peu là,
+c'est que c'est un peu comme si
+vous avez une partie qui est ça.
+Donc, vous avez un encodage qui est fait.
+Et la deuxième, c'est vous lui dites
+il y a un espace latent.
+Voilà, il y a des tas d'infos à cet endroit-là.
+Reconstruis l'image que tu penses
+qui correspond à cet espace latent.
+Et donc, si dans cet espace latent,
+il y a trop peu d'infos,
+forcément, l'image reconstruite
+ne sera pas du tout...
+Enfin, ne sera pas bonne.
+Alors que si l'espace latent,
+c'est globalement la copie d'ici,
+ce sera très facile de la reconstruire.
+Donc, dans votre autocodeur,
+ça va être cet espace latent
+qui va être le goulot d'étranglement.
+J'avais une question.
+Du coup, vous êtes du SAIA.
+Là, visuellement,
+tu as vraiment une image en sortie
+qui est créée ou pas du tout ?
+Oui.
+Oui, ok, d'accord.
+Oui, oui.
+Là, en entrée,
+c'est une matrice de pixels,
+donc c'est une image.
+Au milieu,
+c'est des couches de convolutions.
+Donc, c'est des couches
+de réseaux de neurones
+avec des filtres
+qui viennent extraire des features
+et qui viennent résumer l'information.
+Et ensuite,
+on refait jusqu'à avoir ici une image.
+Donc oui,
+en entrée,
+tu as une image,
+en sortie,
+tu as une image.
+Et au milieu,
+tu as des couches de neurones.
+Donc voilà.
+Il y a plein d'auto-encodeurs
+qui existent
+pour différents sujets.
+Il y a, par exemple,
+l'auto-encodeur des bruiteurs.
+Donc ça,
+ça va être un modèle
+où on bruite énormément l'entrée
+et on demande de reconstruire l'original.
+Ça, c'est la base, en fait,
+des modèles.
+Ça va être la base
+des modèles génératifs d'images, quasi.
+C'est qu'on leur apprend
+à avoir une image complètement bruitée
+et à petit à petit
+générer, du coup,
+une image qui correspond à du texte.
+Donc il y a du texte d'un endroit,
+il y a une image bruitée d'un autre
+et on demande de débruter.
+Donc c'est l'auto-encodeur
+qui vient de débruter
+votre image d'entrée
+et qui reconstruit l'original.
+Donc pareil,
+on va évaluer la performance
+de votre auto-encodeur.
+Est-ce qu'il a bien débruté
+et est-ce que l'image qu'il a générée,
+est égale à votre image originale
+non bruitée ?
+Après, il y a des auto-encodeurs
+parcimonieux spars.
+Ça, c'est pour des contraintes
+sur l'espace latin.
+Ça, c'est utilisé pour avoir
+des features plus interprétables,
+mais ça, c'est assez complexe.
+Par contre,
+auto-encodeur convolutif,
+là, c'est encodeur-décodeur
+à base de convolution.
+Donc c'est ce qu'on va faire à nous.
+C'est adapté aux images.
+Ça vous permet de prendre
+une image en entrée,
+une image en sortie
+et d'avoir, du coup,
+tout un réseau
+qui résume l'information
+de votre image en entrée
+et tout le réseau, après,
+qui crée votre image en sortie.
+Et l'auto-encodeur variationnel,
+ça, pour ceux qui s'intéressent
+potentiellement à l'IA générative,
+c'est un des principes
+qui est un peu à la base
+de l'IA générative
+qui permet de générer
+de nouvelles données
+à partir d'un espace latin, etc.
+Donc, en fait,
+l'auto-encodeur
+peut être, en tout cas,
+la frontière entre le deep learning
+et l'IA générative
+pour quelques sujets.
+Et en tout cas,
+son architecture peut être utile
+pour des sujets génératifs.
+On peut se servir, du coup,
+de l'auto-encodeur
+pour réduire des dimensions,
+si vous avez, je ne sais pas,
+une image très grande
+et que vous voulez la contraindre
+sur un espace latin
+beaucoup plus petit.
+Du coup, vous allez avoir besoin
+de l'auto-encodeur
+pour créer, du coup,
+le décodage,
+l'encodage qui va bien.
+Parce qu'en fait,
+vous n'avez pas d'exemple
+d'encodage à donner à un modèle.
+Vous ne pouvez pas entraîner
+un modèle supervisé
+à juste,
+voilà l'image,
+voilà l'encodage que je veux
+et débrouille-toi au milieu.
+En général, l'encodage,
+on ne l'a pas
+pour la réduction de dimension.
+Donc, on va utiliser
+un auto-encodeur.
+Pareil pour débruter
+des images
+ou des signaux.
+Donc, signaux,
+on peut parler de son.
+Et vous pouvez utiliser,
+du coup,
+des auto-encodeurs
+où vous lui donnez
+un son bruité
+et vous regardez
+est-ce qu'il arrive
+à bien reconstruire
+le son non-bruté.
+Détection d'anomalies,
+du coup,
+c'est ce qu'on va faire
+avec, du coup,
+s'il y a une erreur
+de reconstruction élevée
+si la donnée est atypique
+par rapport à l'entraînement.
+Donc, si vous avez donné
+à l'entraînement
+que des données normales,
+si vous avez une erreur
+de reconstruction
+qui est élevée,
+ça veut dire
+que votre donnée
+n'est pas normale.
+Donc, il y a un défaut.
+Pré-entraînement
+et apprentissage
+de représentation,
+ça, c'est avec
+le transfert à learning.
+Je pourrais vous en parler
+un peu plus par la suite.
+Génération de données nouvelles
+si vous voulez
+avec les VAE,
+donc génération de texte,
+par exemple, etc.
+Et compression de données
+aussi, simplement.
+Alors, pas seulement
+réduire des dimensions,
+mais vous avez plein de données
+et vous voulez les compresser
+dans un espace
+beaucoup plus restreint.
+Vous pouvez utiliser,
+du coup,
+les auto-encodeurs.
+Donc, voilà.
+Donc, du coup,
+c'est ce qu'on vous demande
+sur le TP.
+Il faut que je reprenne
+exactement le texte.
+Du coup, c'est Simon
+qui vient de mettre
+des images reconstruites
+sur le Discord.
+Je vais partager comme ça.
+Et ce que vous voyez là,
+c'est qu'en original,
+on ne lui a appris
+à reconstruire
+que des données
+qui n'ont pas de défauts,
+qui n'ont pas de trous.
+Donc, vous voyez là,
+le modèle,
+quand il reconstruit
+des données
+qui ont des trous,
+qui ont des défauts,
+il a du mal
+à reconstruire les trous.
+Il ne sait pas, en fait,
+à quoi correspondent
+les trous
+dans son truc.
+Donc, si vous calculez
+là une erreur
+entre l'image reconstruite
+et l'image originale,
+vous aurez une erreur
+de reconstruction
+qui sera plus haute
+que ce que vous avez
+si vous avez
+une image normale
+en entrée.
+Donc, c'est là
+que ça peut devenir
+donné du coup
+une alerte
+en disant,
+attention,
+je n'ai pas réussi
+à reconstruire mon image.
+Ça veut dire
+qu'il y a quelque chose
+sur l'image
+que je ne connais pas,
+donc qu'il y a
+une anomalie
+ou un défaut.
+Donc, c'est pour ça
+qu'on va utiliser
+les auto-encodeurs dessus.
+Donc, vous allez le voir
+dans ce qu'il y a à faire,
+c'est aussi choisir
+la bonne méthode
+pour calculer
+l'erreur
+entre l'image reconstruite
+et l'image originale.
+J'imagine que plus tard
+dans la leçon,
+on va parler
+des décodeurs aussi
+puisqu'on a
+les auto-encodeurs
+et on a les décodeurs
+seulement aussi.
+En fait,
+ce qu'on appelle
+auto-encodeur,
+c'est du coup
+un modèle
+qui apprend tout seul
+à encoder.
+Donc, il y a la partie
+encodeur au départ
+puis décodeur.
+Là, tu vois ton modèle.
+En fait,
+le modèle de Simon,
+il est passé,
+donc il a l'image originale.
+Il y a une étape
+intermédiaire
+qu'on ne voit pas
+où le modèle
+a résumé l'information
+dans un petit espace latin.
+et ensuite,
+il y a la partie décodeur
+qui a permis
+de reconstruire l'image.
+Donc, en fait,
+on va entraîner le modèle
+avec ces deux parties-là.
+On va vraiment entraîner
+les deux parties
+de manière successive
+parce que l'espace latin,
+la représentation,
+on ne la connaît pas nous.
+On ne peut pas donner
+et dire,
+voilà,
+cette image-là,
+je veux qu'elle soit
+enregistrée
+sous un format
+plus compressé
+qui a cette tête-là.
+Ça, on ne se connaît pas.
+Donc, on va entraîner
+le modèle
+de bout en bout.
+Là, sur ces originales,
+il y a des défauts.
+On le veut normalement
+entraîner sur des images
+qui n'avaient pas de défauts.
+Ça, c'est ces images
+de test, du coup.
+Ah, d'accord.
+Donc, évidemment,
+c'est ça.
+Tu n'entraînes que
+sur des images
+normales,
+sans défauts.
+Et du coup,
+c'est ça, justement.
+L'idée,
+c'est que, tu vois,
+il n'arrive pas
+à reconstruire ton défaut
+parce qu'on ne lui a jamais
+donné l'information
+de ce à quoi ressemble
+un défaut.
+Donc, ça, c'était
+les tests, ouais.
+OK.
+Donc, ça, c'est les tests.
+Donc, tu vois,
+je ne l'avais pas testé
+avec le bois.
+Avec le bois,
+je pense que ça marche bien,
+du coup,
+parce qu'en tout cas,
+le modèle marche bien.
+Du coup,
+ce à quoi vous devez
+faire attention
+dans votre auto-encodeur,
+c'est que votre espace latin
+au milieu
+est bien compressé.
+si vous mettez
+un espace latin
+trop gros,
+il n'y aura pas
+trop d'informations
+et même les défauts
+seront bien reconstruits.
+Donc, faites juste
+attention à ça.
+Ouais.
+Sur le bois,
+ça marche bien
+sur les trous
+et les rayures,
+beaucoup moins
+sur les tâches.
+Oui, parce qu'il y a
+déjà des exemples
+un peu de bois
+où il y a déjà
+des tâches, etc.
+Et donc, du coup,
+tu vois,
+il y a déjà
+des différences de couleurs
+dans les bois.
+Du coup,
+il y a plus de mal,
+je pense.
+Voilà.
+Vous verrez,
+il y a des...
+Je sais que
+sur les pilules,
+au final,
+il arrive des fois
+à bien reconstruire
+les défauts.
+MetaNode,
+ça dépend.
+Il y a des défauts
+qui sont plus visibles
+que d'autres.
+Pareil, pour MetaNode,
+vous avez des défauts
+où c'est des scratchs,
+des défauts
+où c'est carrément
+un truc qui est déformé
+et tout ça.
+Il y en a qui arrivent
+beaucoup mieux
+à reconstruire
+que d'autres.
+Donc, il y a des défauts
+où vous arrivez moins
+à détecter que d'autres.
+Mais du coup,
+c'est l'idée
+de faire un modèle
+qui arrive à faire ça.
+Ma question était
+parmi les modèles
+de Deep Learning,
+on a des modèles
+qui sont auto-encodeurs,
+on a des modèles
+simplement décodeurs.
+Oui, oui,
+enfin,
+ce n'est même pas
+décodeurs,
+c'était des modèles
+où tu as une image
+et son but,
+c'est de faire
+de la classification.
+Il n'y a pas
+ce truc de reconstruire
+d'une image.
+c'est juste
+que j'essaie de comprendre
+entre fantôme auto-encodeur,
+je sais que tu prends
+de l'input
+et tu as de l'output.
+Oui.
+Et par exemple,
+même quand on,
+ce n'est peut-être pas le sujet,
+quand on parle des LLM,
+il y a des LLM
+qui prennent du texte
+mais qui n'en produisent pas
+ou, enfin,
+ils ont cette conformité.
+Alors, LLM,
+ça va être un modèle
+qui va prendre du texte
+en entrée,
+qui va faire du traitement
+en interne
+dans du texte
+en passant par des données vectorielles,
+etc.
+Donc, il y a une partie
+un peu auto-encodeur
+et ensuite,
+qui ressort du texte
+et qui prédit
+et qui, par contre,
+en fait,
+qui prend du texte en entrée
+qui va prendre,
+par exemple,
+toute ta phrase
+et qui ne ressort
+qu'un token en sortie.
+Le modèle de langage,
+il prédit token par token.
+Il prédit vraiment
+un nombre en même temps.
+Oui, mais du coup,
+il est aussi auto-encodeur
+puisqu'il va prendre en entrée
+et il va donner du input.
+Je sais comprendre
+qu'un décodeur,
+en fait,
+ça sert à quoi ?
+Que ce soit pour des images
+ou pour du texte ?
+Est-ce qu'on peut avoir
+un modèle
+qui est juste décodeur ?
+Juste décodeur,
+je réfléchis,
+parce qu'en fait,
+la partie juste décodée,
+en général,
+si tu pars d'un espace latin,
+cet espace latin,
+tu ne connais pas
+cette représentation.
+Tu vois,
+une représentation vectorielle
+d'une image
+ou d'un texte,
+nous,
+on ne la connaît pas.
+On a besoin de passer
+par un modèle
+qui encode d'abord
+et puis qui décode.
+Mais par exemple,
+si,
+quand on a une image
+bruitée
+qu'on vient de décoder,
+qu'on vient de débruiter,
+c'est du décodage.
+Mais pour entraîner ton modèle,
+tu es obligé
+de passer par de l'auto-encodage
+parce que tu n'as pas
+la représentation de...
+En fait,
+la partie décodage,
+c'est vraiment
+pour faire le lien
+entre deux types de données.
+Alors,
+le type de données
+peut être la même.
+Par exemple,
+tu passes d'une image
+à une image
+et au milieu,
+il y a du encodage-décodage
+où tu passes du texte
+à une image
+et du coup,
+il y a encodage du texte
+puis décodage
+de cet espace
+vers une image.
+Donc,
+il y a toujours
+le modèle décodeur seul.
+J'essaie de trouver...
+On pourrait en parler plus tard.
+C'était juste par curiosité.
+J'essaie de trouver un truc.
+En fait,
+il est toujours entraîné
+avec encodeur-décodeur
+puisque le côté encodé,
+on ne le connaît pas.
+Après,
+en fait,
+quand je regarde,
+ils te disent
+l'encodeur seul,
+ça,
+on sait pourquoi
+ça existe.
+Encodeur-décodeur,
+c'est les architectures
+comme ça
+ou architectures transformers
+s'il y en a qui veulent
+regarder les transformers
+qui sont la base
+des modèles du coup
+de LLM.
+Et tu vois,
+il y en a qui disent
+décodeur seul,
+qui disent ça
+pour être l'architecture
+dominante des LLM
+mais en disant
+que c'est un abus de langage.
+Je ne suis pas trop d'accord
+avec le fait
+que c'est juste un décodeur.
+Pour moi...
+Quoi ?
+En fait,
+il y a toujours
+un côté encodage
+qui est mis quelque part
+le décodeur seul.
+Enfin,
+il faut qu'il décode
+quelque chose
+donc il faut que
+cette chose-là
+ait été encodée d'abord.
+Ok.
+Donc il y a toujours
+un encodage quelque part.
+Donc voilà.
+Donc ouais,
+moi je dirais
+qu'il y a toujours
+quelque chose
+parce que du coup
+cet espace latent,
+cette représentation vectorielle,
+c'est une représentation
+qui n'est pas humaine
+on va dire.
+Donc il y a toujours
+un modèle qui permet
+de passer d'une donnée
+que nous on comprend
+à une donnée
+mathématique
+beaucoup plus abstraite
+pour nous
+et concrète
+pour le modèle.
+Ok.
+Du coup,
+je vous laisse repartir
+sur le TP.
+Pour ceux qui ont venu
+du coup,
+j'avais mis,
+je vais juste voir.
+Pour ceux,
+s'il y en a du coup
+qui sont avancés
+par rapport
+à ça,
+donc vous pouvez
+encapsuler du coup
+au lieu de passer
+un notebook,
+bien implémenter
+du coup
+votre code sous format
+du coup Python
+comme si vous alliez
+pouvoir l'encapsuler,
+le déployer.
+Et après,
+vous pouvez aller plus loin
+avec d'autres modèles
+qui peuvent avoir
+d'autres résultats.
+Et l'idée,
+c'est de faire aussi
+un petit rapport
+un peu
+de votre projet
+comme on a fait
+sur le machine learning
+pour que vous puissiez
+expliquer vos choix,
+comment fonctionne
+votre modèle,
+les métriques
+que vous avez choisis.
+Alors là,
+ça parle de la Euroc,
+mais il y en a
+potentiellement d'autres.
+donc lesquelles
+vous pouvez choisir
+et essayer de critiquer ça
+et de voir
+lesquelles sont les meilleures
+et de faire un petit rapport
+un peu sur votre modèle
+et vous pouvez me l'envoyer
+une fois que c'est fait.
+Yes.
+D'un point de vue métier,
+on se dit qu'il vaut mieux
+faire trop d'inspections
+que de laisser passer
+trop de défauts ?
+Ouais.
+L'idée, c'est dans ce genre
+de sujet,
+c'est un peu toujours pareil,
+c'est de se dire
+il vaut mieux que ça soit
+toi qui est ton entreprise
+qui est à faire
+trop de vérifications
+que ton client
+qui est à te faire
+des retours.
+Ça voudrait dire
+que la pièce est amenée
+et soit vendue,
+soit mise sur un truc
+et que potentiellement
+c'est un client
+qui te fait un retour
+en disant
+la pièce avait un défaut.
+Donc ouais,
+il vaut mieux préférer
+qu'il y ait trop d'alerte
+encore une fois
+que pas assez.
+Et si vous avez des questions
+sur les algos de deep learning
+aussi un peu plus classiques,
+hésitez.
+Mariamma,
+t'avais une question ?
+Non, non.
+OK.
+Voilà, donc pour ceux
+qui sont bien avancés,
+travailler sur un rapport,
+etc.
+et me l'envoyer après
+pour qu'on en parle ensemble.
