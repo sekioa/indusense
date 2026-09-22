@@ -18,3 +18,4 @@ Cet index regroupe les fiches synthétiques du parcours IT.
 - [POC ML : choix de baseline, coût métier et plan d'expérience](12-poc-ml-baseline-cout-metier-plan-experience.md)
 - [MLflow : architecture, tracking, autolog et Model Registry](13-mlflow-tracking-autolog-model-registry.md)
 - [Réseaux de neurones : MLP, CNN et transfer learning — fondations](14-reseaux-de-neurones-mlp-cnn-transfer-learning.md)
+- [Auto-encodeur : ratio de compression, heatmaps, AUROC pixel, SSIM, objet vs texture, PatchCore](15-auto-encodeur-heatmaps-ratio-compression-ssim.md)
