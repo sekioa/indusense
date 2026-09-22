@@ -1,0 +1,111 @@
+# Revue du TP POC ML et transition vers le Deep Learning
+
+Langue détectée : fr
+
+> Transcription automatique locale (whisper.cpp, modèle `large-v3-turbo`, VAD Silero activé). Les hésitations, coupures et termes mal reconnus peuvent nécessiter une correction éditoriale. Segmentation issue du VAD : la durée affichée entre deux répliques peut inclure un silence, pas seulement la parole.
+
+Support associé : Suite directe de la séance précédente ; annonce du passage au Deep Learning l'après-midi.
+
+[00:00:00 → 00:00:02] Et sur vos données de validation, par exemple,
+[00:00:02 → 00:00:03] vous faites plus d'erreurs.
+[00:00:03 → 00:00:05] Parce qu'en fait, votre modèle est spécifique
+[00:00:05 → 00:00:06] aux données d'entraînement.
+[00:00:06 → 00:00:09] Si les données de validation ne sont pas exactement les mêmes,
+[00:00:09 → 00:00:10] le modèle va se tromper.
+[00:00:10 → 00:00:13] Donc, en fait, on va venir tester le nombre d'arbres
+[00:00:13 → 00:00:14] et on va venir s'arrêter
+[00:00:14 → 00:00:18] quand on voit que l'erreur,
+[00:00:18 → 00:00:21] enfin, la loss sur le jeu de validation remonte.
+[00:00:22 → 00:00:23] Comme ça, ça nous permet de dire,
+[00:00:23 → 00:00:25] attention, là, je fais un modèle
+[00:00:25 → 00:00:27] qui est trop spécifique à mes données d'entraînement.
+[00:00:28 → 00:00:28] Donc, il faut que je m'arrête là.
+[00:00:30 → 00:00:34] Ça permet, du coup, de faire, d'ajouter,
+[00:00:34 → 00:00:35] du coup, on ajoute les arbres au fur et à mesure.
+[00:00:35 → 00:00:36] Et l'orly stopping,
+[00:00:37 → 00:00:38] ça vous permet, du coup,
+[00:00:38 → 00:00:39] de vous attraiter au bon nombre d'arbres
+[00:00:39 → 00:00:42] et de faire, du coup, un entraînement
+[00:00:42 → 00:00:44] qui, au final, va être plus court
+[00:00:44 → 00:00:45] que ce que vous auriez peut-être fait au départ
+[00:00:45 → 00:00:46] et qui généralise mieux.
+[00:00:47 → 00:00:48] Et en plus, comme ça,
+[00:00:48 → 00:00:49] votre choix du nombre d'arbres
+[00:00:49 → 00:00:51] n'est pas arbitraire.
+[00:00:51 → 00:00:54] Du coup, il est totalement basé
+[00:00:54 → 00:00:56] sur les résultats de votre entraînement.
+[00:00:58 → 00:00:59] Donc, vous verrez, ça, c'est une méthode
+[00:00:59 → 00:01:00] qu'on reverra cet après-midi
+[00:01:00 → 00:01:02] avec les réseaux de neurones aussi.
+[00:01:07 → 00:01:09] Sur des bonnes pratiques, du coup, en général,
+[00:01:11 → 00:01:13] si vous faites du boosting par pondération,
+[00:01:13 → 00:01:15] on met un nombre d'arbres qui est très petit,
+[00:01:15 → 00:01:16] enfin, qui est assez petit, de 2 à 4.
+[00:01:17 → 00:01:19] Pour le boosting par erreur résiduel,
+[00:01:19 → 00:01:20] par exemple, pour XG Boost,
+[00:01:20 → 00:01:22] de 4 à 8, c'est déjà pas mal comme arbre.
+[00:01:23 → 00:01:24] Et il faut faire attention, par contre,
+[00:01:24 → 00:01:27] avec au surapprentissage
+[00:01:27 → 00:01:29] parce que le modèle va être très spécifique
+[00:01:29 → 00:01:30] à vos données d'entraînement,
+[00:01:30 → 00:01:32] va venir corriger les données sur le donné,
+[00:01:32 → 00:01:34] les erreurs sur le donné d'entraînement.
+[00:01:36 → 00:01:36] Et donc, voilà.
+[00:01:36 → 00:01:39] Et par contre, XG Boost peut très bien marcher
+[00:01:39 → 00:01:40] avec les données de base,
+[00:01:40 → 00:01:42] mais il y a énormément de paramètres
+[00:01:42 → 00:01:43] sur les données d'XG Boost.
+[00:01:44 → 00:01:46] Donc, vous pouvez avoir beaucoup de ce qu'on appelle
+[00:01:46 → 00:01:47] du coup du tuning
+[00:01:47 → 00:01:51] pour bien choisir tous les paramètres du modèle.
+[00:01:54 → 00:01:58] Et vous pouvez, évidemment, utiliser Grid Search ou Optuna
+[00:01:58 → 00:02:02] pour bien choisir les paramètres du modèle.
+[00:02:05 → 00:02:10] Est-ce que vous avez des questions sur XG Boost ?
+[00:02:10 → 00:02:10] Est-ce que c'est...
+[00:02:10 → 00:02:13] Alors, je sais qu'il y en a au moins deux ou trois
+[00:02:13 → 00:02:14] qui l'ont utilisé.
+[00:02:14 → 00:02:16] Est-ce qu'il y a d'autres modèles aussi
+[00:02:16 → 00:02:17] que vous avez utilisés
+[00:02:17 → 00:02:18] sur lesquels qui ne sont pas forcément clairs
+[00:02:18 → 00:02:23] sur leur mécanisme ?
+[00:02:23 → 00:02:26] Parce que ça, du coup, il faut pouvoir les comprendre
+[00:02:26 → 00:02:30] et pouvoir les expliquer lors de la soutenance,
+[00:02:31 → 00:02:32] au moins dans les grandes lignes.
+[00:02:40 → 00:02:42] Si c'est bon pour vous sur ça,
+[00:02:42 → 00:02:46] je vous laisse du coup finaliser le TP
+[00:02:46 → 00:02:48] ou en tout cas, ou imaginez...
+[00:02:48 → 00:02:49] Pour ceux qui ont déjà fini,
+[00:02:49 → 00:02:51] vous pouvez, du coup, vous entraîner
+[00:02:51 → 00:02:53] pour faire une présentation peut-être du rapport, etc.
+[00:02:55 → 00:02:57] Et on passera du coup après au Deep Learning
+[00:02:57 → 00:02:58] cet après-midi.
+[00:02:59 → 00:03:01] Mais donc, je vous laisse jusqu'à midi et demi
+[00:03:01 → 00:03:05] pour me poser des questions sur ce sujet-là,
+[00:03:05 → 00:03:05] sur ce TP.
+[00:03:05 → 00:03:06] On le reprendra à la ferme.
+[00:03:07 → 00:03:12] Dans quel repertoire nous as-tu partagé
+[00:03:12 → 00:03:14] le corrigé, Deep ?
+[00:03:15 → 00:03:17] Le corrigé du TP ?
+[00:03:17 → 00:03:17] Oui.
+[00:03:18 → 00:03:19] Je ne l'ai pas partagé.
+[00:03:19 → 00:03:21] La méthodologie, je pense que tu nous avais dit
+[00:03:21 → 00:03:24] que tu partagerais une méthodologie d'hier.
+[00:03:25 → 00:03:28] Oui, alors ça, je l'ai mis dans les dossiers.
+[00:03:28 → 00:03:30] Et là, tout à l'heure, j'ai remis dans les ressources.
+[00:03:30 → 00:03:31] J'ai mis un truc sprint 2
+[00:03:31 → 00:03:32] parce que sinon, je me suis dit
+[00:03:32 → 00:03:33] que ça allait totalement se perdre
+[00:03:33 → 00:03:34] avec les autres fichiers.
+[00:03:35 → 00:03:40] Et donc, dedans, il y a le fichier,
+[00:03:40 → 00:03:42] du coup, pipeline d'entraînement.
+[00:03:43 → 00:03:44] Non, ce n'est pas du tout ça.
+[00:03:45 → 00:03:47] C'est le projet MLDL Pipeline.
+[00:03:47 → 00:03:50] C'est le fichier Markdown, le dernier,
+[00:03:51 → 00:03:54] qui reprend toute la méthodologie
+[00:03:54 → 00:03:55] du machine learning.
+[00:03:56 → 00:03:56] OK.
+[00:03:57 → 00:03:59] Donc, s'il y a des questions sur ça aussi,
+[00:03:59 → 00:03:59] n'hésitez pas.
+[00:03:59 → 00:04:00] Et vous pouvez vous y référer,
+[00:04:01 → 00:04:01] pour le projet.
+[00:04:03 → 00:04:04] Merci.

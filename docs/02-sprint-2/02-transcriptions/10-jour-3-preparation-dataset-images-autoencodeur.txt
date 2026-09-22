@@ -1,0 +1,1634 @@
+# Préparation d'un dataset d'images et auto-encodeur
+
+Langue détectée : fr
+
+> Transcription automatique locale (whisper.cpp, modèle `large-v3-turbo`, VAD Silero activé). Les hésitations, coupures et termes mal reconnus peuvent nécessiter une correction éditoriale. Segmentation issue du VAD : la durée affichée entre deux répliques peut inclure un silence, pas seulement la parole.
+
+Support associé : `13_Preparation_dataset_images.pdf`.
+
+[00:00:00 → 00:00:03] On traite les données dans des sujets de computer vision,
+[00:00:03 → 00:00:05] donc de deep learning avec des images.
+[00:00:07 → 00:00:10] Votre structure du dataset, ça, ça va être...
+[00:00:10 → 00:00:14] Vous allez voir, le dataset, du coup, il y a entraînement,
+[00:00:14 → 00:00:16] validation, test, ça, ça va être comme d'habitude.
+[00:00:16 → 00:00:20] Et après, il va y avoir le but de détecter un défaut.
+[00:00:22 → 00:00:25] Donc, il faudra voir le découpage entre normal et défaut.
+[00:00:26 → 00:00:27] C'est ce qu'on va voir.
+[00:00:28 → 00:00:31] Déjà, ce que vous pouvez vérifier, ce que vous pouvez regarder,
+[00:00:31 → 00:00:33] c'est une image, du coup, c'est une matrice de pixels.
+[00:00:35 → 00:00:37] Donc, est-ce que vous êtes sur une couleur
+[00:00:37 → 00:00:40] ou est-ce que vous êtes sur trois ?
+[00:00:40 → 00:00:42] Est-ce que vous avez votre image en noir et blanc
+[00:00:42 → 00:00:43] et c'est des niveaux des grilles
+[00:00:43 → 00:00:48] ou est-ce que c'est trois canaux et c'est du coup du RVB ?
+[00:00:48 → 00:00:48] Donc, voilà.
+[00:00:49 → 00:00:55] Et après, chose à savoir, c'est que l'image, du coup,
+[00:00:55 → 00:00:58] varie énormément selon l'éclairage, etc.,
+[00:00:58 → 00:00:59] l'angle, le capteur et tout.
+[00:00:59 → 00:01:04] Ce qui fait que le mieux est de vérifier que les images
+[00:01:04 → 00:01:07] que vous avez en entraînement sont les images
+[00:01:07 → 00:01:08] que vous avez en production.
+[00:01:08 → 00:01:11] Par exemple, admettons, on vous a dit,
+[00:01:11 → 00:01:13] j'ai pris des images,
+[00:01:13 → 00:01:16] je veux faire un sujet de contrôle qualité
+[00:01:16 → 00:01:22] à la fin d'une chaîne, du coup, de production.
+[00:01:23 → 00:01:25] Et il n'y avait pas de caméra encore
+[00:01:25 → 00:01:27] qui était prise jusqu'à maintenant.
+[00:01:27 → 00:01:29] Donc, j'ai récupéré plein de pièces
+[00:01:29 → 00:01:30] et je les ai prises en photo dans une salle,
+[00:01:31 → 00:01:32] bien éclairée, etc.
+[00:01:33 → 00:01:35] Et au final, quand vous allez sur la production,
+[00:01:36 → 00:01:39] votre image, la qualité est peut-être moins bonne
+[00:01:39 → 00:01:40] parce que, je ne sais pas, par exemple,
+[00:01:40 → 00:01:42] c'est beaucoup moins éclairé.
+[00:01:43 → 00:01:45] Si vous n'avez entraîné que vos modèles
+[00:01:45 → 00:01:48] sur des données seulement ultra bien éclairées,
+[00:01:49 → 00:01:51] il va avoir beaucoup plus de mal à le faire
+[00:01:51 → 00:01:52] sur des données qui sont beaucoup plus sombres.
+[00:01:53 → 00:01:54] Donc, ça, faites bien attention.
+[00:01:54 → 00:01:56] En fait, pareil que pour le machine learning,
+[00:01:56 → 00:01:57] il y a le même principe,
+[00:01:57 → 00:01:59] mais vos données d'entraînement doivent être similaires
+[00:01:59 → 00:02:01] à vos données de test et de production
+[00:02:01 → 00:02:06] pour que votre modèle soit le plus optimisé possible
+[00:02:06 → 00:02:07] par rapport à la réalité du terrain, en fait.
+[00:02:09 → 00:02:10] Donc, ça, bien faire attention
+[00:02:10 → 00:02:12] parce que des fois, des images,
+[00:02:12 → 00:02:13] des annotations d'images peuvent être faites
+[00:02:13 → 00:02:16] dans un autre contexte
+[00:02:16 → 00:02:19] que ce qui va être fait en réalité.
+[00:02:20 → 00:02:21] Donc, ça, à prendre en compte
+[00:02:21 → 00:02:22] parce que ça peut faire varier, pour le coup,
+[00:02:24 → 00:02:24] ça.
+[00:02:24 → 00:02:26] Donc, bien avoir un dataset propre
+[00:02:26 → 00:02:29] et représentatif de ce que vous avez en produit.
+[00:02:31 → 00:02:32] Pour l'étape 1, quand tu dis télécharger
+[00:02:32 → 00:02:34] la petite catégorie Metal Nuts,
+[00:02:34 → 00:02:35] il fallait le faire dans le script, dans le notebook
+[00:02:35 → 00:02:38] ou on le faisait à la main du navigateur ?
+[00:02:38 → 00:02:39] Tu peux le faire à la main dans le navigateur.
+[00:02:40 → 00:02:40] C'est très bien.
+[00:02:41 → 00:02:43] Le download, il ne marche pas à tous les coups
+[00:02:43 → 00:02:43] chez tout le monde.
+[00:02:43 → 00:02:45] Moi, je l'avais fait depuis le navigateur
+[00:02:45 → 00:02:46] et comme ça, j'avais posé là où je voulais
+[00:02:46 → 00:02:48] dans le dossier.
+[00:02:49 → 00:02:49] OK.
+[00:02:53 → 00:02:57] Du coup, bien faire attention
+[00:02:57 → 00:02:58] que quand on vous donne des images,
+[00:02:59 → 00:02:59] c'est des images qui ressemblent
+[00:02:59 → 00:03:02] à ce que vous aurez en test aussi.
+[00:03:04 → 00:03:06] Et après, on va venir découper pareil
+[00:03:06 → 00:03:08] en apprentissage, validation et test.
+[00:03:09 → 00:03:10] Apprentissage, c'est tout l'apprentissage
+[00:03:10 → 00:03:10] des poids du modèle,
+[00:03:11 → 00:03:12] donc toutes les modifications des filtres
+[00:03:12 → 00:03:14] et des poids à la W.
+[00:03:15 → 00:03:17] Validation, ça va permettre de pouvoir
+[00:03:17 → 00:03:20] régler les hyperparamètres
+[00:03:20 → 00:03:22] comme pour le machine learning
+[00:03:22 → 00:03:24] et de pouvoir faire de l'orlistopping
+[00:03:24 → 00:03:26] puisque vous allez avoir, du coup,
+[00:03:26 → 00:03:28] à chaque amélioration des paramètres,
+[00:03:30 → 00:03:31] un calcul de l'erreur de coût
+[00:03:31 → 00:03:32] sur le jeu d'entraînement,
+[00:03:32 → 00:03:36] un calcul de coût sur le jeu de validation
+[00:03:36 → 00:03:37] et vous allez voir au moment
+[00:03:37 → 00:03:38] où les deux se séparent,
+[00:03:39 → 00:03:39] qu'il y en a une qui augmente
+[00:03:39 → 00:03:40] et l'autre qui descend,
+[00:03:41 → 00:03:43] vous stoppez l'entraînement du modèle.
+[00:03:44 → 00:03:46] Et le jeu de test, c'est toujours pareil.
+[00:03:47 → 00:03:48] Ça, c'est une évaluation finale
+[00:03:48 → 00:03:49] qui n'est jamais vue pendant l'entraînement.
+[00:03:50 → 00:03:51] Donc, ces données que vous gardez
+[00:03:51 → 00:03:52] vraiment de côté,
+[00:03:53 → 00:03:55] vous les gardez vraiment pour plus tard.
+[00:03:57 → 00:03:58] Attention, du coup,
+[00:03:58 → 00:03:59] il y a les mêmes problèmes
+[00:03:59 → 00:03:59] qu'un machine learning,
+[00:03:59 → 00:04:00] c'est-à-dire qu'il faut faire attention
+[00:04:00 → 00:04:01] dans la fuite de données
+[00:04:01 → 00:04:02] entre les jeux.
+[00:04:03 → 00:04:04] Si vous avez, je ne sais pas,
+[00:04:04 → 00:04:06] vous avez pris des exemples de produits,
+[00:04:06 → 00:04:08] si vous avez mis le même produit
+[00:04:08 → 00:04:09] en photo plusieurs fois,
+[00:04:10 → 00:04:11] il faut que toutes les photos
+[00:04:11 → 00:04:11] du même produit
+[00:04:11 → 00:04:13] soient dans le jeu d'entraînement
+[00:04:13 → 00:04:17] et l'autre dans le jeu de test.
+[00:04:17 → 00:04:19] Par exemple, si vous avez pris un écrou,
+[00:04:20 → 00:04:22] l'écrou 18,
+[00:04:22 → 00:04:23] vous l'avez pris trois fois en photo,
+[00:04:24 → 00:04:25] il faut que les trois photos
+[00:04:25 → 00:04:26] de cet écrou-là
+[00:04:26 → 00:04:27] soient soit dans l'entraînement,
+[00:04:28 → 00:04:28] soit dans le test,
+[00:04:28 → 00:04:29] mais en tout cas,
+[00:04:29 → 00:04:29] qu'elles soient au même endroit
+[00:04:29 → 00:04:30] pour ne pas qu'il y ait
+[00:04:30 → 00:04:31] de fuite de données.
+[00:04:32 → 00:04:34] Sinon, le modèle a déjà vu l'image
+[00:04:34 → 00:04:36] et donc c'est facile pour lui.
+[00:04:37 → 00:04:38] Donc, c'est le plus pire,
+[00:04:39 → 00:04:40] c'est d'avoir l'image
+[00:04:40 → 00:04:40] d'une même pièce
+[00:04:40 → 00:04:41] ou d'une même série
+[00:04:41 → 00:04:42] qui soit répartie
+[00:04:42 → 00:04:43] dans plusieurs jeux.
+[00:04:43 → 00:04:43] Ça, il faut vraiment
+[00:04:43 → 00:04:44] faire attention à ça.
+[00:04:44 → 00:04:45] Ça va vraiment
+[00:04:45 → 00:04:46] être une fuite de données.
+[00:04:47 → 00:04:48] Et pareil, attention,
+[00:04:48 → 00:04:49] il y a avoir des proportions
+[00:04:49 → 00:04:52] qui soient représentatives
+[00:04:52 → 00:04:52] de la réalité.
+[00:04:54 → 00:04:55] par exemple,
+[00:04:56 → 00:04:58] je ne sais pas si dans notre cas,
+[00:04:58 → 00:04:59] si on fait un sujet
+[00:04:59 → 00:05:03] de détaction,
+[00:05:03 → 00:05:04] de classification des animaux
+[00:05:04 → 00:05:05] et que vous avez des photos
+[00:05:05 → 00:05:06] de chats, de chiens
+[00:05:06 → 00:05:09] et de, je ne sais pas,
+[00:05:09 → 00:05:11] un animal qu'on ne voit jamais
+[00:05:11 → 00:05:12] et que vous avez
+[00:05:12 → 00:05:13] beaucoup plus de photos
+[00:05:13 → 00:05:15] de l'animal inconnu
+[00:05:15 → 00:05:16] versus les autres,
+[00:05:16 → 00:05:16] en réalité,
+[00:05:17 → 00:05:17] quand vous allez toujours
+[00:05:17 → 00:05:18] tomber devant des chiens
+[00:05:18 → 00:05:18] et des chiens,
+[00:05:18 → 00:05:18] en fait,
+[00:05:18 → 00:05:19] il va avoir du mal.
+[00:05:19 → 00:05:22] Comme en machine learning,
+[00:05:22 → 00:05:23] faire attention
+[00:05:23 → 00:05:24] que votre sortie,
+[00:05:25 → 00:05:27] les proportions des sorties
+[00:05:27 → 00:05:28] soient à peu près gardées
+[00:05:28 → 00:05:31] sur chaque jeu de données,
+[00:05:31 → 00:05:32] que ce soit jeu d'entraînement,
+[00:05:32 → 00:05:33] jeu de validation
+[00:05:33 → 00:05:34] ou jeu de test.
+[00:05:35 → 00:05:35] Nous, là,
+[00:05:35 → 00:05:36] sur les jeux d'entraînement
+[00:05:36 → 00:05:37] et jeux de validation,
+[00:05:38 → 00:05:40] on n'est que sur des données
+[00:05:40 → 00:05:45] non labellisées,
+[00:05:45 → 00:05:46] enfin, des données saines.
+[00:05:47 → 00:05:47] Donc, il n'y a pas
+[00:05:47 → 00:05:49] cette proportion.
+[00:05:49 → 00:05:49] Nous, le but,
+[00:05:50 → 00:05:51] c'est que ça arrive
+[00:05:51 → 00:05:52] à bien recréer
+[00:05:52 → 00:05:53] des images normales
+[00:05:53 → 00:05:54] et qu'elle se recrée mal
+[00:05:54 → 00:05:55] des images avec défaut.
+[00:05:56 → 00:05:57] Mais du coup,
+[00:05:58 → 00:05:58] vous n'avez pas
+[00:05:58 → 00:05:59] assez de proportion-là
+[00:05:59 → 00:06:00] à faire.
+[00:06:04 → 00:06:09] Donc, voilà,
+[00:06:09 → 00:06:10] pour les pièges,
+[00:06:10 → 00:06:11] c'est sensiblement
+[00:06:11 → 00:06:12] la même chose
+[00:06:12 → 00:06:13] que pour le machine learning.
+[00:06:14 → 00:06:16] Pour la détection...
+[00:06:16 → 00:06:16] Pardon,
+[00:06:16 → 00:06:17] il y a quelqu'un.
+[00:06:24 → 00:06:25] Pour, du coup,
+[00:06:26 → 00:06:28] la détection d'anomalies,
+[00:06:28 → 00:06:29] qui est ce qui va
+[00:06:29 → 00:06:30] nous intéresser ici.
+[00:06:31 → 00:06:31] L'idée,
+[00:06:31 → 00:06:32] c'est de se dire
+[00:06:32 → 00:06:33] qu'on n'a que,
+[00:06:33 → 00:06:34] quand c'est de la détection
+[00:06:34 → 00:06:35] d'anomalies,
+[00:06:35 → 00:06:35] que ce soit
+[00:06:35 → 00:06:36] sur du machine learning,
+[00:06:36 → 00:06:37] sur...
+[00:06:37 → 00:06:38] Vous avez des données
+[00:06:38 → 00:06:39] de façon tabulaire
+[00:06:39 → 00:06:39] et vous voulez détecter
+[00:06:39 → 00:06:40] les anomalies,
+[00:06:41 → 00:06:43] ou sur de l'imagerie,
+[00:06:43 → 00:06:43] comment on va le faire.
+[00:06:45 → 00:06:45] En général,
+[00:06:45 → 00:06:46] ce qu'on va lui donner
+[00:06:46 → 00:06:47] au modèle,
+[00:06:47 → 00:06:47] c'est seulement
+[00:06:47 → 00:06:49] des exemples
+[00:06:49 → 00:06:50] de ce qui est normal.
+[00:06:50 → 00:06:50] Et le but,
+[00:06:50 → 00:06:52] c'est que ce qui est anormal
+[00:06:52 → 00:06:54] ressorte différemment.
+[00:06:55 → 00:06:55] Donc, vous...
+[00:06:55 → 00:06:57] Et vous ne pouvez pas montrer...
+[00:06:57 → 00:06:57] Enfin,
+[00:06:57 → 00:06:58] c'est très rare
+[00:06:58 → 00:06:59] d'avoir assez
+[00:06:59 → 00:07:00] d'exemples d'anomalies
+[00:07:00 → 00:07:01] pour être exhaustif
+[00:07:01 → 00:07:03] dans les anomalies possibles,
+[00:07:03 → 00:07:03] etc.
+[00:07:03 → 00:07:04] Donc, on va montrer
+[00:07:04 → 00:07:06] la normalité au modèle
+[00:07:06 → 00:07:06] et le modèle,
+[00:07:06 → 00:07:07] dès que ce n'est pas normal,
+[00:07:07 → 00:07:10] devra pouvoir détecter
+[00:07:10 → 00:07:11] ce qui est différent
+[00:07:11 → 00:07:12] de ce qu'il a vu
+[00:07:12 → 00:07:12] pendant son entraînement.
+[00:07:13 → 00:07:14] Donc là,
+[00:07:14 → 00:07:15] c'est ce qu'on a.
+[00:07:15 → 00:07:16] C'est qu'on a énormément
+[00:07:16 → 00:07:16] d'images normales
+[00:07:16 → 00:07:18] et très peu de défauts.
+[00:07:19 → 00:07:19] Dans le découpage,
+[00:07:20 → 00:07:20] du coup,
+[00:07:20 → 00:07:21] vous avez sur le jeu
+[00:07:21 → 00:07:21] d'entraînement
+[00:07:21 → 00:07:23] que des images normales.
+[00:07:24 → 00:07:24] Et par contre,
+[00:07:24 → 00:07:25] dans le jeu de validation
+[00:07:25 → 00:07:26] et de test,
+[00:07:27 → 00:07:29] vous allez...
+[00:07:29 → 00:07:30] Surtout dans le jeu de test,
+[00:07:30 → 00:07:31] vous allez avoir
+[00:07:31 → 00:07:33] un mélange de normal
+[00:07:33 → 00:07:34] et de défauts
+[00:07:34 → 00:07:35] pour mesurer la détection.
+[00:07:36 → 00:07:36] Donc,
+[00:07:37 → 00:07:38] les rares défauts
+[00:07:38 → 00:07:39] que vous avez,
+[00:07:39 → 00:07:40] vous les gardez
+[00:07:40 → 00:07:41] pour l'évaluation
+[00:07:41 → 00:07:43] pour voir si votre modèle
+[00:07:43 → 00:07:44] arrive bien à détecter
+[00:07:44 → 00:07:45] sur le test.
+[00:07:45 → 00:07:48] Est-ce qu'il arrive bien
+[00:07:48 → 00:07:48] à détecter
+[00:07:48 → 00:07:52] sur l'évaluation,
+[00:07:52 → 00:07:53] sur le test,
+[00:07:53 → 00:07:53] est-ce qu'il arrive bien
+[00:07:53 → 00:07:54] à détecter les défauts,
+[00:07:54 → 00:07:56] à détecter les anomalies ?
+[00:07:56 → 00:07:57] Parce que si vous ne les avez pas,
+[00:07:57 → 00:07:57] par contre,
+[00:07:57 → 00:07:58] d'anomalies
+[00:07:58 → 00:07:59] sur votre jeu de test,
+[00:08:00 → 00:08:01] vous allez juste tester
+[00:08:01 → 00:08:02] est-ce que votre modèle
+[00:08:02 → 00:08:02] arrive à bien détecter
+[00:08:02 → 00:08:03] les normaux.
+[00:08:03 → 00:08:04] Sauf que vous ne lui avez
+[00:08:04 → 00:08:05] fait détecter que des normaux,
+[00:08:05 → 00:08:06] donc vous n'allez pas
+[00:08:06 → 00:08:09] vraiment calculer
+[00:08:09 → 00:08:09] ses performances.
+[00:08:14 → 00:08:14] Donc voilà,
+[00:08:14 → 00:08:16] il faudra faire attention
+[00:08:16 → 00:08:18] à avoir que des images normales
+[00:08:18 → 00:08:19] dans votre jeu d'entraînement.
+[00:08:21 → 00:08:22] Pour les images,
+[00:08:22 → 00:08:23] les pré-traitements,
+[00:08:24 → 00:08:25] en général,
+[00:08:25 → 00:08:25] les réseaux,
+[00:08:26 → 00:08:26] majoritairement,
+[00:08:26 → 00:08:27] après ça,
+[00:08:27 → 00:08:28] ça sera à checker
+[00:08:28 → 00:08:28] suivant les réseaux
+[00:08:28 → 00:08:29] de neurones qu'on prendra.
+[00:08:30 → 00:08:30] Mais majoritairement,
+[00:08:30 → 00:08:31] les réseaux de neurones
+[00:08:31 → 00:08:32] attendent des images carrées
+[00:08:32 → 00:08:34] de 256 fois 256.
+[00:08:36 → 00:08:37] Donc du coup,
+[00:08:37 → 00:08:38] il va falloir
+[00:08:38 → 00:08:40] diminuer votre image
+[00:08:40 → 00:08:41] pour qu'elle soit
+[00:08:41 → 00:08:42] 256-256.
+[00:08:44 → 00:08:45] Si votre image
+[00:08:45 → 00:08:45] n'est pas carrée,
+[00:08:46 → 00:08:46] il vaut mieux
+[00:08:46 → 00:08:50] que vous diminuiez
+[00:08:50 → 00:08:50] votre image
+[00:08:50 → 00:08:51] et remplir
+[00:08:51 → 00:08:53] les colonnes
+[00:08:53 → 00:08:54] et lignes vides
+[00:08:54 → 00:08:55] par du noir,
+[00:08:56 → 00:08:56] par exemple.
+[00:08:57 → 00:08:57] C'est ce qu'on appelle
+[00:08:57 → 00:08:58] le padding
+[00:08:58 → 00:08:59] plutôt que de déformer
+[00:08:59 → 00:09:00] votre image.
+[00:09:00 → 00:09:00] Si vous aviez une image
+[00:09:00 → 00:09:01] ultra rectangulaire
+[00:09:01 → 00:09:02] et que vous la passez
+[00:09:02 → 00:09:02] en carré,
+[00:09:02 → 00:09:03] il y aura forcément
+[00:09:03 → 00:09:04] une déformation.
+[00:09:04 → 00:09:05] Donc ça,
+[00:09:05 → 00:09:05] ce n'est pas réaliste.
+[00:09:05 → 00:09:06] Il faut plutôt mettre
+[00:09:06 → 00:09:07] votre grand rectangle
+[00:09:07 → 00:09:10] en version plus petite,
+[00:09:10 → 00:09:10] un rectangle
+[00:09:10 → 00:09:11] qui rentre dans votre carré
+[00:09:11 → 00:09:13] et le reste du carré
+[00:09:13 → 00:09:13] est mis en noir,
+[00:09:14 → 00:09:14] par exemple.
+[00:09:16 → 00:09:17] Vérifiez.
+[00:09:17 → 00:09:18] L'avantage des images,
+[00:09:18 → 00:09:19] c'est que c'est visible.
+[00:09:20 → 00:09:20] Donc vérifiez par contre
+[00:09:20 → 00:09:21] quand vous faites
+[00:09:21 → 00:09:24] votre redimensionnement
+[00:09:24 → 00:09:25] que les défauts
+[00:09:25 → 00:09:27] que vous allez venez chercher
+[00:09:27 → 00:09:28] sont toujours visibles
+[00:09:28 → 00:09:28] à l'œil nu.
+[00:09:29 → 00:09:30] Si vous,
+[00:09:30 → 00:09:31] vous ne les voyez pas,
+[00:09:31 → 00:09:31] il y a peu de chances
+[00:09:31 → 00:09:32] que l'image,
+[00:09:33 → 00:09:34] que le modèle
+[00:09:34 → 00:09:34] le voit aussi.
+[00:09:34 → 00:09:35] Alors des fois,
+[00:09:35 → 00:09:38] les modèles sont plus précis
+[00:09:38 → 00:09:39] même que nous.
+[00:09:39 → 00:09:39] Des fois,
+[00:09:39 → 00:09:41] ça se voit en médical,
+[00:09:41 → 00:09:41] etc.
+[00:09:42 → 00:09:42] Mais quand même,
+[00:09:43 → 00:09:44] si vous,
+[00:09:44 → 00:09:45] vous n'êtes pas capable
+[00:09:45 → 00:09:45] de dire
+[00:09:45 → 00:09:46] est-ce qu'il y a un problème
+[00:09:46 → 00:09:46] ou pas sur votre image,
+[00:09:47 → 00:09:49] le modèle ne pourra pas
+[00:09:49 → 00:09:51] le faire non plus globalement.
+[00:09:53 → 00:09:54] Et après,
+[00:09:54 → 00:09:54] il y a des méthodes
+[00:09:54 → 00:09:55] d'interpolation.
+[00:09:55 → 00:09:56] Ça,
+[00:09:56 → 00:09:57] on le verra plus tard.
+[00:09:57 → 00:09:57] Mais c'est du coup,
+[00:09:57 → 00:09:58] si jamais vous avez besoin
+[00:09:58 → 00:10:01] de redimensionner
+[00:10:01 → 00:10:01] qu'il y a des choses manquantes,
+[00:10:02 → 00:10:03] il y a des techniques
+[00:10:03 → 00:10:05] pour remplir les pixels
+[00:10:05 → 00:10:08] avec plusieurs manières différentes
+[00:10:08 → 00:10:09] qui calculent en général
+[00:10:09 → 00:10:09] par rapport
+[00:10:09 → 00:10:12] aux pixels autour.
+[00:10:15 → 00:10:15] Donc,
+[00:10:15 → 00:10:17] vous remettez votre image
+[00:10:17 → 00:10:18] à taille
+[00:10:18 → 00:10:18] et ensuite,
+[00:10:18 → 00:10:19] on va venir normaliser
+[00:10:19 → 00:10:20] les pixels.
+[00:10:21 → 00:10:21] En fait,
+[00:10:21 → 00:10:23] on va mettre les valeurs
+[00:10:23 → 00:10:24] à la même échelle
+[00:10:24 → 00:10:25] pour stabiliser
+[00:10:25 → 00:10:26] et accélérer
+[00:10:26 → 00:10:27] la convergence.
+[00:10:28 → 00:10:29] En soi,
+[00:10:29 → 00:10:30] les pixels,
+[00:10:30 → 00:10:30] c'est des valeurs
+[00:10:30 → 00:10:32] entre 0 et 255.
+[00:10:32 → 00:10:32] Donc,
+[00:10:32 → 00:10:33] c'est déjà
+[00:10:33 → 00:10:35] semi-normalisé.
+[00:10:36 → 00:10:37] Mais quand même,
+[00:10:37 → 00:10:38] dans la majorité des cas,
+[00:10:38 → 00:10:39] on va le faire
+[00:10:39 → 00:10:39] pour mettre tout
+[00:10:39 → 00:10:40] entre 0 et 1
+[00:10:40 → 00:10:42] pour que tout soit
+[00:10:42 → 00:10:42] à la même échelle
+[00:10:42 → 00:10:43] exactement,
+[00:10:43 → 00:10:45] et ça,
+[00:10:46 → 00:10:47] comme en machine learning,
+[00:10:48 → 00:10:49] quand vous calculez
+[00:10:49 → 00:10:51] la moyenne
+[00:10:51 → 00:10:53] et l'écart type
+[00:10:53 → 00:10:55] par matrice,
+[00:10:56 → 00:10:56] en gros,
+[00:10:56 → 00:10:58] par canal,
+[00:10:58 → 00:10:58] par image,
+[00:10:59 → 00:10:59] on va le faire
+[00:10:59 → 00:11:00] sur toutes les images
+[00:11:00 → 00:11:01] du jeu d'entraînement.
+[00:11:02 → 00:11:02] On va calculer
+[00:11:02 → 00:11:03] la moyenne
+[00:11:03 → 00:11:04] de la valeur du pixel
+[00:11:04 → 00:11:05] sur toutes les images
+[00:11:05 → 00:11:06] d'entraînement,
+[00:11:06 → 00:11:07] l'écart type
+[00:11:07 → 00:11:08] sur toutes les images
+[00:11:08 → 00:11:08] d'entraînement
+[00:11:08 → 00:11:09] et on va venir
+[00:11:09 → 00:11:09] transformer
+[00:11:09 → 00:11:11] nos images d'entraînement
+[00:11:11 → 00:11:12] et aussi
+[00:11:12 → 00:11:12] nos images de validation
+[00:11:12 → 00:11:13] et nos images de test.
+[00:11:14 → 00:11:14] Et faites attention
+[00:11:14 → 00:11:15] de ne pas calculer
+[00:11:15 → 00:11:16] du coup
+[00:11:16 → 00:11:17] de ne pas faire
+[00:11:17 → 00:11:18] la normalisation,
+[00:11:18 → 00:11:19] standardisation
+[00:11:19 → 00:11:21] avec des données calculées
+[00:11:21 → 00:11:21] sur le test
+[00:11:21 → 00:11:22] et sur le jeu
+[00:11:22 → 00:11:23] de validation.
+[00:11:23 → 00:11:24] Vous calculez tout
+[00:11:24 → 00:11:25] sur le jeu
+[00:11:25 → 00:11:26] d'entraînement
+[00:11:26 → 00:11:27] et vous transformez
+[00:11:27 → 00:11:28] tous les jeux
+[00:11:28 → 00:11:28] par contre derrière.
+[00:11:34 → 00:11:34] Donc voilà
+[00:11:34 → 00:11:36] pour tout ce qui est
+[00:11:36 → 00:11:37] traitement des images
+[00:11:37 → 00:11:38] quoi qu'il arrive,
+[00:11:39 → 00:11:39] ça en vrai
+[00:11:39 → 00:11:39] on peut vraiment
+[00:11:39 → 00:11:40] faire l'analogie
+[00:11:40 → 00:11:41] avec le machine learning
+[00:11:41 → 00:11:41] où vous faites
+[00:11:41 → 00:11:43] globalement la même chose
+[00:11:43 → 00:11:44] mais sur des données
+[00:11:44 → 00:11:46] tabulaires.
+[00:11:47 → 00:11:48] Et ensuite,
+[00:11:48 → 00:11:49] une difficulté
+[00:11:49 → 00:11:50] comme on disait,
+[00:11:50 → 00:11:51] c'est que la notation
+[00:11:51 → 00:11:52] peut des fois coûter
+[00:11:52 → 00:11:53] très cher,
+[00:11:53 → 00:11:53] être très longue
+[00:11:53 → 00:11:54] et en fait,
+[00:11:54 → 00:11:55] pour des modèles
+[00:11:55 → 00:11:56] de deep learning,
+[00:11:56 → 00:11:57] c'est des modèles complexes
+[00:11:57 → 00:11:58] donc il faut énormément
+[00:11:58 → 00:11:58] d'exemples
+[00:11:58 → 00:11:59] et des fois,
+[00:11:59 → 00:12:00] on n'en a pas autant
+[00:12:00 → 00:12:02] qui sont à noter.
+[00:12:02 → 00:12:02] Donc pour ça,
+[00:12:03 → 00:12:03] on va venir faire
+[00:12:03 → 00:12:04] de l'augmentation
+[00:12:04 → 00:12:05] de données.
+[00:12:05 → 00:12:07] C'est-à-dire que vous allez
+[00:12:07 → 00:12:08] avoir une image
+[00:12:08 → 00:12:10] qui est l'image de base,
+[00:12:10 → 00:12:11] l'original
+[00:12:11 → 00:12:12] et en fait,
+[00:12:12 → 00:12:13] depuis une image,
+[00:12:13 → 00:12:14] vous allez en créer
+[00:12:14 → 00:12:15] plein d'autres.
+[00:12:15 → 00:12:16] Ça va vous permettre
+[00:12:16 → 00:12:18] de passer d'un entraînement
+[00:12:18 → 00:12:19] avec, je ne sais pas,
+[00:12:19 → 00:12:19] par exemple,
+[00:12:20 → 00:12:20] 200 images
+[00:12:20 → 00:12:21] à 1000
+[00:12:21 → 00:12:22] en ayant juste
+[00:12:22 → 00:12:23] modifié
+[00:12:23 → 00:12:26] l'angle de l'image,
+[00:12:26 → 00:12:27] la luminosité,
+[00:12:27 → 00:12:27] etc.
+[00:12:29 → 00:12:30] En fait,
+[00:12:30 → 00:12:30] ça,
+[00:12:30 → 00:12:31] c'est pour se dire
+[00:12:31 → 00:12:32] qu'une image,
+[00:12:33 → 00:12:33] de toute façon,
+[00:12:36 → 00:12:37] pour l'ordinateur,
+[00:12:37 → 00:12:39] que ce soit une image
+[00:12:39 → 00:12:40] qui soit en vertical
+[00:12:40 → 00:12:41] ou en horizontal,
+[00:12:41 → 00:12:42] du coup,
+[00:12:42 → 00:12:42] c'est deux images
+[00:12:42 → 00:12:43] très, très différentes.
+[00:12:44 → 00:12:44] Donc si c'est le même objet
+[00:12:44 → 00:12:45] qui est sur l'image
+[00:12:45 → 00:12:46] debout ou couché,
+[00:12:46 → 00:12:47] par exemple,
+[00:12:47 → 00:12:49] le modèle doit les détecter
+[00:12:49 → 00:12:50] dans les deux cas,
+[00:12:51 → 00:12:51] la majorité des cas.
+[00:12:52 → 00:12:52] Donc vous allez pouvoir
+[00:12:52 → 00:12:53] créer plein d'images
+[00:12:53 → 00:12:55] synthétiques
+[00:12:55 → 00:12:56] à partir d'une seule image.
+[00:12:59 → 00:13:00] Du coup,
+[00:13:00 → 00:13:00] cette possibilité,
+[00:13:01 → 00:13:01] elle est bien
+[00:13:01 → 00:13:02] parce qu'elle nous permet
+[00:13:02 → 00:13:03] d'alimenter fortes,
+[00:13:03 → 00:13:06] comment les données.
+[00:13:07 → 00:13:09] Ça va permettre
+[00:13:09 → 00:13:10] d'augmenter énormément
+[00:13:10 → 00:13:11] la base d'entraînement.
+[00:13:11 → 00:13:11] Par contre,
+[00:13:12 → 00:13:12] faites attention,
+[00:13:12 → 00:13:12] du coup,
+[00:13:12 → 00:13:14] si vous augmentez la base,
+[00:13:15 → 00:13:15] du coup,
+[00:13:15 → 00:13:16] re-bien splitter
+[00:13:16 → 00:13:17] l'entraînement
+[00:13:17 → 00:13:18] et le jeu de validation,
+[00:13:19 → 00:13:19] de ne pas,
+[00:13:20 → 00:13:20] par exemple,
+[00:13:21 → 00:13:22] avoir une donnée,
+[00:13:23 → 00:13:23] une image,
+[00:13:24 → 00:13:25] vous créez la même
+[00:13:25 → 00:13:25] mais avec
+[00:13:25 → 00:13:27] à 90 degrés
+[00:13:27 → 00:13:28] et de mettre
+[00:13:28 → 00:13:29] une dans le jeu d'entraînement
+[00:13:29 → 00:13:30] et une dans le jeu de test.
+[00:13:30 → 00:13:31] Les deux doivent être
+[00:13:31 → 00:13:32] dans le jeu d'entraînement,
+[00:13:32 → 00:13:32] du coup.
+[00:13:33 → 00:13:33] Sinon,
+[00:13:33 → 00:13:34] vous faites une petite fuite
+[00:13:34 → 00:13:34] de données.
+[00:13:36 → 00:13:36] Mais du coup,
+[00:13:36 → 00:13:36] exactement,
+[00:13:37 → 00:13:37] ça va nous permettre
+[00:13:37 → 00:13:39] de générer énormément,
+[00:13:39 → 00:13:41] de créer énormément
+[00:13:41 → 00:13:41] d'images
+[00:13:41 → 00:13:43] et c'est ce qu'on va faire
+[00:13:43 → 00:13:44] dans plein de cas.
+[00:13:45 → 00:13:46] Mais nous,
+[00:13:46 → 00:13:47] tout ce que tu as dit
+[00:13:47 → 00:13:47] en première étape,
+[00:13:47 → 00:13:48] on ne l'avait pas à le faire,
+[00:13:48 → 00:13:49] c'était déjà classé, nous ?
+[00:13:49 → 00:13:50] Alors,
+[00:13:50 → 00:13:51] c'était déjà classé
+[00:13:51 → 00:13:52] sur jeu d'entraînement,
+[00:13:52 → 00:13:53] jeu de test
+[00:13:53 → 00:13:53] et jeu de...
+[00:13:53 → 00:13:54] jeu d'entraînement
+[00:13:54 → 00:13:55] et jeu de test.
+[00:13:55 → 00:13:56] Tu n'avais pas
+[00:13:56 → 00:13:56] le jeu de validation,
+[00:13:58 → 00:13:59] donc tu peux le créer
+[00:13:59 → 00:13:59] donc tu peux le créer
+[00:13:59 → 00:14:00] depuis le jeu d'entraînement.
+[00:14:00 → 00:14:04] Mais parce que...
+[00:14:04 → 00:14:05] Ground truth,
+[00:14:05 → 00:14:06] je ne sais pas ce que c'est,
+[00:14:06 → 00:14:07] test et train.
+[00:14:08 → 00:14:08] Ground truth,
+[00:14:09 → 00:14:10] c'est les masques
+[00:14:10 → 00:14:11] que Ismaël a montrés
+[00:14:11 → 00:14:13] où tu vois les endroits,
+[00:14:14 → 00:14:15] les masques vraiment
+[00:14:15 → 00:14:17] de où sont les erreurs,
+[00:14:17 → 00:14:18] vraiment.
+[00:14:21 → 00:14:22] Donc du coup,
+[00:14:23 → 00:14:24] c'est...
+[00:14:24 → 00:14:27] Ça va vraiment être
+[00:14:27 → 00:14:28] sur ce sujet-là.
+[00:14:29 → 00:14:31] Mais du coup,
+[00:14:31 → 00:14:32] il y a le jeu de validation
+[00:14:32 → 00:14:33] qui n'existe pas,
+[00:14:34 → 00:14:35] par contre.
+[00:14:39 → 00:14:43] Donc ouais,
+[00:14:44 → 00:14:45] il faut juste récupérer ça.
+[00:14:45 → 00:14:46] Mais par contre,
+[00:14:47 → 00:14:48] ce que tu vas voir,
+[00:14:51 → 00:14:52] tu peux...
+[00:14:52 → 00:14:53] Enfin, du coup,
+[00:14:53 → 00:14:54] gérer le jeu de validation.
+[00:14:54 → 00:14:55] Et du coup,
+[00:14:55 → 00:14:57] sur les images,
+[00:14:57 → 00:14:58] s'il y avait 220 images,
+[00:14:58 → 00:14:59] je crois, de base,
+[00:14:59 → 00:15:00] vous pouvez en créer
+[00:15:00 → 00:15:01] beaucoup plus
+[00:15:01 → 00:15:02] avec la technique
+[00:15:02 → 00:15:04] du coup,
+[00:15:04 → 00:15:05] d'augmentation de données.
+[00:15:05 → 00:15:05] Et c'est à ça
+[00:15:05 → 00:15:06] que vous sert
+[00:15:06 → 00:15:08] la librairie Albummentation
+[00:15:08 → 00:15:10] qui prend toutes vos données
+[00:15:10 → 00:15:12] et les modifie.
+[00:15:12 → 00:15:13] Par exemple,
+[00:15:13 → 00:15:14] par contre,
+[00:15:14 → 00:15:15] il faut vérifier
+[00:15:15 → 00:15:16] à quoi ressemblent vos données
+[00:15:16 → 00:15:17] et est-ce que ça marche
+[00:15:17 → 00:15:18] dans la vraie vie.
+[00:15:19 → 00:15:20] Je vais vous donner
+[00:15:20 → 00:15:20] un exemple concret.
+[00:15:21 → 00:15:21] Moi, j'avais fait un projet
+[00:15:21 → 00:15:22] de détection
+[00:15:22 → 00:15:25] des bouches d'égout,
+[00:15:25 → 00:15:26] des tampons.
+[00:15:26 → 00:15:27] Ils appellent ça des tampons,
+[00:15:27 → 00:15:28] mais c'est les bouches d'égout
+[00:15:28 → 00:15:29] rondes
+[00:15:29 → 00:15:31] pour une collectivité
+[00:15:31 → 00:15:32] depuis des images
+[00:15:32 → 00:15:33] de drones.
+[00:15:35 → 00:15:35] Et par exemple,
+[00:15:35 → 00:15:38] faire une rotation
+[00:15:38 → 00:15:39] à n'importe quoi,
+[00:15:40 → 00:15:41] 45, 90% ou autre
+[00:15:41 → 00:15:42] sur une image
+[00:15:42 → 00:15:43] qui est en rond,
+[00:15:44 → 00:15:45] ça n'a aucun intérêt.
+[00:15:46 → 00:15:46] Du coup,
+[00:15:46 → 00:15:47] je ne pouvais pas utiliser
+[00:15:47 → 00:15:48] ce genre
+[00:15:48 → 00:15:49] d'augmentation de données.
+[00:15:50 → 00:15:51] Par contre,
+[00:15:51 → 00:15:52] luminosité,
+[00:15:52 → 00:15:53] vous pouvez le faire.
+[00:15:53 → 00:15:53] Recadrage,
+[00:15:54 → 00:15:54] vous pouvez le faire.
+[00:15:55 → 00:15:55] Bruit,
+[00:15:55 → 00:15:56] vous pouvez le faire.
+[00:15:57 → 00:15:57] Luminosité,
+[00:15:57 → 00:15:57] attention,
+[00:15:58 → 00:15:58] de le faire
+[00:15:58 → 00:16:01] en connaissance de cause
+[00:16:01 → 00:16:01] aussi,
+[00:16:01 → 00:16:02] de ne pas abuser,
+[00:16:02 → 00:16:03] de ne pas mettre
+[00:16:03 → 00:16:03] une lumière
+[00:16:03 → 00:16:04] qui sera du coup
+[00:16:04 → 00:16:05] ultra différente
+[00:16:05 → 00:16:05] de ce que vous aurez
+[00:16:05 → 00:16:06] en production.
+[00:16:06 → 00:16:07] Ce n'est pas le but.
+[00:16:08 → 00:16:08] Mais voilà.
+[00:16:09 → 00:16:09] Mais du coup,
+[00:16:09 → 00:16:11] l'augmentation de données,
+[00:16:11 → 00:16:12] on va l'utiliser très souvent.
+[00:16:12 → 00:16:12] Moi,
+[00:16:12 → 00:16:13] pour mon cas
+[00:16:13 → 00:16:15] de détection des tampons,
+[00:16:16 → 00:16:17] il y avait un premier modèle
+[00:16:17 → 00:16:18] qui marchait bien,
+[00:16:19 → 00:16:20] sauf pour certaines images.
+[00:16:23 → 00:16:24] Et quand j'étudiais
+[00:16:24 → 00:16:24] pourquoi,
+[00:16:25 → 00:16:25] enfin,
+[00:16:25 → 00:16:26] quelles étaient les images
+[00:16:26 → 00:16:26] qui ne marchaient pas,
+[00:16:27 → 00:16:28] c'était des images
+[00:16:28 → 00:16:28] qui étaient
+[00:16:28 → 00:16:29] où le tampon
+[00:16:29 → 00:16:30] était à moitié
+[00:16:30 → 00:16:31] pas visible
+[00:16:31 → 00:16:31] et très souvent,
+[00:16:32 → 00:16:32] par exemple,
+[00:16:32 → 00:16:33] à moitié à l'ombre.
+[00:16:33 → 00:16:34] Évidemment,
+[00:16:34 → 00:16:34] le tampon,
+[00:16:34 → 00:16:35] s'il était sous une voiture,
+[00:16:35 → 00:16:36] je ne pouvais pas le voir,
+[00:16:36 → 00:16:36] je ne pouvais pas le deviner.
+[00:16:37 → 00:16:39] Mais s'il était à moitié à l'ombre,
+[00:16:39 → 00:16:39] du coup,
+[00:16:39 → 00:16:40] je ne voyais plus le rond
+[00:16:40 → 00:16:41] en entier,
+[00:16:41 → 00:16:42] je voyais un rond
+[00:16:42 → 00:16:43] d'une certaine luminosité
+[00:16:43 → 00:16:44] et après,
+[00:16:44 → 00:16:45] c'était noir ou autre chose.
+[00:16:46 → 00:16:46] Du coup,
+[00:16:46 → 00:16:47] pour que le modèle
+[00:16:47 → 00:16:48] n'en voie plus
+[00:16:48 → 00:16:48] et se dise
+[00:16:48 → 00:16:49] ok,
+[00:16:49 → 00:16:49] ça peut être aussi
+[00:16:49 → 00:16:50] de cette forme-là,
+[00:16:51 → 00:16:52] il a fallu créer
+[00:16:52 → 00:16:53] des images
+[00:16:53 → 00:16:54] avec de l'ombre dessus.
+[00:16:54 → 00:16:55] Et donc ça,
+[00:16:55 → 00:16:56] vous prenez une image,
+[00:16:56 → 00:16:58] vous prenez Photoshop
+[00:16:58 → 00:16:59] ou tout autre truc,
+[00:17:00 → 00:17:00] vous créez de l'ombre,
+[00:17:00 → 00:17:01] vous le mettez dessus
+[00:17:01 → 00:17:02] et de là,
+[00:17:02 → 00:17:02] par contre,
+[00:17:03 → 00:17:04] je peux créer ça
+[00:17:04 → 00:17:05] et vu que l'ombre
+[00:17:05 → 00:17:06] est à un endroit de l'image,
+[00:17:06 → 00:17:06] ça,
+[00:17:07 → 00:17:08] avec de la symétrie,
+[00:17:09 → 00:17:10] des rotations
+[00:17:10 → 00:17:11] et symétrie axale,
+[00:17:11 → 00:17:11] etc.,
+[00:17:11 → 00:17:12] je pouvais créer
+[00:17:12 → 00:17:13] huit images
+[00:17:13 → 00:17:14] à partir d'une créée.
+[00:17:14 → 00:17:15] Tu crées l'éclipse.
+[00:17:16 → 00:17:18] Je crée l'éclipse.
+[00:17:19 → 00:17:19] Exactement.
+[00:17:21 → 00:17:21] Exactement.
+[00:17:21 → 00:17:21] Non,
+[00:17:21 → 00:17:22] mais ça m'a permis
+[00:17:22 → 00:17:22] du coup
+[00:17:22 → 00:17:23] de largement améliorer
+[00:17:23 → 00:17:24] les résultats
+[00:17:24 → 00:17:24] parce que du coup,
+[00:17:24 → 00:17:25] de dire au modèle
+[00:17:25 → 00:17:25] attention,
+[00:17:26 → 00:17:27] le tampon
+[00:17:27 → 00:17:29] ne peut pas être seulement,
+[00:17:29 → 00:17:29] enfin,
+[00:17:29 → 00:17:30] il n'est pas seulement
+[00:17:30 → 00:17:31] rond parfait
+[00:17:31 → 00:17:32] et du coup,
+[00:17:32 → 00:17:33] bien visible partout.
+[00:17:34 → 00:17:35] C'est un rond parfait
+[00:17:35 → 00:17:36] mais qui peut être caché
+[00:17:36 → 00:17:36] à moitié.
+[00:17:37 → 00:17:37] Donc du coup,
+[00:17:38 → 00:17:39] fais attention aux autres types,
+[00:17:39 → 00:17:40] enfin,
+[00:17:40 → 00:17:41] pas que au rond parfait.
+[00:17:43 → 00:17:44] Donc du coup,
+[00:17:44 → 00:17:45] c'est très intéressant
+[00:17:45 → 00:17:46] de savoir cette augmentation
+[00:17:46 → 00:17:47] de données
+[00:17:47 → 00:17:49] et sachant que c'est comme tout
+[00:17:49 → 00:17:50] en IA,
+[00:17:50 → 00:17:51] la donnée,
+[00:17:51 → 00:17:51] c'est la base
+[00:17:51 → 00:17:53] et c'est la grande problématique
+[00:17:53 → 00:17:54] aussi au départ.
+[00:17:54 → 00:17:56] Donc si vous avez
+[00:17:56 → 00:17:56] un problème,
+[00:17:57 → 00:17:58] si vous avez peu de données,
+[00:17:58 → 00:17:58] là,
+[00:17:58 → 00:18:00] vous en créez plein de nouvelles.
+[00:18:00 → 00:18:00] Donc en général,
+[00:18:00 → 00:18:01] vous allez largement améliorer
+[00:18:01 → 00:18:02] vos résultats assez vite
+[00:18:02 → 00:18:03] avec tout ça.
+[00:18:07 → 00:18:08] du coup,
+[00:18:08 → 00:18:08] voilà.
+[00:18:15 → 00:18:15] Précaution,
+[00:18:16 → 00:18:16] par contre,
+[00:18:16 → 00:18:16] du coup,
+[00:18:17 → 00:18:17] plus de...
+[00:18:17 → 00:18:18] Donc oui,
+[00:18:18 → 00:18:20] plus vous êtes...
+[00:18:20 → 00:18:21] Vous avez des images variées,
+[00:18:21 → 00:18:22] plus vous avez une généralisation
+[00:18:22 → 00:18:23] qui est meilleure
+[00:18:23 → 00:18:23] sur votre modèle.
+[00:18:24 → 00:18:25] Donc vous pouvez faire
+[00:18:25 → 00:18:27] des transformations géométriques,
+[00:18:28 → 00:18:29] rotation,
+[00:18:29 → 00:18:30] miroir,
+[00:18:30 → 00:18:30] recadrage,
+[00:18:31 → 00:18:31] zoom,
+[00:18:31 → 00:18:32] ou des transformations
+[00:18:32 → 00:18:33] photométriques,
+[00:18:34 → 00:18:36] modifier la luminosité,
+[00:18:36 → 00:18:37] modifier le contraste,
+[00:18:37 → 00:18:38] rajouter du bruit,
+[00:18:38 → 00:18:39] rajouter du flou,
+[00:18:39 → 00:18:39] etc.
+[00:18:40 → 00:18:41] par contre,
+[00:18:41 → 00:18:41] il y a quelque chose
+[00:18:41 → 00:18:44] auquel il faut faire attention.
+[00:18:44 → 00:18:46] Ne pas créer de faux défauts
+[00:18:46 → 00:18:47] ni masquer un vrai défaut.
+[00:18:47 → 00:18:48] Par exemple,
+[00:18:48 → 00:18:48] je ne sais pas
+[00:18:48 → 00:18:49] s'il y a un défaut
+[00:18:49 → 00:18:50] parce que c'est quelque chose
+[00:18:50 → 00:18:52] quand c'est à l'horizontale,
+[00:18:52 → 00:18:52] forcément,
+[00:18:52 → 00:18:53] si vous le mettez
+[00:18:53 → 00:18:54] à la verticale,
+[00:18:54 → 00:18:55] il n'y a plus de défauts.
+[00:18:55 → 00:18:55] Je ne sais pas,
+[00:18:55 → 00:18:55] par exemple.
+[00:18:56 → 00:18:57] Donc ça,
+[00:18:57 → 00:18:57] faire attention à ça.
+[00:18:58 → 00:18:59] Restez cohérent
+[00:18:59 → 00:19:00] avec la physique du procédé.
+[00:19:01 → 00:19:02] Si jamais on vous dit
+[00:19:02 → 00:19:03] votre image,
+[00:19:03 → 00:19:03] par exemple,
+[00:19:04 → 00:19:05] alors là,
+[00:19:05 → 00:19:05] il y a des bouteilles,
+[00:19:05 → 00:19:06] mais c'est des bouteilles
+[00:19:06 → 00:19:07] vues de haut.
+[00:19:07 → 00:19:07] Par exemple,
+[00:19:07 → 00:19:07] c'est des bouteilles
+[00:19:13 → 00:19:15] qui prend les bouteilles
+[00:19:15 → 00:19:16] posées sur le sol.
+[00:19:17 → 00:19:18] Ça ne sert à rien
+[00:19:18 → 00:19:19] de montrer
+[00:19:19 → 00:19:20] et que l'appareil photo
+[00:19:20 → 00:19:21] est toujours dans le même sens
+[00:19:21 → 00:19:21] en face.
+[00:19:22 → 00:19:22] Ça ne sert à rien
+[00:19:22 → 00:19:24] de mettre des photos
+[00:19:24 → 00:19:25] de bouteilles
+[00:19:25 → 00:19:26] du coup
+[00:19:26 → 00:19:27] à l'horizontale
+[00:19:27 → 00:19:28] ou carrément à l'envers.
+[00:19:29 → 00:19:30] Vous n'allez jamais
+[00:19:30 → 00:19:31] avoir ça
+[00:19:31 → 00:19:32] comme image
+[00:19:32 → 00:19:34] en production.
+[00:19:35 → 00:19:35] Donc il faut
+[00:19:35 → 00:19:36] que l'orientation
+[00:19:36 → 00:19:37] elle soit plausible
+[00:19:37 → 00:19:39] et l'échelle aussi
+[00:19:39 → 00:19:39] elle soit plausible
+[00:19:39 → 00:19:40] dans la vraie vie
+[00:19:40 → 00:19:41] et que vous puissiez
+[00:19:41 → 00:19:42] la retrouver
+[00:19:42 → 00:19:43] en fait dans la vraie vie.
+[00:19:43 → 00:19:44] Donc par contre,
+[00:19:44 → 00:19:44] si vous avez
+[00:19:44 → 00:19:45] une bouteille
+[00:19:45 → 00:19:49] qui est posée
+[00:19:49 → 00:19:49] sur une table,
+[00:19:49 → 00:19:50] par contre,
+[00:19:50 → 00:19:50] vous pouvez faire
+[00:19:50 → 00:19:52] une symétrie axiale
+[00:19:52 → 00:19:53] sur son axe
+[00:19:53 → 00:19:54] vertical.
+[00:19:55 → 00:19:55] Là,
+[00:19:55 → 00:19:55] ça fonctionne
+[00:19:55 → 00:19:57] parce que c'est OK
+[00:19:57 → 00:19:57] mais voilà.
+[00:19:58 → 00:19:59] Si ça vous fait changer
+[00:19:59 → 00:20:00] s'il y a des écritures
+[00:20:00 → 00:20:01] dessus et que ça vous modifie
+[00:20:01 → 00:20:02] les écritures,
+[00:20:02 → 00:20:02] là du coup,
+[00:20:02 → 00:20:03] vous ne pouvez pas le faire.
+[00:20:04 → 00:20:04] Donc il faut toujours
+[00:20:04 → 00:20:05] connaître
+[00:20:05 → 00:20:09] ces images
+[00:20:09 → 00:20:10] et donc du coup,
+[00:20:10 → 00:20:10] n'hésitez pas
+[00:20:10 → 00:20:11] à chaque étape
+[00:20:11 → 00:20:12] à vérifier
+[00:20:12 → 00:20:13] et à afficher des images
+[00:20:13 → 00:20:13] pour être sûr
+[00:20:13 → 00:20:14] que ce que vous faites
+[00:20:14 → 00:20:15] est logique
+[00:20:15 → 00:20:16] et qu'il n'y a pas
+[00:20:16 → 00:20:17] quelque chose
+[00:20:17 → 00:20:20] auquel on passe
+[00:20:20 → 00:20:20] à côté.
+[00:20:22 → 00:20:23] Et on n'augmente
+[00:20:23 → 00:20:24] que le jeu d'entraînement,
+[00:20:24 → 00:20:25] jamais le jeu de test.
+[00:20:26 → 00:20:26] Le jeu de test,
+[00:20:27 → 00:20:28] vous le laissez tranquille.
+[00:20:29 → 00:20:30] En outil,
+[00:20:30 → 00:20:30] il y a
+[00:20:30 → 00:20:31] alimentation
+[00:20:31 → 00:20:32] qui est donnée
+[00:20:32 → 00:20:34] dans le code,
+[00:20:35 → 00:20:36] enfin dans le markdown,
+[00:20:36 → 00:20:37] mais il y a aussi
+[00:20:37 → 00:20:38] TensorFlow,
+[00:20:39 → 00:20:39] images,
+[00:20:39 → 00:20:39] Ekeras
+[00:20:39 → 00:20:40] et TorchVision
+[00:20:40 → 00:20:41] qui sont du coup
+[00:20:41 → 00:20:42] des librairies
+[00:20:42 → 00:20:43] de deep learning
+[00:20:43 → 00:20:43] qui permettent
+[00:20:43 → 00:20:44] aussi de faire ça.
+[00:20:46 → 00:20:50] c'est l'équivalent,
+[00:20:50 → 00:20:50] enfin c'est
+[00:20:50 → 00:20:51] les librairies
+[00:20:51 → 00:20:51] que vous avez
+[00:20:51 → 00:20:52] pour faire
+[00:20:52 → 00:20:54] des réseaux de neurones
+[00:20:54 → 00:20:55] et du deep learning,
+[00:20:55 → 00:20:56] c'est l'équivalent
+[00:20:56 → 00:20:57] de scikit-learn
+[00:20:57 → 00:21:00] pour le machine learning.
+[00:21:00 → 00:21:01] C'est le librairie
+[00:21:01 → 00:21:02] où il y a tout dessus.
+[00:21:14 → 00:21:15] Et par contre,
+[00:21:15 → 00:21:15] là,
+[00:21:15 → 00:21:16] on est dans un cas
+[00:21:16 → 00:21:17] aussi du coup
+[00:21:17 → 00:21:17] où on est
+[00:21:17 → 00:21:19] complètement déséquilibré
+[00:21:19 → 00:21:19] comme le cas
+[00:21:19 → 00:21:20] des pannes.
+[00:21:21 → 00:21:22] Donc là,
+[00:21:22 → 00:21:23] si vous regardez
+[00:21:23 → 00:21:24] vos images,
+[00:21:25 → 00:21:26] si vous prenez
+[00:21:26 → 00:21:26] toutes les images
+[00:21:26 → 00:21:27] que vous avez,
+[00:21:27 → 00:21:27] que ce soit
+[00:21:27 → 00:21:28] sur le jeu
+[00:21:28 → 00:21:28] d'entraînement
+[00:21:28 → 00:21:29] et sur le jeu
+[00:21:29 → 00:21:29] de test,
+[00:21:29 → 00:21:31] vous avez des défauts
+[00:21:31 → 00:21:32] que sur le jeu
+[00:21:32 → 00:21:32] de test
+[00:21:32 → 00:21:33] et vous en avez peu.
+[00:21:36 → 00:21:41] Donc si vous êtes
+[00:21:41 → 00:21:42] comme ça,
+[00:21:42 → 00:21:43] très déséquilibré
+[00:21:43 → 00:21:43] avec beaucoup
+[00:21:43 → 00:21:44] d'images normales
+[00:21:44 → 00:21:45] et très peu de défauts,
+[00:21:45 → 00:21:46] il y a plusieurs possibilités.
+[00:21:48 → 00:21:50] Soit vous suréchantillonnez
+[00:21:50 → 00:21:51] les défauts,
+[00:21:51 → 00:21:52] c'est-à-dire que
+[00:21:52 → 00:21:52] vous prenez
+[00:21:52 → 00:21:53] des images
+[00:21:53 → 00:21:54] des défauts,
+[00:21:54 → 00:21:55] vous en créez
+[00:21:55 → 00:21:56] énormément
+[00:21:56 → 00:21:58] d'images de défauts
+[00:21:58 → 00:21:58] et vous les mettez
+[00:21:58 → 00:21:59] dans le jeu
+[00:21:59 → 00:21:59] d'entraînement.
+[00:21:59 → 00:22:00] Ça va permettre
+[00:22:00 → 00:22:01] d'augmenter
+[00:22:01 → 00:22:03] les classes,
+[00:22:03 → 00:22:04] d'essayer de rééquilibrer
+[00:22:04 → 00:22:05] et de voir
+[00:22:05 → 00:22:06] ce que ça donne.
+[00:22:08 → 00:22:09] Deuxième possibilité,
+[00:22:09 → 00:22:10] pondérer les classes
+[00:22:10 → 00:22:11] dans la fonction de coût.
+[00:22:11 → 00:22:11] Donc dire,
+[00:22:12 → 00:22:12] attention,
+[00:22:12 → 00:22:13] je suis sur des classes
+[00:22:13 → 00:22:14] déséquilibrées,
+[00:22:15 → 00:22:16] donc bien prédire
+[00:22:16 → 00:22:16] ou mal prédire
+[00:22:16 → 00:22:18] un défaut
+[00:22:18 → 00:22:19] a beaucoup plus de poids
+[00:22:19 → 00:22:20] que bien prédire
+[00:22:20 → 00:22:20] quelque chose
+[00:22:20 → 00:22:21] qui est normal.
+[00:22:23 → 00:22:24] Et après,
+[00:22:24 → 00:22:24] évidemment,
+[00:22:24 → 00:22:25] choisir des métriques adaptées.
+[00:22:26 → 00:22:26] Si vous choisissez
+[00:22:26 → 00:22:27] l'accuratie,
+[00:22:27 → 00:22:28] là encore,
+[00:22:28 → 00:22:29] comme sur les pannes,
+[00:22:29 → 00:22:30] votre accuratie
+[00:22:30 → 00:22:31] ne va pas vous amener
+[00:22:31 → 00:22:32] d'informations.
+[00:22:32 → 00:22:34] donc il faut rester
+[00:22:34 → 00:22:35] sur des métriques
+[00:22:35 → 00:22:36] qui ont du sens
+[00:22:36 → 00:22:37] quand elles sont déséquilibrées.
+[00:22:39 → 00:22:39] Là,
+[00:22:39 → 00:22:39] nous,
+[00:22:39 → 00:22:40] ce qu'on va faire,
+[00:22:40 → 00:22:40] du coup,
+[00:22:41 → 00:22:42] c'est une approche
+[00:22:42 → 00:22:43] par auto-encodeur,
+[00:22:43 → 00:22:45] c'est-à-dire que vous allez
+[00:22:45 → 00:22:45] avoir un modèle
+[00:22:45 → 00:22:46] qui va être divisé
+[00:22:46 → 00:22:47] en deux parties.
+[00:22:47 → 00:22:48] Une partie
+[00:22:48 → 00:22:49] où c'est un réseau de neurones
+[00:22:49 → 00:22:50] qui permet de résumer
+[00:22:50 → 00:22:50] l'information
+[00:22:50 → 00:22:51] et une partie
+[00:22:51 → 00:22:51] et une partie
+[00:22:51 → 00:22:52] où c'est un réseau de neurones
+[00:22:52 → 00:22:53] qui,
+[00:22:53 → 00:22:54] depuis l'information résumée,
+[00:22:54 → 00:22:55] apprend à régénérer
+[00:22:55 → 00:22:57] une image.
+[00:22:57 → 00:22:57] Donc là,
+[00:22:57 → 00:22:58] on va lui faire apprendre
+[00:22:58 → 00:22:59] que le normal.
+[00:23:00 → 00:23:00] Donc,
+[00:23:00 → 00:23:01] on n'a pas besoin
+[00:23:01 → 00:23:03] des images de défauts
+[00:23:03 → 00:23:03] pour l'entraînement.
+[00:23:04 → 00:23:04] Donc,
+[00:23:04 → 00:23:04] du coup,
+[00:23:04 → 00:23:04] vous contournez
+[00:23:04 → 00:23:05] ce problème-là,
+[00:23:05 → 00:23:06] vous n'avez pas besoin
+[00:23:06 → 00:23:07] de suréchantillonner
+[00:23:07 → 00:23:08] les défauts,
+[00:23:08 → 00:23:08] etc.
+[00:23:14 → 00:23:18] Et donc,
+[00:23:18 → 00:23:18] par contre,
+[00:23:19 → 00:23:19] quelque chose à vérifier
+[00:23:19 → 00:23:21] sur les données
+[00:23:21 → 00:23:23] pour les images,
+[00:23:23 → 00:23:24] c'est les étiquettes,
+[00:23:24 → 00:23:24] les labels
+[00:23:24 → 00:23:25] qui ont été mis
+[00:23:25 → 00:23:28] sur vos données.
+[00:23:29 → 00:23:29] Par exemple,
+[00:23:29 → 00:23:30] du coup,
+[00:23:30 → 00:23:30] là,
+[00:23:30 → 00:23:31] qu'est-ce qui a été mis défaut
+[00:23:31 → 00:23:33] et qui n'a pas été mis défaut ?
+[00:23:33 → 00:23:33] Il faut,
+[00:23:33 → 00:23:34] enfin,
+[00:23:35 → 00:23:36] le niveau d'annotation
+[00:23:36 → 00:23:37] suivant qui l'a fait
+[00:23:37 → 00:23:38] peut ne pas être
+[00:23:38 → 00:23:39] la même chose.
+[00:23:40 → 00:23:40] Donc,
+[00:23:40 → 00:23:42] vous allez devoir,
+[00:23:42 → 00:23:42] là,
+[00:23:43 → 00:23:43] vous considérez
+[00:23:43 → 00:23:43] que les données,
+[00:23:44 → 00:23:44] elles sont bien sur ça,
+[00:23:45 → 00:23:46] mais si c'était métier,
+[00:23:47 → 00:23:47] bien,
+[00:23:47 → 00:23:48] et qu'on vous dit,
+[00:23:48 → 00:23:48] ben voilà,
+[00:23:48 → 00:23:49] on a des images,
+[00:23:49 → 00:23:49] c'est des défauts,
+[00:23:49 → 00:23:50] des images,
+[00:23:50 → 00:23:51] c'est des normales.
+[00:23:51 → 00:23:53] Bien essayez de faire définir
+[00:23:53 → 00:23:53] qu'est-ce qui était un défaut,
+[00:23:54 → 00:23:54] qu'est-ce qui est normal
+[00:23:54 → 00:23:56] pour que vous puissiez
+[00:23:56 → 00:23:58] vérifier qu'il n'y ait pas
+[00:23:58 → 00:23:59] de données défauts
+[00:23:59 → 00:24:00] dans les données normales,
+[00:24:00 → 00:24:00] etc.
+[00:24:01 → 00:24:01] Il peut y avoir
+[00:24:01 → 00:24:02] des erreurs d'annotation
+[00:24:02 → 00:24:04] et si vous les gardez,
+[00:24:04 → 00:24:05] si vous les faites perdurer
+[00:24:05 → 00:24:06] dans votre modèle,
+[00:24:06 → 00:24:06] ben du coup,
+[00:24:07 → 00:24:07] votre modèle
+[00:24:07 → 00:24:08] va les prendre en compte
+[00:24:08 → 00:24:13] et va mal les classer.
+[00:24:14 → 00:24:14] Donc là,
+[00:24:14 → 00:24:15] encore une fois,
+[00:24:15 → 00:24:16] si vous avez accès
+[00:24:16 → 00:24:17] à un expert métier,
+[00:24:17 → 00:24:19] il faut s'en servir
+[00:24:19 → 00:24:21] et lui demander exactement
+[00:24:21 → 00:24:22] qu'est-ce qui est un défaut,
+[00:24:22 → 00:24:23] qu'est-ce qui n'est pas,
+[00:24:23 → 00:24:23] qu'est-ce qui est normal,
+[00:24:23 → 00:24:24] qu'est-ce qui n'est pas.
+[00:24:24 → 00:24:25] Et si jamais vous voyez
+[00:24:25 → 00:24:26] des images un peu ambiguës,
+[00:24:27 → 00:24:27] ben les faire arbitrer
+[00:24:27 → 00:24:30] par cet expert-là.
+[00:24:31 → 00:24:32] Et là, du coup,
+[00:24:32 → 00:24:33] si on est en détection
+[00:24:33 → 00:24:35] d'anomalies non supervisées,
+[00:24:35 → 00:24:35] c'est-à-dire qu'on n'a pas
+[00:24:35 → 00:24:36] de labels,
+[00:24:37 → 00:24:37] l'avantage,
+[00:24:37 → 00:24:38] c'est qu'on a peu
+[00:24:38 → 00:24:40] ou pas de défauts.
+[00:24:40 → 00:24:41] en tout cas,
+[00:24:41 → 00:24:42] on ne les prend pas
+[00:24:42 → 00:24:43] pour l'entraînement.
+[00:24:44 → 00:24:44] Donc,
+[00:24:44 → 00:24:44] dans ces cas-là,
+[00:24:44 → 00:24:45] il n'y a pas de problème
+[00:24:45 → 00:24:45] d'annotation,
+[00:24:46 → 00:24:48] sauf si dans vos données
+[00:24:48 → 00:24:49] normales,
+[00:24:49 → 00:24:50] se sont cachés des défauts
+[00:24:50 → 00:24:51] et qu'ils n'ont pas été
+[00:24:51 → 00:24:52] annotés comme défauts.
+[00:24:52 → 00:24:53] C'est le seul risque
+[00:24:53 → 00:24:53] qu'il peut y avoir,
+[00:24:54 → 00:24:54] mais du coup,
+[00:24:55 → 00:24:56] ça diminue largement.
+[00:24:59 → 00:25:00] Donc,
+[00:25:00 → 00:25:00] voilà.
+[00:25:02 → 00:25:03] Est-ce qu'il y a des questions
+[00:25:03 → 00:25:07] par rapport à ça ?
+[00:25:07 → 00:25:10] C'est-à-dire que pour reprendre
+[00:25:10 → 00:25:11] l'entraînement,
+[00:25:11 → 00:25:11] on utilise des données
+[00:25:11 → 00:25:12] où il y a un mélange
+[00:25:12 → 00:25:13] de tout,
+[00:25:13 → 00:25:13] des défauts
+[00:25:13 → 00:25:15] et des données normales.
+[00:25:15 → 00:25:16] C'est ça ?
+[00:25:16 → 00:25:16] Non.
+[00:25:17 → 00:25:17] Pour l'entraînement,
+[00:25:17 → 00:25:17] là, nous,
+[00:25:18 → 00:25:18] on ne va utiliser
+[00:25:18 → 00:25:20] que des données normales
+[00:25:20 → 00:25:21] parce que le but,
+[00:25:22 → 00:25:22] c'est que notre modèle
+[00:25:22 → 00:25:25] n'apprenne à recréer
+[00:25:25 → 00:25:25] des données
+[00:25:25 → 00:25:27] qu'à partir de ce qui est normal
+[00:25:27 → 00:25:28] pour que comme ça,
+[00:25:28 → 00:25:29] si jamais on lui donne
+[00:25:29 → 00:25:30] une image avec un défaut,
+[00:25:30 → 00:25:30] il dise attention,
+[00:25:30 → 00:25:31] ce n'est pas comme
+[00:25:31 → 00:25:32] ce que j'avais vu
+[00:25:32 → 00:25:33] dans mes données d'entraînement.
+[00:25:34 → 00:25:34] Donc,
+[00:25:34 → 00:25:35] c'est qu'il y a une anomalie.
+[00:25:35 → 00:25:36] Voilà,
+[00:25:36 → 00:25:36] c'est dans le test
+[00:25:36 → 00:25:37] qu'il y a tout
+[00:25:37 → 00:25:38] qui est mélangé du coup.
+[00:25:39 → 00:25:39] Oui,
+[00:25:39 → 00:25:40] c'est dans le test
+[00:25:40 → 00:25:40] qu'il y a tout
+[00:25:40 → 00:25:41] qui est mélangé.
+[00:25:41 → 00:25:41] Comme ça,
+[00:25:41 → 00:25:42] on vérifiera bien
+[00:25:42 → 00:25:43] si le modèle arrive bien
+[00:25:43 → 00:25:44] à détecter
+[00:25:44 → 00:25:45] les données normales
+[00:25:45 → 00:25:47] et les séparer
+[00:25:47 → 00:25:47] des anomalies.
+[00:25:48 → 00:25:48] Par contre,
+[00:25:48 → 00:25:49] dans le jeu d'entraînement,
+[00:25:49 → 00:25:50] tu n'as que des données normales.
+[00:25:53 → 00:25:53] Et ça,
+[00:25:53 → 00:25:53] du coup,
+[00:25:53 → 00:25:54] c'est déjà fait
+[00:25:54 → 00:25:56] quand tu as téléchargé
+[00:25:56 → 00:25:57] dans l'arborescence
+[00:25:57 → 00:25:58] qui avait été faite.
+[00:25:58 → 00:25:59] C'est déjà comme ça.
+[00:25:59 → 00:25:59] Oui,
+[00:25:59 → 00:26:05] là où les tests,
+[00:26:06 → 00:26:08] tu as le dossier good
+[00:26:08 → 00:26:08] et après,
+[00:26:08 → 00:26:09] tu as chaque type
+[00:26:09 → 00:26:10] de défaut qui est écrit.
+[00:26:11 → 00:26:11] Du coup,
+[00:26:11 → 00:26:12] il faut créer
+[00:26:12 → 00:26:13] le jeu de validation
+[00:26:13 → 00:26:15] ou pas du tout ?
+[00:26:15 → 00:26:16] Le jeu de validation,
+[00:26:16 → 00:26:17] il faut le créer ?
+[00:26:17 → 00:26:17] Oui,
+[00:26:20 → 00:26:21] le jeu de validation,
+[00:26:21 → 00:26:21] par contre,
+[00:26:21 → 00:26:23] il va falloir le créer
+[00:26:23 → 00:26:25] pour pouvoir,
+[00:26:25 → 00:26:25] justement,
+[00:26:26 → 00:26:26] pour pouvoir faire
+[00:26:26 → 00:26:27] tout ce qui est
+[00:26:27 → 00:26:27] early stopping,
+[00:26:28 → 00:26:28] etc.
+[00:26:28 → 00:26:28] tu es obligé
+[00:26:28 → 00:26:29] d'avoir un jeu
+[00:26:29 → 00:26:29] d'entraînement
+[00:26:29 → 00:26:30] et un jeu de validation.
+[00:26:33 → 00:26:33] Donc,
+[00:26:33 → 00:26:34] on sera obligé.
+[00:26:36 → 00:26:37] Je vais demander
+[00:26:37 → 00:26:37] à Claude
+[00:26:37 → 00:26:38] alors de le créer.
+[00:26:39 → 00:26:39] Oui,
+[00:26:39 → 00:26:40] tu peux.
+[00:26:41 → 00:26:42] Là,
+[00:26:42 → 00:26:42] il m'a fait une proposition,
+[00:26:43 → 00:26:43] je ne sais pas
+[00:26:43 → 00:26:44] si elle tient la route
+[00:26:44 → 00:26:45] ou pas,
+[00:26:45 → 00:26:45] mais bon.
+[00:26:45 → 00:26:46] Oui,
+[00:26:46 → 00:26:46] il faut peut-être
+[00:26:46 → 00:26:47] lui demander,
+[00:26:47 → 00:26:47] en tout cas,
+[00:26:47 → 00:26:49] vérifier que ça y soit.
+[00:26:52 → 00:26:53] Merci.
+[00:26:55 → 00:26:55] Donc,
+[00:26:56 → 00:26:56] voilà.
+[00:26:56 → 00:26:57] Et donc,
+[00:26:57 → 00:26:57] sur les choses
+[00:26:57 → 00:26:59] que vous allez mettre
+[00:26:59 → 00:27:00] en place sur le deep learning,
+[00:27:00 → 00:27:01] encore plus que sur
+[00:27:01 → 00:27:02] le machine learning
+[00:27:02 → 00:27:02] parce que les entraînements
+[00:27:02 → 00:27:04] sont longs,
+[00:27:04 → 00:27:04] alors là,
+[00:27:04 → 00:27:05] même pour les données,
+[00:27:05 → 00:27:06] etc.,
+[00:27:06 → 00:27:07] c'est le versionning.
+[00:27:07 → 00:27:07] Donc,
+[00:27:07 → 00:27:07] l'idée,
+[00:27:07 → 00:27:09] c'est de reproduire
+[00:27:09 → 00:27:10] et tracer les données
+[00:27:10 → 00:27:11] là que vous avez,
+[00:27:11 → 00:27:11] mais pareil,
+[00:27:12 → 00:27:12] on aura la même chose
+[00:27:12 → 00:27:13] pour reproduire
+[00:27:13 → 00:27:14] les modèles
+[00:27:14 → 00:27:15] que vous allez utiliser
+[00:27:15 → 00:27:16] et pour suivre
+[00:27:16 → 00:27:17] quels modèles
+[00:27:17 → 00:27:19] vous optimisez,
+[00:27:19 → 00:27:19] etc.
+[00:27:22 → 00:27:22] Donc,
+[00:27:22 → 00:27:22] déjà,
+[00:27:22 → 00:27:23] on va vouloir versionner
+[00:27:23 → 00:27:24] le jeu de données
+[00:27:24 → 00:27:25] parce que,
+[00:27:26 → 00:27:27] pour plusieurs raisons,
+[00:27:28 → 00:27:28] la première,
+[00:27:28 → 00:27:29] c'est que
+[00:27:29 → 00:27:30] vos images,
+[00:27:30 → 00:27:31] en général,
+[00:27:31 → 00:27:32] comme c'est un truc
+[00:27:32 → 00:27:32] qui est lourd,
+[00:27:33 → 00:27:36] ça reste sur votre serveur
+[00:27:36 → 00:27:36] à vous,
+[00:27:36 → 00:27:36] par exemple,
+[00:27:36 → 00:27:37] vous n'allez pas
+[00:27:37 → 00:27:38] le mettre dans le git
+[00:27:38 → 00:27:40] et donc,
+[00:27:40 → 00:27:40] du coup,
+[00:27:40 → 00:27:40] il faut quand même
+[00:27:40 → 00:27:42] que si quelqu'un
+[00:27:42 → 00:27:42] reprend votre projet,
+[00:27:43 → 00:27:44] il faut qu'il puisse savoir
+[00:27:44 → 00:27:46] sur quelles données
+[00:27:46 → 00:27:47] a été entraînée
+[00:27:47 → 00:27:47] votre modèle.
+[00:27:48 → 00:27:49] Donc,
+[00:27:49 → 00:27:49] vous allez versionner
+[00:27:49 → 00:27:50] les images
+[00:27:50 → 00:27:51] en elles-mêmes,
+[00:27:53 → 00:27:54] les métadonnées,
+[00:27:54 → 00:27:54] donc,
+[00:27:54 → 00:27:56] d'où viennent les...
+[00:27:56 → 00:27:56] Là,
+[00:27:57 → 00:27:57] ça serait se dire
+[00:27:57 → 00:27:58] à quel moment
+[00:27:58 → 00:27:59] vous les avez récupérées,
+[00:28:00 → 00:28:01] depuis quel a été
+[00:28:01 → 00:28:02] l'appareil photo
+[00:28:02 → 00:28:03] qui les a pris
+[00:28:03 → 00:28:06] en image,
+[00:28:07 → 00:28:08] de quelles ont été
+[00:28:08 → 00:28:08] les conditions
+[00:28:08 → 00:28:10] de la prise de vue,
+[00:28:10 → 00:28:12] quand,
+[00:28:12 → 00:28:12] etc.
+[00:28:13 → 00:28:13] Donc,
+[00:28:13 → 00:28:13] ça,
+[00:28:13 → 00:28:14] c'est le plus de données
+[00:28:14 → 00:28:15] possible sur les images.
+[00:28:16 → 00:28:16] Et ensuite,
+[00:28:16 → 00:28:17] vous allez aussi
+[00:28:17 → 00:28:18] versionner les artefacts,
+[00:28:18 → 00:28:19] c'est-à-dire
+[00:28:19 → 00:28:20] votre découpage
+[00:28:20 → 00:28:21] entre le jeu d'entraînement,
+[00:28:21 → 00:28:22] le jeu de validation,
+[00:28:22 → 00:28:23] le jeu de test,
+[00:28:23 → 00:28:24] les statistiques
+[00:28:24 → 00:28:25] de normalisation,
+[00:28:25 → 00:28:25] comme ça,
+[00:28:25 → 00:28:26] si quelqu'un veut normaliser
+[00:28:26 → 00:28:27] un nouveau jeu de test,
+[00:28:27 → 00:28:28] il puisse le faire directement
+[00:28:28 → 00:28:30] avec la même normalisation
+[00:28:30 → 00:28:31] que vous,
+[00:28:31 → 00:28:32] et les labels,
+[00:28:32 → 00:28:33] les étiquettes,
+[00:28:33 → 00:28:34] qu'est-ce qui est défaut,
+[00:28:34 → 00:28:35] qu'est-ce qui n'est pas défaut,
+[00:28:35 → 00:28:35] etc.
+[00:28:37 → 00:28:38] Donc là,
+[00:28:38 → 00:28:39] vous pouvez le faire,
+[00:28:40 → 00:28:41] il y a plusieurs outils.
+[00:28:42 → 00:28:43] Il y a DVC
+[00:28:43 → 00:28:44] que vous pouvez mettre en place,
+[00:28:44 → 00:28:44] du coup,
+[00:28:45 → 00:28:45] pour ceux qui sont en train
+[00:28:45 → 00:28:46] de faire le sujet.
+[00:28:47 → 00:28:48] Il y a Git LFS aussi.
+[00:28:49 → 00:28:49] Et sinon,
+[00:28:49 → 00:28:49] après,
+[00:28:50 → 00:28:53] il y a des conventions
+[00:28:53 → 00:28:53] avec du coup,
+[00:28:53 → 00:28:53] nommage,
+[00:28:53 → 00:28:54] fichier de métadonnées,
+[00:28:54 → 00:28:55] etc.
+[00:28:55 → 00:28:56] Si vous êtes sur votre serveur
+[00:28:56 → 00:28:57] directement.
+[00:28:58 → 00:28:58] Mais DVC,
+[00:28:58 → 00:28:59] par exemple,
+[00:28:59 → 00:28:59] fonctionne très bien.
+[00:28:59 → 00:29:00] Donc,
+[00:29:00 → 00:29:01] vous pouvez utiliser DVC
+[00:29:01 → 00:29:01] pour versionner
+[00:29:01 → 00:29:03] votre jeu de données.
+[00:29:04 → 00:29:05] L'idée,
+[00:29:05 → 00:29:05] c'est que vraiment,
+[00:29:06 → 00:29:06] si on vous donne
+[00:29:06 → 00:29:07] un identifiant,
+[00:29:08 → 00:29:08] enfin,
+[00:29:08 → 00:29:09] si vous avez enregistré
+[00:29:09 → 00:29:10] avec un identifiant,
+[00:29:10 → 00:29:10] si on récupère
+[00:29:10 → 00:29:11] cet identifiant-là,
+[00:29:11 → 00:29:13] on a exactement
+[00:29:13 → 00:29:15] le même dataset
+[00:29:15 → 00:29:16] et que du coup,
+[00:29:16 → 00:29:17] on peut repartir
+[00:29:17 → 00:29:17] de la même base.
+[00:29:20 → 00:29:20] Donc ça,
+[00:29:20 → 00:29:21] vous pouvez le rajouter dessus.
+[00:29:24 → 00:29:24] Donc voilà.
+[00:29:24 → 00:29:25] Est-ce qu'il y a des questions
+[00:29:25 → 00:29:28] sur ce TP-là,
+[00:29:28 → 00:29:32] du coup ?
+[00:29:32 → 00:29:34] Suivant où vous en êtes,
+[00:29:34 → 00:29:34] du coup,
+[00:29:34 → 00:29:36] de ce TP des images,
+[00:29:36 → 00:29:37] je vous laisse
+[00:29:37 → 00:29:39] le terminer
+[00:29:39 → 00:29:41] ou le continuer.
+[00:29:42 → 00:29:42] Et s'il y en a
+[00:29:42 → 00:29:43] qui ont du coup
+[00:29:43 → 00:29:45] quasi tout fait
+[00:29:45 → 00:29:46] et qui ont déjà
+[00:29:46 → 00:29:47] du coup pris en main
+[00:29:47 → 00:29:47] les données
+[00:29:47 → 00:29:48] et déjà créé
+[00:29:48 → 00:29:49] le jeu d'entraînement,
+[00:29:49 → 00:29:49] jeu de test,
+[00:29:49 → 00:29:50] jeu de validation
+[00:29:50 → 00:29:50] et tout ça,
+[00:29:51 → 00:29:52] vous pouvez commencer
+[00:29:52 → 00:29:52] à regarder
+[00:29:52 → 00:29:53] comment
+[00:29:53 → 00:29:56] ce...
+[00:29:56 → 00:29:57] comment se...
+[00:29:57 → 00:29:59] quelle est l'architecture
+[00:29:59 → 00:30:00] d'un auto-encodeur
+[00:30:00 → 00:30:02] et comment il fonctionne.
+[00:30:03 → 00:30:03] De toute façon,
+[00:30:03 → 00:30:04] il reste une demi-heure
+[00:30:04 → 00:30:05] donc on n'aura pas non plus
+[00:30:05 → 00:30:06] le temps de tout faire
+[00:30:06 → 00:30:06] mais comme ça,
+[00:30:07 → 00:30:07] demain matin,
+[00:30:07 → 00:30:09] on mettra l'auto-encodeur
+[00:30:09 → 00:30:09] en place
+[00:30:09 → 00:30:10] pour voir
+[00:30:10 → 00:30:13] comment ça marche.
+[00:30:14 → 00:30:15] Et s'il y en a...
+[00:30:15 → 00:30:16] Après,
+[00:30:16 → 00:30:18] s'il y en a qui veulent le...
+[00:30:18 → 00:30:18] Du coup,
+[00:30:18 → 00:30:19] j'ai le markdown
+[00:30:19 → 00:30:22] du TP
+[00:30:22 → 00:30:23] de l'auto-encodeur.
+[00:30:23 → 00:30:24] S'il y en a qui le veulent,
+[00:30:24 → 00:30:25] vous me le dites
+[00:30:25 → 00:30:25] et je vous l'envoie
+[00:30:25 → 00:30:25] comme ça,
+[00:30:26 → 00:30:27] vous pouvez passer
+[00:30:27 → 00:30:27] à l'étape suivante sinon.
+[00:30:29 → 00:30:29] Et je vous mets
+[00:30:29 → 00:30:31] ces slides
+[00:30:31 → 00:30:31] sur les documents
+[00:30:31 → 00:30:34] de suite.
+[00:30:44 → 00:30:45] Et les auto-encodeurs,
+[00:30:45 → 00:30:45] du coup,
+[00:30:46 → 00:30:47] vous allez avoir
+[00:30:47 → 00:30:48] une partie
+[00:30:48 → 00:30:49] sur les auto-encodeurs
+[00:30:49 → 00:30:51] dans le gros fichier
+[00:30:51 → 00:30:52] que je vous montrais
+[00:30:52 → 00:30:52] tout à l'heure
+[00:30:52 → 00:30:54] qui va s'appeler
+[00:30:54 → 00:30:55] du coup
+[00:30:55 → 00:30:56] Deep Learning.
+[00:30:57 → 00:30:57] Donc,
+[00:30:57 → 00:30:57] je vous mets
+[00:30:57 → 00:30:59] Deep Learning
+[00:30:59 → 00:31:00] le 12 et le 13
+[00:31:00 → 00:31:01] et donc,
+[00:31:01 → 00:31:02] s'il y en a qui veulent regarder
+[00:31:02 → 00:31:03] sur les auto-encodeurs,
+[00:31:03 → 00:31:06] vous aurez pas mal de choses
+[00:31:06 → 00:31:06] là-dedans.
+[00:31:33 → 00:31:33] Dis-moi,
+[00:31:33 → 00:31:33] tu sais
+[00:31:33 → 00:31:35] comment
+[00:31:35 → 00:31:36] activer la licence
+[00:31:36 → 00:31:37] cloud,
+[00:31:37 → 00:31:37] enfin,
+[00:31:38 → 00:31:38] cloud,
+[00:31:38 → 00:31:39] il marche là,
+[00:31:39 → 00:31:40] mais dans VS Code,
+[00:31:40 → 00:31:41] il y a une erreur de 400
+[00:31:41 → 00:31:42] quand on essaie de qu'il est.
+[00:31:43 → 00:31:44] Est-ce que tu t'es bien
+[00:31:44 → 00:31:47] logué dessus ?
+[00:31:47 → 00:31:48] Est-ce qu'il t'a demandé
+[00:31:48 → 00:31:49] sur VS Code
+[00:31:49 → 00:31:50] justement du coup
+[00:31:50 → 00:31:51] de t'identifier ?
+[00:31:51 → 00:31:54] Ah, c'est là qu'il veut
+[00:31:54 → 00:31:55] comment ?
+[00:31:55 → 00:31:56] C'est là que ça va plante.
+[00:31:58 → 00:31:59] Tu peux partager ton écran
+[00:31:59 → 00:32:00] juste pour voir.
+[00:32:00 → 00:32:00] Ouais.
+[00:32:02 → 00:32:13] Alors ?
+[00:32:13 → 00:32:15] Là, je suis avec mon ancien compte
+[00:32:15 → 00:32:16] parce que sinon,
+[00:32:16 → 00:32:17] ça marche pas.
+[00:32:19 → 00:32:21] tu vois,
+[00:32:21 → 00:32:21] tu vois,
+[00:32:21 → 00:32:21] tu vois,
+[00:32:21 → 00:32:22] j'ai mon ancien mail.
+[00:32:23 → 00:32:23] Ouais,
+[00:32:23 → 00:32:26] et si tu fais modifier ?
+[00:32:26 → 00:32:28] J'ai log out,
+[00:32:28 → 00:32:29] boum,
+[00:32:30 → 00:32:31] je fais ça
+[00:32:31 → 00:32:33] ou un truc de console ?
+[00:32:33 → 00:32:33] Le premier,
+[00:32:33 → 00:32:33] cloud,
+[00:32:33 → 00:32:34] iSubscription.
+[00:32:35 → 00:32:35] Ah bah là,
+[00:32:35 → 00:32:36] quand je fais ça,
+[00:32:36 → 00:32:37] il me remet directement
+[00:32:37 → 00:32:38] avec mon ancien compte.
+[00:32:39 → 00:32:40] Je suis bloqué.
+[00:32:40 → 00:32:41] Ah, parce qu'il faut
+[00:32:41 → 00:32:42] que tu te...
+[00:32:42 → 00:32:45] Il faut que tu déconnectes
+[00:32:45 → 00:32:46] aussi du cloud web
+[00:32:46 → 00:32:49] parce que c'est du coup,
+[00:32:49 → 00:32:49] c'est que...
+[00:32:49 → 00:32:50] En fait,
+[00:32:50 → 00:32:50] pour faire ça,
+[00:32:51 → 00:32:53] ils te demandent ton...
+[00:32:53 → 00:32:53] Tu sais,
+[00:32:53 → 00:32:53] ils se connectent
+[00:32:53 → 00:32:55] sur ton cloud web
+[00:32:55 → 00:32:57] donc déconnecte-toi
+[00:32:57 → 00:32:58] du cloud web
+[00:32:58 → 00:33:01] pour...
+[00:33:01 → 00:33:02] Ah bah non,
+[00:33:02 → 00:33:03] là c'est bon.
+[00:33:03 → 00:33:03] Ah non,
+[00:33:03 → 00:33:04] c'est cloud console,
+[00:33:04 → 00:33:04] ok.
+[00:33:05 → 00:33:05] Ouais,
+[00:33:05 → 00:33:06] si tu vas sur cloud
+[00:33:06 → 00:33:07] directement,
+[00:33:07 → 00:33:08] voir si t'es connecté
+[00:33:08 → 00:33:09] avec un compte.
+[00:33:11 → 00:33:12] Sur cloud directement,
+[00:33:13 → 00:33:14] ici.
+[00:33:16 → 00:33:17] Tu fais quoi ?
+[00:33:17 → 00:33:25] Qu'est-ce que tu t'appelles ?
+[00:33:25 → 00:33:27] cloud.ai,
+[00:33:27 → 00:33:28] juste.
+[00:33:33 → 00:33:36] Et là,
+[00:33:36 → 00:33:37] tu vois,
+[00:33:37 → 00:33:38] tu dois être...
+[00:33:38 → 00:33:40] Tu dois être connecté
+[00:33:40 → 00:33:41] avec un compte.
+[00:33:42 → 00:33:43] Tout en bas à gauche,
+[00:33:43 → 00:33:44] tout en bas à gauche,
+[00:33:44 → 00:33:45] t'as le Ludo Pro.
+[00:33:46 → 00:33:47] Tu peux te déconnecter
+[00:33:47 → 00:33:49] si c'est avec ton...
+[00:33:49 → 00:33:50] C'est cloud,
+[00:33:50 → 00:33:51] effectivement.
+[00:33:52 → 00:33:53] Si t'es...
+[00:33:53 → 00:33:53] D'accord.
+[00:33:54 → 00:33:55] Là,
+[00:33:55 → 00:33:55] normalement,
+[00:33:56 → 00:33:56] si tu refais,
+[00:33:56 → 00:33:57] si tu refais,
+[00:33:57 → 00:33:58] ça devrait marcher.
+[00:34:01 → 00:34:02] En tout cas,
+[00:34:02 → 00:34:02] ils devraient te demander
+[00:34:02 → 00:34:03] avec quel mail.
+[00:34:05 → 00:34:05] Ouais.
+[00:34:06 → 00:34:06] Déjà,
+[00:34:08 → 00:34:08] après,
+[00:34:08 → 00:34:09] j'avais une autre erreur.
+[00:34:09 → 00:34:31] C'est là qu'il me faisait
+[00:34:31 → 00:34:32] une erreur 400 tout à l'heure.
+[00:34:32 → 00:34:32] Voilà.
+[00:34:33 → 00:34:33] Toujours pareil.
+[00:34:36 → 00:34:39] Qu'est-ce que c'est le mieux ?
+[00:34:39 → 00:34:41] J'ai essayé...
+[00:34:41 → 00:34:42] Si je me connecte
+[00:34:42 → 00:34:46] ici à la place...
+[00:34:46 → 00:34:47] Ça marche,
+[00:34:47 → 00:34:47] c'est blanc.
+[00:34:48 → 00:34:48] Ouais.
+[00:34:49 → 00:34:50] Et alors,
+[00:34:50 → 00:34:50] attends,
+[00:34:51 → 00:34:54] rien sur cloud code ?
+[00:34:54 → 00:34:55] C'est quoi ?
+[00:34:55 → 00:34:55] C'est que...
+[00:34:55 → 00:35:05] Il dit que c'est les ressources.
+[00:35:06 → 00:35:07] Ouais,
+[00:35:07 → 00:35:08] ça m'a jamais fait ça.
+[00:35:09 → 00:35:15] C'est le nouveau compte,
+[00:35:15 → 00:35:16] ça,
+[00:35:16 → 00:35:16] du coup,
+[00:35:16 → 00:35:17] que t'as reçu ?
+[00:35:17 → 00:35:17] Ouais.
+[00:35:26 → 00:35:48] J'ai essayé comme ça.
+[00:35:49 → 00:35:50] Ah,
+[00:35:50 → 00:35:50] ça a l'air d'avoir marché,
+[00:35:51 → 00:35:51] là.
+[00:35:51 → 00:35:52] Ouais,
+[00:35:52 → 00:35:53] je pense que des fois,
+[00:35:53 → 00:35:54] c'est parce que
+[00:35:54 → 00:35:54] comme t'étais connecté
+[00:35:54 → 00:35:55] avec un autre,
+[00:35:58 → 00:35:59] comme t'étais connecté
+[00:35:59 → 00:35:59] avec un autre,
+[00:35:59 → 00:36:00] des fois,
+[00:36:00 → 00:36:00] c'est...
+[00:36:00 → 00:36:02] Ils sont brûlés
+[00:36:02 → 00:36:03] avec le navigateur,
+[00:36:03 → 00:36:04] je pense.
+[00:36:04 → 00:36:05] Ouais,
+[00:36:05 → 00:36:05] c'est bon.
+[00:36:06 → 00:36:07] Ah,
+[00:36:07 → 00:36:07] c'est bon ?
+[00:36:07 → 00:36:07] C'est bon,
+[00:36:07 → 00:36:08] parfait.
+[00:36:08 → 00:36:08] Ouais,
+[00:36:09 → 00:36:09] c'est bon.
+[00:36:09 → 00:36:10] Parce qu'ils sont brûlés
+[00:36:10 → 00:36:11] avec le...
+[00:36:11 → 00:36:12] Ils m'ont donné un délire
+[00:36:12 → 00:36:13] d'un chrome
+[00:36:13 → 00:36:14] et l'autre dans...
+[00:36:14 → 00:36:14] Eh ouais,
+[00:36:14 → 00:36:15] ouais.
+[00:36:15 → 00:36:17] Dans Edge.
+[00:36:17 → 00:36:18] Ouais,
+[00:36:18 → 00:36:18] OK.
+[00:36:18 → 00:36:18] Et donc,
+[00:36:18 → 00:36:19] ils retrouvaient pas
+[00:36:19 → 00:36:19] ces petits,
+[00:36:19 → 00:36:20] en fait.
+[00:36:21 → 00:36:21] Merci.
+[00:36:22 → 00:36:23] Avec plaisir.
+[00:36:23 → 00:36:23] C'est mieux.
+[00:36:27 → 00:36:28] Du coup,
+[00:36:28 → 00:36:28] t'es toujours
+[00:36:28 → 00:36:29] à un partage d'écran,
+[00:36:29 → 00:36:29] là,
+[00:36:29 → 00:36:29] si j'aime bien.
+[00:36:29 → 00:36:30] Ouais.
+[00:36:40 → 00:36:41] Arrêtez,
+[00:36:41 → 00:37:25] par...
+[00:37:25 → 00:37:36] Bon,
+[00:37:36 → 00:37:36] désolé,
+[00:37:36 → 00:37:37] je vais te faire répéter,
+[00:37:37 → 00:37:37] mais à cause de ça,

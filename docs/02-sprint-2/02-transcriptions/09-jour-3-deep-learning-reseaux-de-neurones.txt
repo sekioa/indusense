@@ -1,0 +1,2756 @@
+# Deep Learning : réseaux de neurones, entraînement et CNN
+
+Langue détectée : fr
+
+> Transcription automatique locale (whisper.cpp, modèle `large-v3-turbo`, VAD Silero activé). Les hésitations, coupures et termes mal reconnus peuvent nécessiter une correction éditoriale. Segmentation issue du VAD : la durée affichée entre deux répliques peut inclure un silence, pas seulement la parole.
+
+Support associé : `12_Deep_Learning.pdf`.
+
+[00:00:00 → 00:00:10] L'idée, c'est de voir comment on fait les modèles de deep learning.
+[00:00:11 → 00:00:14] Vous allez voir, la trame de l'entraînement, etc.,
+[00:00:14 → 00:00:16] est sensiblement la même,
+[00:00:16 → 00:00:20] mais les algorithmes de deep learning ont quelques spécificités.
+[00:00:20 → 00:00:23] C'est ce qu'on va regarder et faire un TP là-dessus aussi.
+[00:00:27 → 00:00:31] Ça, on l'avait dit déjà avant.
+[00:00:32 → 00:00:35] Vous avez plusieurs domaines de l'IA.
+[00:00:36 → 00:00:38] Le machine learning, du coup, qu'on a vu
+[00:00:38 → 00:00:42] avec tout ce qui permet de faire les classifications et régressions,
+[00:00:42 → 00:00:45] où, par exemple, les modèles sont faits à base de random forest.
+[00:00:46 → 00:00:48] Enfin, vous pouvez l'utiliser comme modèle, par exemple, random forest.
+[00:00:48 → 00:00:53] SVM, qui est un autre type de modèle aussi qui existe.
+[00:00:54 → 00:00:58] Et à l'intérieur, il y a un type de modèle qui s'appelle les réseaux de neurones,
+[00:00:59 → 00:01:00] qui, lorsqu'ils vont être assez grands,
+[00:01:00 → 00:01:03] on va les appeler assez profonds,
+[00:01:04 → 00:01:07] vont créer une sous-partie de l'IA qui s'appelle le deep learning.
+[00:01:08 → 00:01:12] Le propre du deep learning, c'est que,
+[00:01:12 → 00:01:19] du coup, le propre du deep learning, on va le voir,
+[00:01:19 → 00:01:26] c'est de pouvoir traiter autre chose que des données tabulaires.
+[00:01:27 → 00:01:30] Là où le machine learning, vous êtes censé avoir toutes vos données
+[00:01:30 → 00:01:33] sur du CSV, en colonne et ligne.
+[00:01:33 → 00:01:37] Une observation, c'est une ligne et il y a les caractéristiques sur les colonnes.
+[00:01:37 → 00:01:42] Là, le deep learning va vous permettre de pouvoir traiter plein d'autres types de données.
+[00:01:43 → 00:01:46] Par contre, on va, du coup, avoir un niveau...
+[00:01:46 → 00:01:51] Ça sera encore une boîte noire un peu sur ces sujets-là.
+[00:01:51 → 00:01:55] L'idée, c'est que, du coup, si vous prenez une image en entrée,
+[00:01:55 → 00:01:58] en machine learning, vous seriez obligés de faire rentrer cette image
+[00:01:58 → 00:02:02] qui est une matrice de pixels dans une ligne de votre tableau.
+[00:02:03 → 00:02:06] Donc, faire du pré-traitement d'images, sortir des features, etc.,
+[00:02:06 → 00:02:09] pour ensuite faire votre modèle de classification.
+[00:02:10 → 00:02:14] Là où, pour le deep learning, vous allez pouvoir directement l'utiliser l'image
+[00:02:14 → 00:02:18] et avoir, du coup, feature extraction et classification
+[00:02:18 → 00:02:20] qui se fait automatiquement par le modèle.
+[00:02:21 → 00:02:23] C'est le modèle qui va se débrouiller lui-même
+[00:02:23 → 00:02:31] pour trouver des patterns, etc., sur vos images directement.
+[00:02:33 → 00:02:35] Donc, c'est pour ça qu'on va utiliser le deep learning.
+[00:02:36 → 00:02:37] Alors, vous pouvez très bien utiliser le deep learning
+[00:02:37 → 00:02:39] avec des données tabulaires à entrée.
+[00:02:40 → 00:02:42] Mais on va le voir, c'est des modèles qui sont beaucoup plus gros,
+[00:02:42 → 00:02:44] qui sont plus longs à entraîner,
+[00:02:44 → 00:02:46] qui demandent plus de puissance de calcul pour tourner,
+[00:02:47 → 00:02:49] donc qui peuvent être assez complexes.
+[00:02:50 → 00:02:53] Donc, du coup, dans la majorité des cas...
+[00:02:53 → 00:02:56] Enfin, en tout cas, vous ne prenez pas le deep learning en première attention
+[00:02:56 → 00:02:58] si vous avez des données tabulaires.
+[00:02:58 → 00:03:01] Si vous avez des tableaux, vous restez sur du machine learning au moins au début.
+[00:03:01 → 00:03:05] Si vous voyez qu'après, vous avez besoin de quelque chose de plus complexe
+[00:03:05 → 00:03:08] pour aller plus loin et pour améliorer les performances,
+[00:03:08 → 00:03:10] vous pouvez aller vers du deep learning.
+[00:03:10 → 00:03:13] Mais sinon, de base, on reste sur du machine learning.
+[00:03:14 → 00:03:16] Et du coup, deep learning, par contre, si vous avez, par exemple, de l'image,
+[00:03:16 → 00:03:18] vous savez que directement, vous avez les classifications d'image,
+[00:03:19 → 00:03:20] vous allez aller vers le deep learning.
+[00:03:24 → 00:03:28] Et donc, deep learning, ça va être, du coup, plein de modèles
+[00:03:28 → 00:03:32] qui vont être faits tous avec la même architecture,
+[00:03:32 → 00:03:34] enfin, le même style d'architecture, les mêmes éléments,
+[00:03:35 → 00:03:37] qui sont, du coup, des réseaux de neurones.
+[00:03:38 → 00:03:41] Les réseaux de neurones, du coup, qui sont aussi appelés MLP
+[00:03:41 → 00:03:42] pour Multi-Layer Pass-Option,
+[00:03:44 → 00:03:46] du coup, avec des couches que vous avez.
+[00:03:46 → 00:03:51] Donc, les couches, c'est vraiment le représentant vertical à chaque fois.
+[00:03:52 → 00:03:55] Et chaque rond représente, du coup, un neurone.
+[00:03:56 → 00:03:58] Donc, en fait, ça va être des modèles
+[00:03:59 → 00:04:00] qui vont prendre en entrée des données,
+[00:04:01 → 00:04:02] qui vont passer parmi tout un réseau,
+[00:04:02 → 00:04:04] et tout ça pour vous faire, du coup, une sortie,
+[00:04:05 → 00:04:06] une prédiction à la sortie.
+[00:04:08 → 00:04:09] Donc, c'est ça qu'on va voir,
+[00:04:09 → 00:04:10] comment les mettre en place,
+[00:04:10 → 00:04:12] comment ça fonctionne, etc.
+[00:04:14 → 00:04:16] Vous avez, du coup, au moins une couche d'entrée
+[00:04:16 → 00:04:25] qui prend en entrée tous les éléments de votre donnée d'entrée.
+[00:04:25 → 00:04:27] Donc, par exemple, si on a une image,
+[00:04:27 → 00:04:29] une image, c'est une matrice de pixels,
+[00:04:29 → 00:04:32] il va y avoir autant de neurones sur la couche d'entrée
+[00:04:32 → 00:04:34] qu'il y a de pixels sur votre image.
+[00:04:35 → 00:04:37] Et c'est ce qui va vous permettre de faire tous les...
+[00:04:37 → 00:04:40] Et en fait, du coup, chaque neurone d'entrée
+[00:04:40 → 00:04:43] reprendra la valeur du pixel associé.
+[00:04:43 → 00:04:47] Au milieu, vous avez les couches cachées
+[00:04:47 → 00:04:48] qui sont...
+[00:04:48 → 00:04:52] Il peut y en avoir une ou plusieurs.
+[00:04:53 → 00:04:54] On parle de deep learning.
+[00:04:55 → 00:04:56] Alors, les gens s'accordent à dire deep learning
+[00:04:56 → 00:04:59] quand il y a au moins deux, voire au moins trois couches cachées.
+[00:05:00 → 00:05:02] Mais il peut y en avoir des dizaines, des centaines, etc.
+[00:05:03 → 00:05:04] Et vous avez une couche de sortie
+[00:05:04 → 00:05:09] qui est la couche qui vous donne, du coup,
+[00:05:09 → 00:05:11] la prédiction de...
+[00:05:11 → 00:05:12] Est-ce que vous voulez faire une régression,
+[00:05:12 → 00:05:13] une classification, etc.
+[00:05:14 → 00:05:16] Ce que vous voulez prédire va se retrouver
+[00:05:16 → 00:05:19] sur cette couche de sortie-là ?
+[00:05:19 → 00:05:21] Il y a, du coup, plusieurs neurones par couche.
+[00:05:21 → 00:05:23] Si on est sur la couche d'entrée,
+[00:05:24 → 00:05:26] du coup, on a un nombre de neurones,
+[00:05:26 → 00:05:28] le nombre de neurones de notre observation,
+[00:05:29 → 00:05:29] de notre donnée d'entrée.
+[00:05:30 → 00:05:32] Les couches cachées au milieu,
+[00:05:32 → 00:05:33] il y a plein de neurones aussi.
+[00:05:33 → 00:05:35] Et la couche de sortie,
+[00:05:36 → 00:05:37] ça va dépendre de ce qu'on veut faire.
+[00:05:37 → 00:05:38] Mais par exemple,
+[00:05:38 → 00:05:39] si on fait de la classification binaire,
+[00:05:40 → 00:05:41] il y a juste besoin d'avoir
+[00:05:41 → 00:05:45] la probabilité d'appartenir à la classe positive.
+[00:05:45 → 00:05:47] Donc, vous n'avez qu'un neurone.
+[00:05:48 → 00:05:52] Le nombre d'éléments à la sortie
+[00:05:52 → 00:05:57] dépendra de votre objectif.
+[00:06:00 → 00:06:03] Donc, vous avez un neurone par features
+[00:06:03 → 00:06:05] où une feature, du coup,
+[00:06:05 → 00:06:07] peut être un pixel, par exemple,
+[00:06:07 → 00:06:09] et que des features numériques, par contre.
+[00:06:09 → 00:06:10] Là où, par exemple,
+[00:06:10 → 00:06:12] Random Forest accepte les catégories, etc.
+[00:06:13 → 00:06:15] Là, vous n'avez que des features numériques.
+[00:06:15 → 00:06:17] Et il faut avoir, du coup,
+[00:06:17 → 00:06:18] mis sur la même échelle
+[00:06:18 → 00:06:20] vos données en entrée.
+[00:06:21 → 00:06:23] Donc, la normalisation et la standardisation,
+[00:06:23 → 00:06:24] on en avait parlé,
+[00:06:25 → 00:06:29] on l'avait fait avant de se lancer dans les modèles.
+[00:06:30 → 00:06:31] Du coup, si vous faites du Razone Run,
+[00:06:31 → 00:06:32] vous êtes obligés d'avoir fait
+[00:06:32 → 00:06:33] la standardisation et la normalisation
+[00:06:33 → 00:06:34] sur vos données en entrée.
+[00:06:37 → 00:06:38] Donc, ça, c'est très important.
+[00:06:39 → 00:06:41] Et du coup, vos données vont passer
+[00:06:41 → 00:06:43] jusqu'à avoir votre prédiction ici.
+[00:06:45 → 00:06:47] Ce qui se passe dans Zone Run,
+[00:06:47 → 00:06:50] on va retrouver, du coup,
+[00:06:50 → 00:06:52] ici, on va dire
+[00:06:52 → 00:06:54] que c'est les neurones de la couche d'entrée.
+[00:06:55 → 00:06:57] Et ça, c'est un neurone à la suite.
+[00:06:58 → 00:07:01] En fait, les neurones de la première couche cachée
+[00:07:01 → 00:07:04] sont une combinaison linéaire
+[00:07:04 → 00:07:05] des neurones précédents,
+[00:07:05 → 00:07:06] du coup, de la couche d'entrée,
+[00:07:07 → 00:07:08] avec des poids ici.
+[00:07:09 → 00:07:11] Vous retrouvez W1, W2, W3.
+[00:07:12 → 00:07:14] Et donc, c'est durant l'entraînement,
+[00:07:14 → 00:07:16] comme dans la régression linéaire,
+[00:07:16 → 00:07:17] où le but est de trouver les paramètres
+[00:07:17 → 00:07:18] qui optimisent le mieux
+[00:07:18 → 00:07:20] la fonction de coût.
+[00:07:21 → 00:07:21] Là, ça va être pareil,
+[00:07:22 → 00:07:22] sauf que, du coup,
+[00:07:22 → 00:07:24] pour chaque neurone,
+[00:07:24 → 00:07:26] il y a plein de poids
+[00:07:26 → 00:07:27] qui sont associés.
+[00:07:28 → 00:07:29] Donc, en nombre de paramètres
+[00:07:29 → 00:07:29] à mettre à jour
+[00:07:29 → 00:07:31] à chaque fois pendant l'entraînement,
+[00:07:31 → 00:07:32] il y en a énormément plus
+[00:07:32 → 00:07:34] que sur des algorithmes
+[00:07:34 → 00:07:35] de machine learning.
+[00:07:36 → 00:07:37] Ici, vous vous retrouvez, du coup,
+[00:07:37 → 00:07:38] avec le résultat du neurone
+[00:07:38 → 00:07:43] qui est la somme de la donnée 1,
+[00:07:43 → 00:07:45] enfin, la colonne 1,
+[00:07:45 → 00:07:46] fois W1,
+[00:07:46 → 00:07:47] plus la colonne 2,
+[00:07:47 → 00:07:49] fois W2, etc., etc.
+[00:07:51 → 00:07:52] Donc, c'est une combinaison linéaire.
+[00:07:53 → 00:07:54] Et il y a juste une deuxième partie
+[00:07:54 → 00:07:55] dans le neurone,
+[00:07:55 → 00:07:56] c'est que si vous ne faites que
+[00:07:56 → 00:07:57] des combinaisons linéaires
+[00:07:57 → 00:07:58] de combinaisons linéaires,
+[00:07:58 → 00:07:59] votre réseau de neurones entier
+[00:07:59 → 00:08:01] reste une combinaison linéaire.
+[00:08:01 → 00:08:02] Donc, on n'aurait pas,
+[00:08:02 → 00:08:04] on ne pourrait pas avoir
+[00:08:04 → 00:08:04] des compréhensions
+[00:08:04 → 00:08:06] et des patterns non linéaires
+[00:08:06 → 00:08:07] qui est des fois ce qu'on cherche.
+[00:08:08 → 00:08:09] Donc, vous avez des fois,
+[00:08:09 → 00:08:11] enfin, vous avez pour chaque neurone
+[00:08:11 → 00:08:12] une fonction qu'on appelle
+[00:08:12 → 00:08:13] une fonction d'activation
+[00:08:13 → 00:08:15] qui rajoute de la non-linéarité
+[00:08:15 → 00:08:16] et qui va permettre au modèle
+[00:08:16 → 00:08:18] de trouver des patterns
+[00:08:18 → 00:08:20] sur des sujets très complexes
+[00:08:20 → 00:08:21] et non-linéaires.
+[00:08:23 → 00:08:24] Donc, on retrouve, en fait,
+[00:08:24 → 00:08:25] les mêmes paramètres
+[00:08:25 → 00:08:26] que lors de la régression linéaire
+[00:08:26 → 00:08:27] avec, du coup,
+[00:08:27 → 00:08:28] l'optimisation qui va devoir se faire
+[00:08:28 → 00:08:29] de ces paramètres.
+[00:08:30 → 00:08:30] L'idée, c'est que vous,
+[00:08:31 → 00:08:32] quand vous allez construire
+[00:08:32 → 00:08:33] votre réseau de neurones,
+[00:08:35 → 00:08:37] il va y avoir des poids, du coup,
+[00:08:37 → 00:08:38] qui vont être au début
+[00:08:38 → 00:08:39] mis de manière aléatoire
+[00:08:39 → 00:08:41] et quand vous allez donner au modèle
+[00:08:41 → 00:08:42] le fait qu'il doit s'entraîner,
+[00:08:42 → 00:08:44] il va venir modifier tous ses poids
+[00:08:44 → 00:08:46] petit à petit
+[00:08:46 → 00:08:48] pour essayer d'améliorer les résultats.
+[00:08:49 → 00:08:50] Exactement comme ce qui est fait
+[00:08:50 → 00:08:52] pendant, du coup,
+[00:08:52 → 00:08:54] de la...
+[00:08:54 → 00:08:57] pendant, du coup, la...
+[00:08:57 → 00:08:58] Comment ça s'appelle ?
+[00:08:58 → 00:08:59] La régression linéaire, pardon.
+[00:09:02 → 00:09:03] Est-ce que ça va jusque-là
+[00:09:03 → 00:09:04] sur la compréhension
+[00:09:04 → 00:09:05] des réseaux de neurones ?
+[00:09:05 → 00:09:13] Ou est-ce qu'il y a des questions ?
+[00:09:13 → 00:09:19] Si ça va, vous pouvez juste
+[00:09:19 → 00:09:19] mettre un petit pouce.
+[00:09:20 → 00:09:20] Si ça ne va pas,
+[00:09:20 → 00:09:22] vous me dites les questions.
+[00:09:24 → 00:09:25] Juste, s'il te plaît,
+[00:09:25 → 00:09:26] une question concernant
+[00:09:26 → 00:09:27] activation function.
+[00:09:28 → 00:09:29] Je n'ai pas compris
+[00:09:29 → 00:09:31] c'est quoi cette fonction exactement.
+[00:09:31 → 00:09:33] C'est la somme de l'ensemble
+[00:09:33 → 00:09:37] de xj fois wj, le poids ?
+[00:09:37 → 00:09:38] En fait, tu as d'abord
+[00:09:38 → 00:09:39] cette fonction-là qui est faite,
+[00:09:40 → 00:09:41] donc qui est la somme,
+[00:09:41 → 00:09:42] la combinaison linéaire.
+[00:09:42 → 00:09:44] Et ensuite, le résultat de cette somme
+[00:09:44 → 00:09:45] va rentrer dans une fonction
+[00:09:45 → 00:09:46] qui s'appelle
+[00:09:46 → 00:09:47] une fonction d'activation.
+[00:09:48 → 00:09:49] pour être transformée.
+[00:09:49 → 00:09:50] En général, c'est des fonctions
+[00:09:50 → 00:09:51] où par exemple,
+[00:09:51 → 00:09:53] là, elle est un peu mal écrite,
+[00:09:53 → 00:09:53] mais par exemple,
+[00:09:53 → 00:09:55] il y a une fonction d'activation
+[00:09:55 → 00:09:56] où c'est tous les négatifs
+[00:09:56 → 00:09:57] sont mis à zéro
+[00:09:57 → 00:10:00] et tous les positifs
+[00:10:00 → 00:10:02] prennent leurs valeurs classiques.
+[00:10:02 → 00:10:03] Et en fait,
+[00:10:03 → 00:10:05] ça amène de la non-linéarité
+[00:10:05 → 00:10:06] et ça permet
+[00:10:06 → 00:10:07] de répondre,
+[00:10:07 → 00:10:08] de trouver des patins
+[00:10:08 → 00:10:11] sur des problèmes
+[00:10:11 → 00:10:11] plus complexes
+[00:10:11 → 00:10:14] qui seraient non linéaires.
+[00:10:16 → 00:10:16] En fait,
+[00:10:16 → 00:10:17] si on ne fait pas
+[00:10:17 → 00:10:18] cette fonction-là,
+[00:10:18 → 00:10:20] on aurait juste
+[00:10:20 → 00:10:21] un peu comme...
+[00:10:21 → 00:10:21] En fait,
+[00:10:21 → 00:10:22] on aurait une régression linéaire
+[00:10:22 → 00:10:24] mais très complexe,
+[00:10:24 → 00:10:26] enfin très longue surtout.
+[00:10:27 → 00:10:27] Et là,
+[00:10:27 → 00:10:28] ça permet de pouvoir trouver
+[00:10:28 → 00:10:29] d'autres comportements
+[00:10:29 → 00:10:30] qui sont non linéaires.
+[00:10:30 → 00:10:30] Donc à chaque fois,
+[00:10:30 → 00:10:31] la fonction d'activation,
+[00:10:31 → 00:10:32] ça va être une fonction
+[00:10:32 → 00:10:33] non linéaire
+[00:10:33 → 00:10:35] qui vient prendre le résultat
+[00:10:35 → 00:10:36] de la combinaison d'avant
+[00:10:36 → 00:10:39] et vient modifier du coup.
+[00:10:39 → 00:10:40] Et c'est ça qui...
+[00:10:40 → 00:10:40] En fait,
+[00:10:40 → 00:10:41] c'est le résultat de ça
+[00:10:41 → 00:10:42] qui va être donné
+[00:10:42 → 00:10:43] au neurone d'après
+[00:10:43 → 00:10:45] parce que ça va aller
+[00:10:45 → 00:10:46] de couche en couche.
+[00:10:47 → 00:10:47] D'accord.
+[00:10:48 → 00:10:48] Et c'est nous
+[00:10:48 → 00:10:49] qui va définir
+[00:10:49 → 00:10:51] cette fonction
+[00:10:51 → 00:10:53] ou bien il est déjà définie ?
+[00:10:53 → 00:10:54] Alors la fonction,
+[00:10:54 → 00:10:55] si on part sur
+[00:10:55 → 00:10:57] écrire notre propre
+[00:10:57 → 00:10:57] réseau neurone
+[00:10:57 → 00:10:58] depuis zéro,
+[00:10:59 → 00:11:00] vous allez devoir
+[00:11:00 → 00:11:01] écrire et choisir
+[00:11:01 → 00:11:02] l'architecture.
+[00:11:02 → 00:11:03] Donc vous allez devoir
+[00:11:03 → 00:11:04] choisir le nombre
+[00:11:04 → 00:11:05] de couches,
+[00:11:05 → 00:11:06] le nombre de neurones
+[00:11:06 → 00:11:06] par couche
+[00:11:06 → 00:11:07] et les fonctions
+[00:11:07 → 00:11:09] d'activation.
+[00:11:09 → 00:11:10] Ce que par contre,
+[00:11:10 → 00:11:11] ce qu'il n'y a pas
+[00:11:11 → 00:11:11] à choisir,
+[00:11:11 → 00:11:12] ça va être
+[00:11:12 → 00:11:13] tous les paramètres
+[00:11:13 → 00:11:13] et les poids là,
+[00:11:14 → 00:11:15] W, 1, etc.
+[00:11:15 → 00:11:16] puisque ça,
+[00:11:16 → 00:11:17] c'est le modèle
+[00:11:17 → 00:11:17] lui-même
+[00:11:17 → 00:11:18] qui va les optimiser.
+[00:11:19 → 00:11:19] Ok, ça marche.
+[00:11:19 → 00:11:20] Ça marche, merci.
+[00:11:20 → 00:11:22] Est-ce que le résultat
+[00:11:22 → 00:11:23] d'un même neurone
+[00:11:23 → 00:11:23] peut passer par
+[00:11:23 → 00:11:25] deux fonctions
+[00:11:25 → 00:11:25] d'activation
+[00:11:25 → 00:11:27] différentes ou plus ?
+[00:11:27 → 00:11:28] Non, on n'en fait qu'une.
+[00:11:29 → 00:11:30] Ouais, ok.
+[00:11:30 → 00:11:31] On n'en fait qu'une
+[00:11:31 → 00:11:32] et on fait la même
+[00:11:32 → 00:11:33] fonction d'activation
+[00:11:33 → 00:11:34] sur toute la couche.
+[00:11:35 → 00:11:37] C'est-à-dire que,
+[00:11:37 → 00:11:37] je crois que c'est
+[00:11:37 → 00:11:38] le graphique.
+[00:11:39 → 00:11:39] Voilà,
+[00:11:39 → 00:11:40] des fonctions d'activation,
+[00:11:40 → 00:11:41] ça, c'est le type
+[00:11:41 → 00:11:42] de fonction d'activation
+[00:11:42 → 00:11:43] que vous pouvez avoir
+[00:11:43 → 00:11:45] et vous pouvez les choisir,
+[00:11:45 → 00:11:45] du coup.
+[00:11:46 → 00:11:46] Alors,
+[00:11:46 → 00:11:48] les plus utilisés,
+[00:11:49 → 00:11:50] c'était
+[00:11:50 → 00:11:51] tangent hyperbolique
+[00:11:51 → 00:11:52] pendant très longtemps
+[00:11:52 → 00:11:52] et maintenant,
+[00:11:53 → 00:11:53] c'est la fonction relu,
+[00:11:54 → 00:11:54] celle qui, du coup,
+[00:11:54 → 00:11:56] annule les valeurs
+[00:11:56 → 00:11:57] négatives
+[00:11:57 → 00:11:59] qui est très utilisée.
+[00:12:00 → 00:12:00] Et en fait,
+[00:12:00 → 00:12:02] vous allez les mettre
+[00:12:02 → 00:12:03] à chaque...
+[00:12:03 → 00:12:03] Ça, c'est...
+[00:12:03 → 00:12:04] Là, vous avez
+[00:12:04 → 00:12:05] la première couche.
+[00:12:05 → 00:12:06] chacune a sa fonction
+[00:12:06 → 00:12:07] d'activation.
+[00:12:07 → 00:12:08] Vous pouvez ici
+[00:12:08 → 00:12:09] avoir une fonction relu,
+[00:12:09 → 00:12:10] ici, avoir une fonction
+[00:12:10 → 00:12:11] tangent hyperbolique.
+[00:12:12 → 00:12:12] Par contre,
+[00:12:12 → 00:12:13] ça va être la même fonction
+[00:12:13 → 00:12:14] pour chaque neurone
+[00:12:14 → 00:12:14] de la même couche.
+[00:12:15 → 00:12:16] Ouais, ok.
+[00:12:19 → 00:12:19] Et du coup,
+[00:12:20 → 00:12:20] ce qu'on peut commencer
+[00:12:20 → 00:12:21] à voir ici,
+[00:12:21 → 00:12:22] c'est que pour les réseaux
+[00:12:22 → 00:12:22] de neurones,
+[00:12:23 → 00:12:24] ça va être des modèles
+[00:12:24 → 00:12:25] beaucoup plus gros,
+[00:12:25 → 00:12:27] donc beaucoup plus complexe
+[00:12:27 → 00:12:28] et beaucoup plus longs
+[00:12:28 → 00:12:28] à entraîner.
+[00:12:29 → 00:12:30] Là, si on regarde,
+[00:12:30 → 00:12:31] on a deux features
+[00:12:31 → 00:12:32] en entrée,
+[00:12:32 → 00:12:33] donc très peu,
+[00:12:34 → 00:12:35] seulement deux couches
+[00:12:35 → 00:12:36] de deux neurones,
+[00:12:36 → 00:12:37] donc ce qui est très peu,
+[00:12:37 → 00:12:38] et un neurone a en sortie
+[00:12:38 → 00:12:39] et vous voyez
+[00:12:39 → 00:12:40] le nombre de paramètres
+[00:12:40 → 00:12:41] qu'il y a,
+[00:12:41 → 00:12:42] c'est tous les W ici
+[00:12:42 → 00:12:44] et des B qui sont des biais.
+[00:12:45 → 00:12:46] C'est comme le AX plus B
+[00:12:46 → 00:12:47] sur la régression linéaire.
+[00:12:47 → 00:12:47] Chaque neurone,
+[00:12:48 → 00:12:49] il y a un biais B ici
+[00:12:49 → 00:12:49] qui est écrit,
+[00:12:50 → 00:12:51] une constante en fait
+[00:12:51 → 00:12:51] qui est rajoutée.
+[00:12:52 → 00:12:52] Et donc,
+[00:12:53 → 00:12:53] on voit que déjà là,
+[00:12:53 → 00:12:55] on a 4, 5, 6,
+[00:12:56 → 00:12:57] 10, 12,
+[00:12:58 → 00:13:01] 14, 15 paramètres
+[00:13:01 → 00:13:02] pour un tout petit modèle.
+[00:13:03 → 00:13:03] Donc en fait,
+[00:13:03 → 00:13:04] pour des modèles
+[00:13:04 → 00:13:04] de deep learning
+[00:13:04 → 00:13:05] assez complexes,
+[00:13:06 → 00:13:07] on va monter vite
+[00:13:07 → 00:13:08] sur des milliers,
+[00:13:08 → 00:13:09] voire des millions
+[00:13:09 → 00:13:09] de paramètres
+[00:13:09 → 00:13:10] à entraîner.
+[00:13:10 → 00:13:11] Et c'est le modèle
+[00:13:11 → 00:13:12] qui va devoir faire
+[00:13:12 → 00:13:13] des allers-retours
+[00:13:13 → 00:13:14] pour modifier petit à petit
+[00:13:14 → 00:13:15] les paramètres
+[00:13:15 → 00:13:15] et c'est pour ça
+[00:13:15 → 00:13:16] que ça peut être très long.
+[00:13:17 → 00:13:17] Et c'est pour ça
+[00:13:17 → 00:13:18] qu'on va vous demander,
+[00:13:18 → 00:13:18] enfin,
+[00:13:18 → 00:13:19] qu'on va vous dire
+[00:13:19 → 00:13:20] si vous avez fait
+[00:13:20 → 00:13:21] du deep learning
+[00:13:21 → 00:13:22] régulièrement
+[00:13:22 → 00:13:23] de le faire
+[00:13:23 → 00:13:25] avec une puissance
+[00:13:25 → 00:13:26] de calcul du coup
+[00:13:26 → 00:13:27] plus grande
+[00:13:27 → 00:13:28] que ce que vous avez besoin
+[00:13:28 → 00:13:29] pour du machine learning.
+[00:13:31 → 00:13:32] et donc là,
+[00:13:32 → 00:13:32] vous voyez,
+[00:13:32 → 00:13:33] la feature d'ici,
+[00:13:33 → 00:13:34] P1 par exemple,
+[00:13:34 → 00:13:34] donc ça fait
+[00:13:34 → 00:13:36] le neurone,
+[00:13:36 → 00:13:37] le premier neurone là,
+[00:13:37 → 00:13:38] il reçoit P1
+[00:13:38 → 00:13:39] fois W11
+[00:13:39 → 00:13:41] plus P2
+[00:13:41 → 00:13:42] fois W12
+[00:13:42 → 00:13:43] plus B11.
+[00:13:44 → 00:13:45] Ça donne le résultat
+[00:13:45 → 00:13:46] N11 ici
+[00:13:46 → 00:13:47] qui passe dans une fonction
+[00:13:47 → 00:13:48] d'activation
+[00:13:48 → 00:13:50] pour donner le résultat A.
+[00:13:50 → 00:13:51] Ce résultat,
+[00:13:51 → 00:13:52] c'est A fois W1
+[00:13:52 → 00:13:55] plus A fois W2
+[00:13:55 → 00:13:57] qui vient dans le neurone ici,
+[00:13:57 → 00:13:59] donc il y a tout
+[00:13:59 → 00:14:00] qui passe au fur et à mesure.
+[00:14:01 → 00:14:01] Donc c'est un peu
+[00:14:01 → 00:14:02] comme ce qu'on a vu
+[00:14:02 → 00:14:03] sur le boosting tout à l'heure,
+[00:14:03 → 00:14:04] c'est que vous avez besoin
+[00:14:04 → 00:14:05] d'avoir les résultats d'avant
+[00:14:05 → 00:14:07] pour connaître la suite après.
+[00:14:07 → 00:14:08] Donc c'est aussi pour ça
+[00:14:08 → 00:14:09] que l'entraînement est long
+[00:14:09 → 00:14:11] parce que c'est séquentiel,
+[00:14:11 → 00:14:12] vous avez besoin
+[00:14:12 → 00:14:13] de savoir le résultat
+[00:14:13 → 00:14:14] de chaque couche,
+[00:14:14 → 00:14:15] de la couche précédente
+[00:14:15 → 00:14:16] avant de faire la couche suivante.
+[00:14:19 → 00:14:20] Et donc c'est comme ça
+[00:14:20 → 00:14:20] que vont fonctionner
+[00:14:20 → 00:14:21] les réseaux de neurone.
+[00:14:21 → 00:14:22] Donc c'est ce genre
+[00:14:22 → 00:14:23] de calcul qui est fait.
+[00:14:24 → 00:14:24] Vous,
+[00:14:24 → 00:14:26] vous n'avez pas grand chose,
+[00:14:26 → 00:14:26] enfin,
+[00:14:26 → 00:14:27] niveau calcul,
+[00:14:27 → 00:14:28] vous n'avez rien à faire
+[00:14:28 → 00:14:30] du moins à la main,
+[00:14:30 → 00:14:30] etc.
+[00:14:32 → 00:14:33] Vous allez avoir
+[00:14:33 → 00:14:36] à décider
+[00:14:36 → 00:14:37] l'architecture du modèle.
+[00:14:38 → 00:14:38] Et vous verrez,
+[00:14:38 → 00:14:39] il y a des architectures
+[00:14:39 → 00:14:41] sur des sujets images,
+[00:14:41 → 00:14:42] on va avoir
+[00:14:42 → 00:14:44] des architectures,
+[00:14:44 → 00:14:44] pardon,
+[00:14:45 → 00:14:45] types
+[00:14:45 → 00:14:47] que vous allez venir
+[00:14:47 → 00:14:48] entraîner,
+[00:14:48 → 00:14:48] etc.
+[00:14:52 → 00:14:53] Donc les couches cachées,
+[00:14:53 → 00:14:54] vous ne les choisissez pas.
+[00:14:55 → 00:14:55] Par contre,
+[00:14:55 → 00:14:55] quelque chose
+[00:14:55 → 00:14:57] que vous allez devoir choisir,
+[00:14:57 → 00:14:58] c'est la couche de sortie,
+[00:14:58 → 00:14:59] d'output.
+[00:15:00 → 00:15:01] Si vous faites de la régression,
+[00:15:02 → 00:15:03] il y a un seul neurone en sortie
+[00:15:03 → 00:15:04] et en fait,
+[00:15:04 → 00:15:06] il y a le résultat
+[00:15:06 → 00:15:09] du neurone,
+[00:15:09 → 00:15:12] ça sera la combinaison linéaire
+[00:15:12 → 00:15:13] des neurones
+[00:15:13 → 00:15:13] de la couche précédente,
+[00:15:14 → 00:15:14] de la couche cachée,
+[00:15:15 → 00:15:16] de la dernière couche cachée,
+[00:15:16 → 00:15:18] ça sera le résultat
+[00:15:18 → 00:15:19] et la régression du coup
+[00:15:19 → 00:15:20] prédite par le modèle.
+[00:15:21 → 00:15:21] Il n'y aura pas
+[00:15:21 → 00:15:22] de fonction d'activation.
+[00:15:23 → 00:15:23] La valeur absolue,
+[00:15:23 → 00:15:24] ça sera du coup
+[00:15:24 → 00:15:25] la valeur prédite.
+[00:15:26 → 00:15:27] Si vous êtes sur
+[00:15:27 → 00:15:28] de la classification,
+[00:15:28 → 00:15:30] vous allez avoir
+[00:15:30 → 00:15:31] un seul neurone en sortie,
+[00:15:32 → 00:15:33] vous obtenez du coup
+[00:15:33 → 00:15:35] avec la combinaison linéaire,
+[00:15:35 → 00:15:36] on obtient une valeur
+[00:15:36 → 00:15:37] qui peut prendre
+[00:15:37 → 00:15:38] tout et n'importe quoi
+[00:15:38 → 00:15:39] et on fait passer ça
+[00:15:39 → 00:15:41] dans une fonction sigmoïde
+[00:15:41 → 00:15:42] qui met tout
+[00:15:42 → 00:15:43] entre 0 et 1
+[00:15:43 → 00:15:44] pour avoir du coup
+[00:15:44 → 00:15:45] la probabilité
+[00:15:45 → 00:15:45] d'appartenir
+[00:15:45 → 00:15:46] à la classe positive
+[00:15:46 → 00:15:48] et comme ça,
+[00:15:48 → 00:15:48] vous saurez
+[00:15:48 → 00:15:51] probabilité d'appartenir
+[00:15:51 → 00:15:52] à la classe positive,
+[00:15:53 → 00:15:54] vous aurez du coup
+[00:15:54 → 00:15:54] le...
+[00:15:57 → 00:15:57] vous pourrez choisir
+[00:15:57 → 00:15:58] le seuil
+[00:15:58 → 00:15:58] en disant
+[00:15:58 → 00:15:59] si je suis au-dessus 0,5,
+[00:15:59 → 00:16:00] j'appartiens
+[00:16:00 → 00:16:00] à la classe positive,
+[00:16:00 → 00:16:01] si je suis au-dessus 0,6
+[00:16:01 → 00:16:03] ou au final 0,5
+[00:16:03 → 00:16:04] c'est trop juste
+[00:16:04 → 00:16:05] donc je mets 0,6
+[00:16:05 → 00:16:05] etc.
+[00:16:06 → 00:16:07] Exactement comme vous avez fait
+[00:16:07 → 00:16:08] du coup sur...
+[00:16:08 → 00:16:09] comme certains ont fait
+[00:16:09 → 00:16:10] là, s'amuser à bouger
+[00:16:10 → 00:16:11] le seuil de décision.
+[00:16:15 → 00:16:17] Donc quand on va devoir
+[00:16:17 → 00:16:18] définir une architecture,
+[00:16:19 → 00:16:19] là en fait,
+[00:16:20 → 00:16:20] pour les raisons
+[00:16:20 → 00:16:21] de neurones classiques,
+[00:16:21 → 00:16:22] au début,
+[00:16:22 → 00:16:23] c'est pas comme
+[00:16:23 → 00:16:24] en machine learning
+[00:16:24 → 00:16:24] ou en machine learning,
+[00:16:24 → 00:16:26] je dis...
+[00:16:26 → 00:16:26] Enfin en fait,
+[00:16:26 → 00:16:28] c'est comme si vous disiez
+[00:16:28 → 00:16:28] ben j'ai une random...
+[00:16:28 → 00:16:29] je choisis la random forest
+[00:16:29 → 00:16:30] mais après la random forest
+[00:16:30 → 00:16:32] vous devez la...
+[00:16:32 → 00:16:33] la choisir
+[00:16:33 → 00:16:35] son nombre d'arbres,
+[00:16:36 → 00:16:36] la profondeur,
+[00:16:36 → 00:16:37] etc.
+[00:16:37 → 00:16:38] Ben là,
+[00:16:38 → 00:16:38] sur les raisons de neurones,
+[00:16:39 → 00:16:39] ça va être
+[00:16:39 → 00:16:41] quasiment la même chose,
+[00:16:41 → 00:16:42] c'est-à-dire que vous allez dire
+[00:16:42 → 00:16:43] je vais choisir...
+[00:16:43 → 00:16:43] je vais prendre
+[00:16:43 → 00:16:44] un réseau de neurones
+[00:16:44 → 00:16:45] mais après,
+[00:16:45 → 00:16:46] quelle tête aura exactement
+[00:16:46 → 00:16:47] votre réseau de neurones,
+[00:16:47 → 00:16:48] ça sera à vous
+[00:16:48 → 00:16:48] de le choisir.
+[00:16:49 → 00:16:50] Donc vous allez devoir décider
+[00:16:50 → 00:16:53] le nombre de couches cachées
+[00:16:53 → 00:16:53] que vous rajoutez,
+[00:16:54 → 00:16:55] combien vous en mettez,
+[00:16:56 → 00:16:57] le nombre de neurones
+[00:16:57 → 00:16:58] par couche cachée
+[00:16:58 → 00:16:59] puisque là,
+[00:16:59 → 00:16:59] c'est le nombre
+[00:16:59 → 00:17:00] vraiment de neurones
+[00:17:00 → 00:17:00] d'entrée,
+[00:17:01 → 00:17:01] donc les features.
+[00:17:02 → 00:17:02] Mais là,
+[00:17:02 → 00:17:03] vous allez devoir dire
+[00:17:03 → 00:17:03] le nombre de neurones
+[00:17:03 → 00:17:04] par couche cachée,
+[00:17:05 → 00:17:06] la fonction d'activation
+[00:17:06 → 00:17:07] par couche aussi
+[00:17:07 → 00:17:10] et la fonction d'activation
+[00:17:10 → 00:17:11] et le nombre de couches
+[00:17:11 → 00:17:12] et le nombre de neurones
+[00:17:12 → 00:17:13] dans votre couche de sortie aussi.
+[00:17:14 → 00:17:14] Ça,
+[00:17:14 → 00:17:16] c'est défini par votre objectif.
+[00:17:16 → 00:17:16] Donc ça,
+[00:17:16 → 00:17:17] c'est assez...
+[00:17:17 → 00:17:18] ça,
+[00:17:18 → 00:17:19] c'est déterministe.
+[00:17:20 → 00:17:20] Là,
+[00:17:20 → 00:17:20] au milieu,
+[00:17:21 → 00:17:22] vous pouvez tous
+[00:17:22 → 00:17:23] prendre le même sujet,
+[00:17:23 → 00:17:24] dire tous
+[00:17:24 → 00:17:25] que vous allez faire
+[00:17:25 → 00:17:25] un réseau de neurones,
+[00:17:26 → 00:17:27] faire tous un réseau de neurones
+[00:17:27 → 00:17:29] avec des nombres différents
+[00:17:29 → 00:17:30] de couches
+[00:17:30 → 00:17:31] et de neurones par couche
+[00:17:31 → 00:17:33] pour avoir des résultats
+[00:17:33 → 00:17:34] qui peuvent varier.
+[00:17:36 → 00:17:36] Donc c'est ça
+[00:17:36 → 00:17:37] qu'il va falloir
+[00:17:37 → 00:17:39] décider
+[00:17:39 → 00:17:40] et voir
+[00:17:40 → 00:17:40] quelle est
+[00:17:40 → 00:17:42] la taille
+[00:17:42 → 00:17:43] de votre réseau de neurones.
+[00:17:46 → 00:17:46] Après,
+[00:17:46 → 00:17:47] c'est un peu
+[00:17:47 → 00:17:48] comme ce qu'on faisait
+[00:17:48 → 00:17:49] au machine learning,
+[00:17:49 → 00:17:50] c'est que vous allez tester,
+[00:17:50 → 00:17:51] évaluer,
+[00:17:51 → 00:17:52] voir ce que ça donne
+[00:17:52 → 00:17:53] et potentiellement
+[00:17:53 → 00:17:54] faire évoluer
+[00:17:54 → 00:17:55] votre nombre de couches
+[00:17:55 → 00:17:56] ou votre nombre de neurones.
+[00:18:02 → 00:18:04] voilà pour les réseaux de neurones.
+[00:18:04 → 00:18:04] Donc ça,
+[00:18:04 → 00:18:05] c'est pour les réseaux de neurones.
+[00:18:05 → 00:18:06] Si vous avez
+[00:18:06 → 00:18:07] en entrée
+[00:18:07 → 00:18:08] des features numériques,
+[00:18:08 → 00:18:09] vous pouvez prendre
+[00:18:09 → 00:18:09] le réseau de neurones
+[00:18:09 → 00:18:10] comme vous avez pris
+[00:18:10 → 00:18:11] la random forest
+[00:18:11 → 00:18:11] jusqu'à maintenant
+[00:18:11 → 00:18:13] et dire,
+[00:18:13 → 00:18:13] je vais faire
+[00:18:13 → 00:18:14] un réseau de neurones
+[00:18:14 → 00:18:15] avec 5 couches cachées.
+[00:18:16 → 00:18:16] Au début,
+[00:18:16 → 00:18:18] j'ai 100 neurones,
+[00:18:18 → 00:18:19] puis 150,
+[00:18:19 → 00:18:20] puis 180,
+[00:18:20 → 00:18:20] puis après,
+[00:18:20 → 00:18:21] je redescends.
+[00:18:21 → 00:18:21] Très souvent,
+[00:18:22 → 00:18:22] on fait des architectures
+[00:18:22 → 00:18:24] en pyramide,
+[00:18:24 → 00:18:25] c'est-à-dire que vous augmentez
+[00:18:25 → 00:18:26] le nombre de neurones
+[00:18:26 → 00:18:27] au fur et à mesure,
+[00:18:27 → 00:18:28] puis vous redescendez.
+[00:18:29 → 00:18:30] C'est comme si on détaillait
+[00:18:30 → 00:18:31] l'information,
+[00:18:31 → 00:18:32] puis on re-résume
+[00:18:32 → 00:18:32] l'information.
+[00:18:34 → 00:18:34] Donc ça,
+[00:18:34 → 00:18:35] vous allez pouvoir choisir ça.
+[00:18:38 → 00:18:39] Et du coup,
+[00:18:39 → 00:18:39] sur l'entraînement,
+[00:18:40 → 00:18:40] quand vous allez dire,
+[00:18:40 → 00:18:43] je choisis un réseau de neurones
+[00:18:43 → 00:18:44] de temps en temps
+[00:18:44 → 00:18:45] de couches
+[00:18:45 → 00:18:46] avec temps de neurones,
+[00:18:46 → 00:18:47] quand vous allez faire
+[00:18:47 → 00:18:47] le point fit,
+[00:18:48 → 00:18:48] l'entraînement,
+[00:18:50 → 00:18:50] ce qui va se faire,
+[00:18:50 → 00:18:51] ça va être la descente
+[00:18:51 → 00:18:52] de gradient
+[00:18:52 → 00:18:53] comme pour la régression linéaire.
+[00:18:54 → 00:18:54] Donc,
+[00:18:54 → 00:18:55] vous allez devoir choisir
+[00:18:55 → 00:18:56] une fonction de coût
+[00:18:56 → 00:18:58] comme en machine learning.
+[00:18:58 → 00:18:58] Donc,
+[00:18:58 → 00:18:59] les fonctions de coût,
+[00:19:00 → 00:19:02] elles dépendent
+[00:19:02 → 00:19:04] de votre objectif,
+[00:19:04 → 00:19:04] mais par exemple,
+[00:19:04 → 00:19:07] si vous faites de la régression,
+[00:19:08 → 00:19:09] vous pouvez choisir la MSE
+[00:19:09 → 00:19:11] comme étant une fonction de coût.
+[00:19:12 → 00:19:13] Classification binaire,
+[00:19:13 → 00:19:14] il y a la log loss
+[00:19:14 → 00:19:15] et classification multiclase,
+[00:19:15 → 00:19:16] cross-rentromine.
+[00:19:16 → 00:19:16] Après,
+[00:19:16 → 00:19:17] il y en a d'autres,
+[00:19:17 → 00:19:18] vous pouvez choisir celle que vous voulez.
+[00:19:19 → 00:19:19] Mais du coup,
+[00:19:19 → 00:19:20] le modèle va venir
+[00:19:20 → 00:19:22] trouver les poids,
+[00:19:22 → 00:19:22] les W là,
+[00:19:23 → 00:19:24] qui viennent minimiser
+[00:19:24 → 00:19:25] les fonctions de coût.
+[00:19:25 → 00:19:25] Donc,
+[00:19:26 → 00:19:26] à chaque fois,
+[00:19:26 → 00:19:27] à chaque passe,
+[00:19:27 → 00:19:28] il va calculer l'erreur,
+[00:19:28 → 00:19:29] dire,
+[00:19:29 → 00:19:29] ok,
+[00:19:29 → 00:19:30] mon erreur est trop grosse,
+[00:19:30 → 00:19:30] j'ai tel paramètre
+[00:19:30 → 00:19:31] qui est un peu trop gros,
+[00:19:32 → 00:19:32] donc je le descends,
+[00:19:32 → 00:19:33] etc.
+[00:19:34 → 00:19:35] Et ça,
+[00:19:35 → 00:19:35] encore une fois,
+[00:19:36 → 00:19:37] c'est fait grâce
+[00:19:37 → 00:19:38] à la descente de gradient
+[00:19:38 → 00:19:40] qui est ce qu'on avait vu
+[00:19:40 → 00:19:44] pour la régression linéaire.
+[00:19:45 → 00:19:45] Donc,
+[00:19:45 → 00:19:46] vous avez le gradient,
+[00:19:47 → 00:19:51] vous avez votre fonction de coût
+[00:19:51 → 00:19:52] qui est calculée
+[00:19:52 → 00:19:53] par rapport à chaque paramètre.
+[00:19:53 → 00:19:54] On va avoir le gradient,
+[00:19:55 → 00:19:56] donc la dérivée partielle
+[00:19:56 → 00:19:56] qui va être calculée.
+[00:19:57 → 00:19:58] on donne un taux d'apprentissage
+[00:19:58 → 00:19:59] et petit à petit,
+[00:20:00 → 00:20:00] le modèle,
+[00:20:01 → 00:20:02] l'entraînement
+[00:20:02 → 00:20:02] va faire varier
+[00:20:02 → 00:20:04] tous les paramètres
+[00:20:04 → 00:20:05] petit à petit
+[00:20:05 → 00:20:06] pour converger
+[00:20:06 → 00:20:08] vers une fonction de coût
+[00:20:08 → 00:20:09] la plus petite possible.
+[00:20:12 → 00:20:12] Et c'est ça
+[00:20:12 → 00:20:13] qui prend du temps
+[00:20:13 → 00:20:14] parce que du coup,
+[00:20:14 → 00:20:14] ça va faire
+[00:20:14 → 00:20:15] des allers-retours
+[00:20:15 → 00:20:18] sur notre sujet.
+[00:20:20 → 00:20:21] C'est ça que ça va se faire,
+[00:20:21 → 00:20:21] c'est que
+[00:20:21 → 00:20:23] si vous avez votre zone run
+[00:20:23 → 00:20:23] qui est ici,
+[00:20:23 → 00:20:23] ça,
+[00:20:23 → 00:20:24] c'est votre donnée d'entrée,
+[00:20:25 → 00:20:25] ça,
+[00:20:25 → 00:20:26] c'est votre donnée de sortie
+[00:20:26 → 00:20:28] avec la target là ici.
+[00:20:29 → 00:20:29] En fait,
+[00:20:30 → 00:20:31] au début,
+[00:20:31 → 00:20:33] vous avez tous les poids
+[00:20:33 → 00:20:34] qui sont tous les liens
+[00:20:34 → 00:20:35] entre chaque neurone
+[00:20:35 → 00:20:36] qui ont été mis
+[00:20:36 → 00:20:36] de manière aléatoire.
+[00:20:37 → 00:20:38] Donc,
+[00:20:38 → 00:20:39] je prends
+[00:20:39 → 00:20:41] ma première donnée,
+[00:20:42 → 00:20:42] je la fais passer
+[00:20:42 → 00:20:43] dans mon modèle,
+[00:20:44 → 00:20:46] je fais une prédiction,
+[00:20:46 → 00:20:48] je mesure la qualité
+[00:20:48 → 00:20:48] de ma prédiction
+[00:20:48 → 00:20:49] avec la loss
+[00:20:49 → 00:20:51] et je viens après
+[00:20:51 → 00:20:52] calculer l'erreur
+[00:20:52 → 00:20:53] et le dérivé
+[00:20:53 → 00:20:56] de la fonction de coût
+[00:20:56 → 00:20:58] et je viens du coup
+[00:20:58 → 00:20:58] modifier tous les poids.
+[00:20:59 → 00:20:59] Donc d'abord,
+[00:20:59 → 00:20:59] il va modifier
+[00:20:59 → 00:21:00] ses poids ici
+[00:21:00 → 00:21:01] en disant
+[00:21:01 → 00:21:01] celui-là,
+[00:21:01 → 00:21:05] il faut le grandir
+[00:21:05 → 00:21:05] plus plus,
+[00:21:06 → 00:21:07] celui-là,
+[00:21:07 → 00:21:07] il faut aussi
+[00:21:07 → 00:21:08] qu'il soit un peu plus grand,
+[00:21:09 → 00:21:09] celui-là,
+[00:21:09 → 00:21:09] il faut qu'il soit
+[00:21:09 → 00:21:10] un peu plus petit
+[00:21:10 → 00:21:13] et une fois que cela
+[00:21:13 → 00:21:14] s'en fait,
+[00:21:14 → 00:21:15] on peut repartir
+[00:21:15 → 00:21:17] à l'étape d'avant.
+[00:21:18 → 00:21:18] Donc,
+[00:21:18 → 00:21:19] c'est là aussi
+[00:21:19 → 00:21:19] ce qui est long,
+[00:21:19 → 00:21:21] c'est qu'on est encore
+[00:21:21 → 00:21:22] obligé d'avoir
+[00:21:22 → 00:21:22] les résultats
+[00:21:22 → 00:21:23] de l'étape précédente
+[00:21:23 → 00:21:24] pour avoir
+[00:21:24 → 00:21:26] l'étape suivante.
+[00:21:27 → 00:21:27] Donc,
+[00:21:27 → 00:21:29] le modèle va calculer
+[00:21:29 → 00:21:29] petit à petit
+[00:21:29 → 00:21:30] tous les gradients,
+[00:21:30 → 00:21:31] mettre à jour
+[00:21:31 → 00:21:32] tous les petits poids
+[00:21:32 → 00:21:33] et puis après,
+[00:21:33 → 00:21:33] hop,
+[00:21:33 → 00:21:34] on repart dans le sens
+[00:21:34 → 00:21:38] pour faire la prédiction,
+[00:21:39 → 00:21:40] évaluer la prédiction,
+[00:21:40 → 00:21:41] repartir
+[00:21:41 → 00:21:41] et
+[00:21:41 → 00:21:44] remodifier les poids,
+[00:21:44 → 00:21:44] etc.,
+[00:21:44 → 00:21:45] jusqu'à ce que vous ayez
+[00:21:45 → 00:21:46] une erreur de coupe
+[00:21:46 → 00:21:48] qui soit minimum,
+[00:21:48 → 00:21:49] qui bouge plus trop.
+[00:21:51 → 00:21:51] donc,
+[00:21:51 → 00:21:52] c'est ça qu'on appelle
+[00:21:52 → 00:21:53] la backpropagation
+[00:21:53 → 00:21:55] et qui vient
+[00:21:55 → 00:21:55] mettre à jour
+[00:21:55 → 00:21:56] les poids.
+[00:21:59 → 00:22:04] Je vais vous montrer
+[00:22:04 → 00:22:10] une illustration.
+[00:22:30 → 00:22:41] c'est celui-là,
+[00:22:41 → 00:22:48] c'est ça.
+[00:22:48 → 00:22:49] Hop,
+[00:22:49 → 00:22:54] par exemple,
+[00:22:59 → 00:23:02] je vais vous envoyer le lien
+[00:23:02 → 00:23:03] si vous voulez
+[00:23:03 → 00:23:05] voir un peu.
+[00:23:16 → 00:23:16] En fait,
+[00:23:16 → 00:23:17] imaginez que ça,
+[00:23:17 → 00:23:18] c'est vos données.
+[00:23:18 → 00:23:18] Alors,
+[00:23:18 → 00:23:19] on a du coup
+[00:23:19 → 00:23:20] deux classes différentes,
+[00:23:21 → 00:23:22] les bleus
+[00:23:22 → 00:23:22] et les oranges.
+[00:23:23 → 00:23:24] Quand vous allez,
+[00:23:25 → 00:23:25] ça,
+[00:23:25 → 00:23:26] c'est vos features
+[00:23:26 → 00:23:26] au départ.
+[00:23:29 → 00:23:30] et on dit que là,
+[00:23:30 → 00:23:30] pour l'instant,
+[00:23:30 → 00:23:33] on met deux couches cachées
+[00:23:33 → 00:23:34] et on a l'output.
+[00:23:35 → 00:23:36] Ce qui va se passer
+[00:23:36 → 00:23:37] pendant l'entraînement,
+[00:23:38 → 00:23:38] si je fais comme ça,
+[00:23:40 → 00:23:41] c'est que le modèle,
+[00:23:41 → 00:23:42] il va tester
+[00:23:42 → 00:23:44] et il va évaluer
+[00:23:44 → 00:23:46] jusqu'à stagner.
+[00:23:46 → 00:23:46] Voilà,
+[00:23:46 → 00:23:47] les données sont très simples,
+[00:23:47 → 00:23:48] donc ça va aller vite.
+[00:23:50 → 00:23:50] Si je fais des données
+[00:23:50 → 00:23:51] plus complexes,
+[00:23:51 → 00:23:51] là,
+[00:23:51 → 00:23:52] vous voyez sur le premier,
+[00:23:52 → 00:23:53] c'est assez facile
+[00:23:53 → 00:23:53] de séparer.
+[00:23:54 → 00:23:55] Il y a un rond
+[00:23:55 → 00:23:57] concentré
+[00:23:57 → 00:23:58] plus petit que l'autre.
+[00:23:59 → 00:24:00] Si je prends
+[00:24:00 → 00:24:00] des données
+[00:24:00 → 00:24:01] un peu plus complexes,
+[00:24:04 → 00:24:04] je vais prendre
+[00:24:04 → 00:24:05] un petit eau
+[00:24:05 → 00:24:05] pour que ça aille doucement
+[00:24:05 → 00:24:06] et qu'on puisse voir.
+[00:24:08 → 00:24:08] Vous voyez,
+[00:24:08 → 00:24:09] vous avez du coup
+[00:24:09 → 00:24:11] les phases orange et bleu
+[00:24:11 → 00:24:12] qui se font petit à petit.
+[00:24:14 → 00:24:14] Là,
+[00:24:14 → 00:24:15] vous voyez la loss
+[00:24:15 → 00:24:15] qui diminue
+[00:24:15 → 00:24:16] et au fur et à mesure,
+[00:24:17 → 00:24:17] le modèle du coup
+[00:24:17 → 00:24:18] vient essayer
+[00:24:18 → 00:24:19] de créer
+[00:24:19 → 00:24:23] la bonne séparation.
+[00:24:25 → 00:24:25] Et là,
+[00:24:25 → 00:24:25] ça y est,
+[00:24:25 → 00:24:28] il est en train de voir
+[00:24:28 → 00:24:29] jusqu'au moment
+[00:24:29 → 00:24:30] où il va considérer
+[00:24:30 → 00:24:31] qu'il est bon.
+[00:24:32 → 00:24:32] Là,
+[00:24:32 → 00:24:33] par contre,
+[00:24:33 → 00:24:35] peut-être que là,
+[00:24:35 → 00:24:35] ça stagne.
+[00:24:36 → 00:24:37] Ça va rester comme ça.
+[00:24:37 → 00:24:38] Peut-être qu'au final,
+[00:24:39 → 00:24:40] que les deux features
+[00:24:40 → 00:24:40] ont entré
+[00:24:40 → 00:24:42] ou que deux couches,
+[00:24:42 → 00:24:44] ce n'était pas assez suffisant
+[00:24:44 → 00:24:44] parce que ce n'est pas
+[00:24:44 → 00:24:45] très représentatif
+[00:24:45 → 00:24:46] en vrai
+[00:24:46 → 00:24:50] de la séparation
+[00:24:50 → 00:24:50] des classes.
+[00:24:51 → 00:24:51] Si je fais
+[00:24:51 → 00:24:52] la même chose,
+[00:24:53 → 00:24:53] mais que je mets
+[00:24:53 → 00:24:54] par exemple
+[00:24:54 → 00:24:55] une troisième couche
+[00:24:55 → 00:24:55] qui va venir,
+[00:24:56 → 00:24:56] je vais mettre
+[00:24:56 → 00:24:57] plus de neurones,
+[00:24:57 → 00:24:59] on va rajouter
+[00:24:59 → 00:25:01] un peu plus de features
+[00:25:01 → 00:25:01] en entrée.
+[00:25:06 → 00:25:07] si je mets celle-là,
+[00:25:07 → 00:25:07] ça va être facile.
+[00:25:08 → 00:25:15] Le fait d'avoir
+[00:25:15 → 00:25:15] plus de features
+[00:25:15 → 00:25:16] peut l'aider
+[00:25:16 → 00:25:17] potentiellement
+[00:25:17 → 00:25:19] et plus vous avez
+[00:25:19 → 00:25:20] des couches
+[00:25:20 → 00:25:20] et des neurones,
+[00:25:21 → 00:25:21] plus ça vient
+[00:25:21 → 00:25:22] trouver des choses
+[00:25:22 → 00:25:23] complexes.
+[00:25:23 → 00:25:23] Après,
+[00:25:23 → 00:25:24] ça va dépendre
+[00:25:24 → 00:25:25] de vos features
+[00:25:25 → 00:25:25] que vous avez
+[00:25:25 → 00:25:26] en entrée.
+[00:25:26 → 00:25:27] Déjà là,
+[00:25:27 → 00:25:28] il a fait
+[00:25:28 → 00:25:29] une séparation.
+[00:25:29 → 00:25:29] Vous voyez,
+[00:25:29 → 00:25:30] vous avez deux modèles
+[00:25:30 → 00:25:30] différents
+[00:25:30 → 00:25:31] qui ont été
+[00:25:31 → 00:25:32] entraînés
+[00:25:32 → 00:25:33] et le modèle
+[00:25:33 → 00:25:34] déjà ici
+[00:25:34 → 00:25:35] avec plus de neurones
+[00:25:35 → 00:25:37] ressemble un peu plus
+[00:25:37 → 00:25:38] à ce qu'on a
+[00:25:38 → 00:25:39] dans la réalité.
+[00:25:41 → 00:25:41] Après,
+[00:25:41 → 00:25:41] je sais que si
+[00:25:41 → 00:25:42] je mets ces données-là,
+[00:25:47 → 00:25:49] je devrais avoir
+[00:25:49 → 00:25:50] plus de...
+[00:25:50 → 00:25:50] Là,
+[00:25:50 → 00:25:51] si je rajoute
+[00:25:51 → 00:25:51] les données
+[00:25:51 → 00:25:52] qui sont...
+[00:25:52 → 00:25:52] Là,
+[00:25:52 → 00:25:53] c'est les features
+[00:25:53 → 00:25:53] qui aident.
+[00:25:55 → 00:25:55] Là,
+[00:25:55 → 00:25:56] si je mets ces features-là,
+[00:25:57 → 00:25:58] vous voyez que très vite,
+[00:25:59 → 00:26:01] on arrive...
+[00:26:01 → 00:26:01] Ici,
+[00:26:01 → 00:26:02] j'avais mis qu'une couche.
+[00:26:05 → 00:26:08] Avec une couche,
+[00:26:09 → 00:26:09] ça y arrive quand même
+[00:26:09 → 00:26:10] parce que le neurone
+[00:26:10 → 00:26:11] est assez...
+[00:26:11 → 00:26:12] Les features sont bien.
+[00:26:13 → 00:26:14] Si je fais sur ces données-là,
+[00:26:16 → 00:26:16] là,
+[00:26:16 → 00:26:17] j'ai qu'une couche,
+[00:26:17 → 00:26:18] il risque de galérer
+[00:26:18 → 00:26:19] un petit moment
+[00:26:19 → 00:26:20] pour trouver
+[00:26:20 → 00:26:21] les poids
+[00:26:21 → 00:26:22] qui permettent...
+[00:26:22 → 00:26:22] Là,
+[00:26:22 → 00:26:23] ce qu'il essaye de faire,
+[00:26:23 → 00:26:25] c'est d'améliorer
+[00:26:26 → 00:26:27] de changer,
+[00:26:27 → 00:26:27] en fait,
+[00:26:27 → 00:26:28] les valeurs des poids ici
+[00:26:28 → 00:26:31] et de voir
+[00:26:31 → 00:26:32] ce que ça donne plus tard.
+[00:26:34 → 00:26:35] Vous voyez là
+[00:26:35 → 00:26:35] les valeurs des poids
+[00:26:35 → 00:26:36] qui vous sont données.
+[00:26:37 → 00:26:37] Là,
+[00:26:37 → 00:26:37] vous voyez,
+[00:26:37 → 00:26:38] maintenant,
+[00:26:39 → 00:26:40] là,
+[00:26:40 → 00:26:40] le poids,
+[00:26:40 → 00:26:41] il est 0,23.
+[00:26:41 → 00:26:41] Tout à l'heure,
+[00:26:42 → 00:26:42] il était à 0,25.
+[00:26:43 → 00:26:44] Il n'a pas changé encore.
+[00:26:45 → 00:26:45] Là,
+[00:26:45 → 00:26:45] maintenant,
+[00:26:45 → 00:26:46] il est passé à 0,22.
+[00:26:46 → 00:26:46] Donc,
+[00:26:47 → 00:26:47] petit à petit,
+[00:26:47 → 00:26:48] il fait diminuer le poids
+[00:26:48 → 00:26:49] pour voir.
+[00:26:49 → 00:26:50] Par contre,
+[00:26:50 → 00:26:50] là,
+[00:26:50 → 00:26:52] on a des données
+[00:26:52 → 00:26:53] qui sont assez complexes
+[00:26:53 → 00:26:57] à venir séparer.
+[00:26:57 → 00:26:57] Donc,
+[00:26:57 → 00:26:58] une seule couche cachée,
+[00:26:58 → 00:26:58] ça ne suffit pas.
+[00:27:00 → 00:27:01] On va faire ça.
+[00:27:06 → 00:27:07] par exemple,
+[00:27:08 → 00:27:09] je vais me regarder le tout.
+[00:27:13 → 00:27:13] Normalement,
+[00:27:13 → 00:27:13] du coup,
+[00:27:13 → 00:27:14] plus vous avez de couches,
+[00:27:14 → 00:27:16] plus vous avez un modèle complexe,
+[00:27:16 → 00:27:17] plus vous avez un modèle
+[00:27:17 → 00:27:18] qui va être capable
+[00:27:18 → 00:27:20] de venir interpréter
+[00:27:20 → 00:27:21] et de venir classifier
+[00:27:21 → 00:27:21] des données
+[00:27:21 → 00:27:23] de plus en plus...
+[00:27:23 → 00:27:23] Oh,
+[00:27:23 → 00:27:24] le dernier gris,
+[00:27:24 → 00:27:25] il est trop petit.
+[00:27:29 → 00:27:30] Qui vont,
+[00:27:30 → 00:27:30] du coup,
+[00:27:30 → 00:27:31] être capables
+[00:27:31 → 00:27:34] de venir...
+[00:27:34 → 00:27:35] faire des trucs...
+[00:27:35 → 00:27:36] Oula.
+[00:27:37 → 00:27:37] Là,
+[00:27:37 → 00:27:39] il a planté direct.
+[00:27:44 → 00:27:47] J'ai pas commencé,
+[00:27:47 → 00:27:48] recommencé à 0.
+[00:27:56 → 00:27:58] Pour celui-là,
+[00:27:58 → 00:27:59] il a un peu de mal,
+[00:27:59 → 00:27:59] quand même.
+[00:28:02 → 00:28:02] Là,
+[00:28:02 → 00:28:03] les données,
+[00:28:03 → 00:28:05] elles sont compliquées.
+[00:28:17 → 00:28:17] Ça va commencer
+[00:28:17 → 00:28:18] à ressembler à quelque chose.
+[00:28:21 → 00:28:22] Et donc,
+[00:28:22 → 00:28:23] pendant chaque test,
+[00:28:24 → 00:28:24] vous avez
+[00:28:24 → 00:28:27] toutes les données
+[00:28:27 → 00:28:27] à chaque fois
+[00:28:27 → 00:28:28] qui sont mises à jour.
+[00:28:29 → 00:28:29] On voit les poids
+[00:28:29 → 00:28:30] qui bougent,
+[00:28:30 → 00:28:30] etc.
+[00:28:30 → 00:28:31] Et donc,
+[00:28:31 → 00:28:31] votre modèle,
+[00:28:32 → 00:28:35] vous avez l'architecture.
+[00:28:35 → 00:28:36] Vous allez monitorer
+[00:28:36 → 00:28:37] petit à petit
+[00:28:37 → 00:28:38] votre loss
+[00:28:38 → 00:28:39] sur le jeu d'entraînement
+[00:28:39 → 00:28:40] et votre loss
+[00:28:40 → 00:28:41] sur le jeu de test
+[00:28:41 → 00:28:42] pour vous assurer
+[00:28:42 → 00:28:43] que si vous...
+[00:28:43 → 00:28:44] c'est comme ce qu'on a vu
+[00:28:44 → 00:28:44] ce matin,
+[00:28:44 → 00:28:45] si votre loss
+[00:28:45 → 00:28:46] sur le jeu de test,
+[00:28:47 → 00:28:47] en fait,
+[00:28:47 → 00:28:48] le jeu de validation,
+[00:28:48 → 00:28:49] elle commence à augmenter
+[00:28:49 → 00:28:50] alors que la loss
+[00:28:50 → 00:28:51] sur le jeu d'entraînement
+[00:28:51 → 00:28:52] continue à diminuer,
+[00:28:52 → 00:28:52] ça va dire
+[00:28:52 → 00:28:53] que vous êtes en overfitting.
+[00:28:54 → 00:28:55] Et là,
+[00:28:55 → 00:28:55] vous allez voir,
+[00:28:55 → 00:28:56] le modèle va finir
+[00:28:56 → 00:28:57] par se stabiliser à peu près.
+[00:28:59 → 00:28:59] Et là,
+[00:28:59 → 00:29:00] il commence à avoir fait
+[00:29:00 → 00:29:00] quelque chose
+[00:29:00 → 00:29:01] d'à peu près bien.
+[00:29:03 → 00:29:03] Et là,
+[00:29:03 → 00:29:04] du coup,
+[00:29:04 → 00:29:06] le modèle est stabilisé.
+[00:29:07 → 00:29:08] Donc,
+[00:29:08 → 00:29:08] c'est comme ça
+[00:29:08 → 00:29:10] que vont fonctionner
+[00:29:10 → 00:29:11] les modèles
+[00:29:11 → 00:29:12] du coup,
+[00:29:13 → 00:29:14] à base de réseaux de neurones.
+[00:29:16 → 00:29:16] Et du coup,
+[00:29:17 → 00:29:18] ce qu'il y a à faire,
+[00:29:18 → 00:29:19] c'est trouver l'architecture,
+[00:29:19 → 00:29:20] la bonne architecture,
+[00:29:20 → 00:29:20] etc.,
+[00:29:20 → 00:29:21] qui fonctionne
+[00:29:21 → 00:29:23] pour votre modèle.
+[00:29:25 → 00:29:26] Vous retrouvez du coup
+[00:29:26 → 00:29:27] le taux d'apprentissage
+[00:29:27 → 00:29:28] qui est ce qu'on disait
+[00:29:28 → 00:29:29] dans la descente
+[00:29:29 → 00:29:29] de Crendier,
+[00:29:29 → 00:29:30] les petits pas.
+[00:29:31 → 00:29:32] Quand tu dis
+[00:29:32 → 00:29:33] trouver l'architecture,
+[00:29:33 → 00:29:33] c'est ça,
+[00:29:33 → 00:29:34] trouver le nombre
+[00:29:34 → 00:29:35] de layers cachés,
+[00:29:35 → 00:29:36] etc.
+[00:29:36 → 00:29:37] C'est ça.
+[00:29:37 → 00:29:38] C'est l'architecture
+[00:29:38 → 00:29:39] d'un réseau neurone,
+[00:29:39 → 00:29:41] c'est nombre de couches,
+[00:29:41 → 00:29:41] nombre de neurones
+[00:29:41 → 00:29:42] par couche,
+[00:29:43 → 00:29:44] fonction d'activation
+[00:29:44 → 00:29:46] et pour la fonction de sortie,
+[00:29:46 → 00:29:46] du coup,
+[00:29:47 → 00:29:47] nombre de neurones
+[00:29:47 → 00:29:49] et fonction de sortie.
+[00:29:50 → 00:29:50] Mais ça,
+[00:29:50 → 00:29:50] c'est vraiment,
+[00:29:51 → 00:29:51] la dernière,
+[00:29:51 → 00:29:52] c'est vraiment décidée
+[00:29:52 → 00:29:53] par votre projet.
+[00:29:54 → 00:29:55] Si vous faites de la régression,
+[00:29:55 → 00:29:56] vous savez ce que vous avez.
+[00:29:56 → 00:29:57] Si vous faites de la classification,
+[00:29:58 → 00:29:58] vous savez ce que vous avez,
+[00:29:58 → 00:29:59] etc.
+[00:30:01 → 00:30:02] Donc,
+[00:30:02 → 00:30:02] voilà.
+[00:30:03 → 00:30:03] C'est comme ça
+[00:30:03 → 00:30:05] qu'on va venir faire.
+[00:30:05 → 00:30:05] Donc,
+[00:30:05 → 00:30:06] vous allez pouvoir
+[00:30:06 → 00:30:07] venir tester
+[00:30:07 → 00:30:08] et voir.
+[00:30:08 → 00:30:10] Et plus vous faites
+[00:30:10 → 00:30:11] de couches,
+[00:30:11 → 00:30:12] plus vous allez pouvoir
+[00:30:12 → 00:30:13] régler des problèmes complexes,
+[00:30:14 → 00:30:14] plus, par contre,
+[00:30:14 → 00:30:15] votre temps d'entraînement
+[00:30:15 → 00:30:16] va être long.
+[00:30:17 → 00:30:17] Donc,
+[00:30:18 → 00:30:18] ce qu'on va faire
+[00:30:18 → 00:30:19] en général,
+[00:30:19 → 00:30:20] c'est créer
+[00:30:20 → 00:30:21] un premier modèle
+[00:30:21 → 00:30:22] de réseau de neurones
+[00:30:22 → 00:30:24] avec peu de couches,
+[00:30:25 → 00:30:26] voir si on arrive
+[00:30:26 → 00:30:27] à avoir des résultats
+[00:30:27 → 00:30:28] bien.
+[00:30:28 → 00:30:28] Par exemple,
+[00:30:28 → 00:30:29] je prends deux couches
+[00:30:29 → 00:30:29] cachées.
+[00:30:31 → 00:30:32] Est-ce que j'ai comme résultat ?
+[00:30:32 → 00:30:33] Est-ce que j'ai une loss
+[00:30:33 → 00:30:34] qui est bonne ?
+[00:30:34 → 00:30:35] Je vois que je peux
+[00:30:35 → 00:30:36] largement améliorer.
+[00:30:37 → 00:30:37] Je vais rajouter
+[00:30:37 → 00:30:38] une couche cachée
+[00:30:38 → 00:30:39] et rajouter des neurones.
+[00:30:40 → 00:30:42] Et vous allez le travailler
+[00:30:42 → 00:30:42] comme ça
+[00:30:42 → 00:30:44] en complexifiant
+[00:30:44 → 00:30:44] votre modèle
+[00:30:44 → 00:30:45] au fur et à mesure.
+[00:30:48 → 00:30:53] Je reviens sur les slides.
+[00:31:02 → 00:31:03] Donc,
+[00:31:03 → 00:31:03] il y a la bac propagation
+[00:31:03 → 00:31:04] qui se fait.
+[00:31:05 → 00:31:05] Et après,
+[00:31:05 → 00:31:06] il y a plusieurs choses
+[00:31:06 → 00:31:07] à choisir.
+[00:31:07 → 00:31:08] Je vais remettre
+[00:31:08 → 00:31:09] bien pour ces trucs.
+[00:31:09 → 00:31:10] C'est que
+[00:31:10 → 00:31:11] la descente de gradient,
+[00:31:12 → 00:31:12] vous pouvez la faire
+[00:31:12 → 00:31:13] quand vous envoyez
+[00:31:13 → 00:31:14] vos données d'entraînement.
+[00:31:14 → 00:31:15] Mettons,
+[00:31:15 → 00:31:15] vous avez,
+[00:31:15 → 00:31:15] je ne sais pas,
+[00:31:15 → 00:31:16] mille lignes
+[00:31:16 → 00:31:17] avec des infos,
+[00:31:18 → 00:31:18] avec des données.
+[00:31:20 → 00:31:20] Et ça,
+[00:31:20 → 00:31:21] c'est votre jeu d'info.
+[00:31:21 → 00:31:22] Tu peux juste reprendre
+[00:31:22 → 00:31:22] l'archive s'il te plaît
+[00:31:22 → 00:31:23] avant de passer.
+[00:31:24 → 00:31:24] Tu as dit,
+[00:31:24 → 00:31:25] il faut savoir
+[00:31:25 → 00:31:26] le nombre de neurones,
+[00:31:26 → 00:31:27] le nombre de couches cachées,
+[00:31:28 → 00:31:29] le nombre de neurones par couche,
+[00:31:29 → 00:31:30] le nombre de fonction d'activation,
+[00:31:30 → 00:31:31] c'est ça ?
+[00:31:31 → 00:31:32] C'est ça.
+[00:31:32 → 00:31:33] C'est le nombre de couches cachées,
+[00:31:34 → 00:31:35] le nombre de neurones par couche,
+[00:31:36 → 00:31:37] la fonction d'activation
+[00:31:37 → 00:31:38] de chaque couche
+[00:31:38 → 00:31:40] et le nombre
+[00:31:40 → 00:31:41] et la fonction de neurones
+[00:31:41 → 00:31:42] et la fonction d'activation
+[00:31:42 → 00:31:43] de la couche de sortie.
+[00:31:47 → 00:31:51] Tout ça que tu auras à définir.
+[00:31:53 → 00:31:55] Après,
+[00:31:55 → 00:31:56] vous verrez,
+[00:31:56 → 00:31:57] les réseaux de neurones,
+[00:31:57 → 00:31:57] on va voir,
+[00:31:58 → 00:31:59] on va les utiliser
+[00:31:59 → 00:31:59] nous sur les images.
+[00:32:00 → 00:32:01] C'est une architecture
+[00:32:01 → 00:32:03] spécifique pour les images
+[00:32:03 → 00:32:04] et vous verrez,
+[00:32:04 → 00:32:05] on va faire le TP
+[00:32:05 → 00:32:05] où d'abord,
+[00:32:05 → 00:32:06] vous allez construire
+[00:32:06 → 00:32:07] votre propre modèle.
+[00:32:07 → 00:32:07] Mais après,
+[00:32:07 → 00:32:08] vous verrez que dans la majorité
+[00:32:08 → 00:32:08] des cas,
+[00:32:10 → 00:32:11] comme on utilise très souvent
+[00:32:11 → 00:32:13] le deep learning
+[00:32:13 → 00:32:14] pour les images,
+[00:32:16 → 00:32:16] vous verrez
+[00:32:16 → 00:32:17] qu'on va le faire,
+[00:32:18 → 00:32:19] qu'on va utiliser
+[00:32:19 → 00:32:19] du coup
+[00:32:19 → 00:32:22] des modèles
+[00:32:22 → 00:32:23] qui existent déjà
+[00:32:23 → 00:32:25] et des architectures
+[00:32:25 → 00:32:25] en tout cas
+[00:32:25 → 00:32:26] qui existent déjà
+[00:32:26 → 00:32:27] comme on fait
+[00:32:27 → 00:32:27] pour le machine learning
+[00:32:27 → 00:32:28] en fait.
+[00:32:30 → 00:32:33] pardon.
+[00:32:35 → 00:32:35] Et donc,
+[00:32:35 → 00:32:36] vous allez avoir
+[00:32:36 → 00:32:39] ici,
+[00:32:39 → 00:32:39] par contre,
+[00:32:39 → 00:32:40] pour la descente
+[00:32:40 → 00:32:40] de gradient,
+[00:32:41 → 00:32:41] un choix à faire
+[00:32:41 → 00:32:43] parce que normalement,
+[00:32:43 → 00:32:43] du coup,
+[00:32:43 → 00:32:44] quand vous avez,
+[00:32:44 → 00:32:44] admettons,
+[00:32:45 → 00:32:45] j'ai 1000 lignes
+[00:32:45 → 00:32:46] dans mes données
+[00:32:46 → 00:32:46] d'entraînement,
+[00:32:48 → 00:32:48] au début,
+[00:32:49 → 00:32:50] le gradient,
+[00:32:50 → 00:32:53] il va se faire
+[00:32:53 → 00:32:54] au coût global.
+[00:32:54 → 00:32:55] C'est-à-dire que
+[00:32:55 → 00:32:55] si j'ai 1000 lignes,
+[00:32:56 → 00:32:57] j'envoie
+[00:32:57 → 00:32:58] ma prédiction
+[00:32:58 → 00:32:59] sur 1000 lignes
+[00:32:59 → 00:33:00] avec mes poids
+[00:33:00 → 00:33:00] au début,
+[00:33:00 → 00:33:01] leur première valeur
+[00:33:01 → 00:33:01] qu'ils ont,
+[00:33:02 → 00:33:03] je calcule l'erreur,
+[00:33:03 → 00:33:04] je fais une moyenne
+[00:33:04 → 00:33:05] et je reviens.
+[00:33:06 → 00:33:06] Donc,
+[00:33:06 → 00:33:06] sauf que
+[00:33:06 → 00:33:08] calculer le coût
+[00:33:08 → 00:33:09] global que je fais
+[00:33:09 → 00:33:12] sur si j'ai 1000 lignes,
+[00:33:12 → 00:33:12] OK,
+[00:33:12 → 00:33:13] si j'ai des centaines
+[00:33:13 → 00:33:14] de milliers de données,
+[00:33:14 → 00:33:15] en fait,
+[00:33:15 → 00:33:15] ça commence à être
+[00:33:15 → 00:33:16] très coûteux.
+[00:33:17 → 00:33:17] Donc,
+[00:33:17 → 00:33:19] il y a deux autres techniques.
+[00:33:19 → 00:33:20] Soit vous faites
+[00:33:20 → 00:33:22] de la stochastique
+[00:33:22 → 00:33:23] gradientation,
+[00:33:23 → 00:33:24] c'est-à-dire que
+[00:33:24 → 00:33:25] à chaque ligne
+[00:33:25 → 00:33:25] qu'il y a envoyé,
+[00:33:26 → 00:33:26] vous modifiez,
+[00:33:27 → 00:33:27] enfin,
+[00:33:28 → 00:33:28] les poids
+[00:33:28 → 00:33:29] vont être modifiés.
+[00:33:30 → 00:33:30] Par contre,
+[00:33:30 → 00:33:30] du coup,
+[00:33:30 → 00:33:31] ça fait plein de
+[00:33:31 → 00:33:35] petites variations
+[00:33:35 → 00:33:35] souvent,
+[00:33:36 → 00:33:38] mais ça peut fonctionner
+[00:33:38 → 00:33:38] parce que des fois,
+[00:33:38 → 00:33:39] je ne sais pas,
+[00:33:39 → 00:33:40] je vais passer la première ligne,
+[00:33:40 → 00:33:40] ça va me dire
+[00:33:40 → 00:33:41] que le poids,
+[00:33:41 → 00:33:41] il doit être augmenté.
+[00:33:42 → 00:33:42] La deuxième ligne,
+[00:33:42 → 00:33:42] il va dire,
+[00:33:42 → 00:33:43] finalement,
+[00:33:43 → 00:33:44] il faut être descendu,
+[00:33:44 → 00:33:44] puis il remonte,
+[00:33:44 → 00:33:45] puis il redescend,
+[00:33:45 → 00:33:45] etc.
+[00:33:45 → 00:33:45] Donc,
+[00:33:45 → 00:33:46] ça peut être un peu long
+[00:33:46 → 00:33:47] à converger
+[00:33:47 → 00:33:48] et l'entraînement
+[00:33:48 → 00:33:49] peut être un peu long.
+[00:33:50 → 00:33:50] Donc,
+[00:33:50 → 00:33:51] prendre toutes les données
+[00:33:51 → 00:33:52] d'un coup,
+[00:33:52 → 00:33:53] c'est long.
+[00:33:53 → 00:33:54] Prendre une donnée
+[00:33:54 → 00:33:54] par une donnée,
+[00:33:54 → 00:33:55] ça peut être long
+[00:33:55 → 00:33:56] à converger.
+[00:33:56 → 00:33:59] Et il y a un entre-deux
+[00:33:59 → 00:34:01] qui est de prendre,
+[00:34:02 → 00:34:02] dire qu'on prend
+[00:34:02 → 00:34:04] un lot de données,
+[00:34:04 → 00:34:05] donc c'est le mini-batch
+[00:34:05 → 00:34:07] Guardian Descent,
+[00:34:07 → 00:34:07] c'est-à-dire,
+[00:34:07 → 00:34:09] si vous avez 1000 lignes,
+[00:34:09 → 00:34:09] vous les découpez
+[00:34:09 → 00:34:10] en packs de 100,
+[00:34:11 → 00:34:12] vous calculez le coût
+[00:34:12 → 00:34:14] sur ces 100 lignes,
+[00:34:14 → 00:34:15] le coût moyen,
+[00:34:15 → 00:34:16] on fait varier
+[00:34:16 → 00:34:16] tous les poids,
+[00:34:17 → 00:34:18] puis on fait le coût
+[00:34:18 → 00:34:21] sur le deuxième bloc
+[00:34:21 → 00:34:21] et on fait varier,
+[00:34:21 → 00:34:21] etc.
+[00:34:22 → 00:34:24] et ça permet
+[00:34:24 → 00:34:25] d'aller plus vite
+[00:34:25 → 00:34:25] et de faire
+[00:34:25 → 00:34:26] les coûts différents.
+[00:34:30 → 00:34:31] Et il y a,
+[00:34:31 → 00:34:31] pareil,
+[00:34:31 → 00:34:32] des méthodes
+[00:34:32 → 00:34:33] de régularisation,
+[00:34:33 → 00:34:33] etc.,
+[00:34:33 → 00:34:34] qui s'appellent
+[00:34:34 → 00:34:34] le momentum,
+[00:34:36 → 00:34:38] que ça,
+[00:34:38 → 00:34:38] je vous laisserai
+[00:34:38 → 00:34:39] regarder un peu plus
+[00:34:39 → 00:34:40] en détail,
+[00:34:40 → 00:34:41] mais en gros,
+[00:34:41 → 00:34:41] c'est-à-dire que
+[00:34:41 → 00:34:42] si vous faites ligne
+[00:34:42 → 00:34:42] par ligne,
+[00:34:43 → 00:34:43] par exemple,
+[00:34:43 → 00:34:43] potentiellement,
+[00:34:44 → 00:34:44] vous pouvez varier
+[00:34:44 → 00:34:45] comme ça.
+[00:34:45 → 00:34:46] Et si vous rajoutez
+[00:34:46 → 00:34:47] du momentum,
+[00:34:47 → 00:34:48] c'est comme si vous rajoutiez,
+[00:34:49 → 00:34:50] si on imagine
+[00:34:50 → 00:34:51] que du coup,
+[00:34:51 → 00:34:51] on est sur une courbe
+[00:34:51 → 00:34:52] qui descend,
+[00:34:52 → 00:34:54] le momentum,
+[00:34:54 → 00:34:55] c'est que je lance
+[00:34:55 → 00:34:56] un ballon
+[00:34:56 → 00:34:57] depuis en haut
+[00:34:57 → 00:34:57] de ma montagne,
+[00:34:58 → 00:34:59] ça montre directement
+[00:34:59 → 00:34:59] la direction,
+[00:35:00 → 00:35:00] le ballon,
+[00:35:00 → 00:35:00] il tombe,
+[00:35:01 → 00:35:01] et en fait,
+[00:35:01 → 00:35:02] c'est comme si
+[00:35:02 → 00:35:02] le momentum,
+[00:35:02 → 00:35:03] ça va faire pareil
+[00:35:03 → 00:35:04] et ça va venir
+[00:35:04 → 00:35:07] attirer les valeurs
+[00:35:07 → 00:35:08] des poids
+[00:35:08 → 00:35:12] vers le bas,
+[00:35:12 → 00:35:12] en fait.
+[00:35:15 → 00:35:16] Donc,
+[00:35:16 → 00:35:17] chose auxquelles
+[00:35:17 → 00:35:18] il faut faire
+[00:35:18 → 00:35:18] présentation
+[00:35:18 → 00:35:19] avec le réseau
+[00:35:19 → 00:35:19] de neurones
+[00:35:19 → 00:35:20] parce qu'on est
+[00:35:20 → 00:35:21] sur des modèles
+[00:35:21 → 00:35:22] complexes.
+[00:35:22 → 00:35:22] Qui dit
+[00:35:22 → 00:35:23] modèles complexes,
+[00:35:24 → 00:35:25] gros modèles
+[00:35:25 → 00:35:25] etc.,
+[00:35:25 → 00:35:26] dit très vite
+[00:35:26 → 00:35:27] sur apprentissage,
+[00:35:27 → 00:35:28] donc overfitting.
+[00:35:29 → 00:35:29] Donc,
+[00:35:29 → 00:35:29] vous allez devoir
+[00:35:29 → 00:35:30] vérifier que
+[00:35:30 → 00:35:32] vous n'êtes pas
+[00:35:32 → 00:35:33] dans ce cas ici,
+[00:35:33 → 00:35:34] c'est-à-dire que
+[00:35:34 → 00:35:35] vous avez vos données
+[00:35:35 → 00:35:35] d'entraînement
+[00:35:35 → 00:35:36] et que votre modèle
+[00:35:36 → 00:35:36] est super
+[00:35:36 → 00:35:38] et que votre loss
+[00:35:38 → 00:35:39] et votre évaluation
+[00:35:39 → 00:35:39] est super
+[00:35:39 → 00:35:40] sur vos données
+[00:35:40 → 00:35:40] d'entraînement,
+[00:35:41 → 00:35:41] mais sur votre jeu
+[00:35:41 → 00:35:42] de validation
+[00:35:42 → 00:35:42] et votre jeu
+[00:35:42 → 00:35:43] de données,
+[00:35:43 → 00:35:43] en fait,
+[00:35:43 → 00:35:44] ça ne fonctionne pas.
+[00:35:45 → 00:35:45] Donc,
+[00:35:45 → 00:35:45] il va falloir
+[00:35:45 → 00:35:46] faire attention à ça
+[00:35:46 → 00:35:46] parce que plus
+[00:35:46 → 00:35:47] on va vers
+[00:35:47 → 00:35:48] des modèles complexes,
+[00:35:48 → 00:35:49] plus vous avez
+[00:35:49 → 00:35:49] ce risque-là.
+[00:35:51 → 00:35:52] J'ai du mal
+[00:35:52 → 00:35:52] à comprendre
+[00:35:52 → 00:35:54] le premier schéma
+[00:35:54 → 00:35:56] sur le underfeated.
+[00:35:57 → 00:35:57] Ça,
+[00:35:58 → 00:35:58] c'est si tu avais
+[00:35:58 → 00:35:59] un modèle
+[00:35:59 → 00:36:00] beaucoup trop simple
+[00:36:00 → 00:36:00] par rapport
+[00:36:00 → 00:36:01] à ce que tu veux faire.
+[00:36:02 → 00:36:02] Ça,
+[00:36:02 → 00:36:03] admettons,
+[00:36:03 → 00:36:04] je prends,
+[00:36:04 → 00:36:04] je sais,
+[00:36:05 → 00:36:05] les points,
+[00:36:05 → 00:36:06] c'est mes données historiques
+[00:36:06 → 00:36:08] et je dis
+[00:36:08 → 00:36:08] que je vais faire
+[00:36:08 → 00:36:10] une régression linéaire,
+[00:36:10 → 00:36:11] simple,
+[00:36:11 → 00:36:12] une fonction affine
+[00:36:12 → 00:36:12] avec deux features.
+[00:36:13 → 00:36:14] Du coup,
+[00:36:15 → 00:36:15] le modèle
+[00:36:15 → 00:36:16] va essayer
+[00:36:16 → 00:36:16] de trouver,
+[00:36:17 → 00:36:18] l'entraînement
+[00:36:18 → 00:36:18] va essayer
+[00:36:18 → 00:36:19] de trouver
+[00:36:19 → 00:36:19] une ligne
+[00:36:19 → 00:36:20] qui passe
+[00:36:20 → 00:36:21] par le plus de points,
+[00:36:21 → 00:36:21] donc ça va faire ça.
+[00:36:22 → 00:36:23] Mais si tu regardes,
+[00:36:23 → 00:36:24] ta droite,
+[00:36:24 → 00:36:26] elle n'explique pas
+[00:36:26 → 00:36:26] du tout
+[00:36:26 → 00:36:27] tes données
+[00:36:27 → 00:36:28] et tu vas avoir
+[00:36:28 → 00:36:30] beaucoup d'erreurs,
+[00:36:30 → 00:36:30] mais beaucoup d'erreurs
+[00:36:30 → 00:36:32] sur les données
+[00:36:32 → 00:36:32] d'entraînement
+[00:36:32 → 00:36:33] puisque tu vois,
+[00:36:33 → 00:36:33] ce point-là,
+[00:36:34 → 00:36:34] il est très éloigné.
+[00:36:36 → 00:36:36] Donc en fait,
+[00:36:36 → 00:36:36] ton modèle
+[00:36:36 → 00:36:37] n'est pas assez complexe,
+[00:36:37 → 00:36:38] il ne vient pas chercher
+[00:36:38 → 00:36:39] assez de patterns
+[00:36:39 → 00:36:40] dans tes données,
+[00:36:40 → 00:36:41] il est trop simple.
+[00:36:42 → 00:36:43] Donc ça,
+[00:36:43 → 00:36:43] c'est si tu prends
+[00:36:43 → 00:36:44] un modèle
+[00:36:44 → 00:36:45] beaucoup trop simple
+[00:36:45 → 00:36:45] par rapport
+[00:36:45 → 00:36:46] à ta problématique.
+[00:36:49 → 00:36:49] OK.
+[00:36:50 → 00:36:52] En général,
+[00:36:52 → 00:36:54] ça peut arriver
+[00:36:54 → 00:36:54] si tu prends
+[00:36:54 → 00:36:55] une régression linéaire
+[00:36:55 → 00:36:59] pour un projet
+[00:36:59 → 00:37:00] qui est très complexe
+[00:37:00 → 00:37:02] et que tu lui as donné
+[00:37:02 → 00:37:04] juste deux features
+[00:37:04 → 00:37:05] qui ne sont pas
+[00:37:05 → 00:37:06] les features explicatives,
+[00:37:06 → 00:37:06] etc.
+[00:37:07 → 00:37:07] Donc ça,
+[00:37:08 → 00:37:08] il y a très peu de chances
+[00:37:08 → 00:37:09] que ça arrive.
+[00:37:10 → 00:37:10] Ce qui peut vraiment arriver,
+[00:37:11 → 00:37:11] c'est l'overfitting
+[00:37:11 → 00:37:13] en ayant des modèles
+[00:37:13 → 00:37:14] trop complexes
+[00:37:14 → 00:37:15] qui sont trop spécifiés
+[00:37:15 → 00:37:16] sur les données
+[00:37:16 → 00:37:16] d'entraînement,
+[00:37:16 → 00:37:17] qui sont très bons
+[00:37:17 → 00:37:18] sur les données
+[00:37:18 → 00:37:18] d'entraînement
+[00:37:18 → 00:37:20] mais qui vont mettre
+[00:37:20 → 00:37:20] des erreurs
+[00:37:20 → 00:37:21] sur les données
+[00:37:21 → 00:37:23] de validation
+[00:37:23 → 00:37:23] et de test.
+[00:37:29 → 00:37:29] Donc,
+[00:37:30 → 00:37:33] quand on revient
+[00:37:33 → 00:37:34] au modèle
+[00:37:34 → 00:37:35] overfitted here,
+[00:37:36 → 00:37:37] on passe par
+[00:37:37 → 00:37:38] le plus de points
+[00:37:38 → 00:37:39] du coup ?
+[00:37:39 → 00:37:40] On a tendance
+[00:37:40 → 00:37:40] à se dire
+[00:37:40 → 00:37:41] qu'on est bien
+[00:37:41 → 00:37:42] finalement
+[00:37:42 → 00:37:43] puisqu'on exploite
+[00:37:43 → 00:37:44] les données ?
+[00:37:44 → 00:37:45] On est bien
+[00:37:45 → 00:37:47] mais si je te donne,
+[00:37:47 → 00:37:47] ça,
+[00:37:47 → 00:37:48] c'est sur mes données
+[00:37:48 → 00:37:48] d'entraînement,
+[00:37:49 → 00:37:49] si je donne
+[00:37:49 → 00:37:50] des données de test
+[00:37:50 → 00:37:50] qui ont,
+[00:37:51 → 00:37:52] tu vois,
+[00:37:52 → 00:37:52] si je te mets
+[00:37:52 → 00:37:53] des données de test
+[00:37:53 → 00:37:54] qui ont globalement
+[00:37:54 → 00:37:55] la même forme,
+[00:37:55 → 00:37:56] donc cette forme
+[00:37:56 → 00:37:57] de courbe là
+[00:37:57 → 00:37:58] qui est vers le bas
+[00:37:58 → 00:37:59] un peu quadratique,
+[00:38:00 → 00:38:01] peut-être que tu vois,
+[00:38:02 → 00:38:02] je vais avoir ici
+[00:38:02 → 00:38:03] une donnée
+[00:38:03 → 00:38:03] qui est là.
+[00:38:05 → 00:38:06] Si je dessine
+[00:38:06 → 00:38:09] des données de test,
+[00:38:09 → 00:38:09] on va dire
+[00:38:09 → 00:38:10] que cette donnée de test,
+[00:38:10 → 00:38:11] elle peut exister.
+[00:38:19 → 00:38:20] Cette donnée de test,
+[00:38:21 → 00:38:21] elle peut exister.
+[00:38:22 → 00:38:23] Cette donnée de test,
+[00:38:23 → 00:38:23] elle peut exister.
+[00:38:24 → 00:38:25] Je peux être ici aussi.
+[00:38:26 → 00:38:27] Je peux être là.
+[00:38:28 → 00:38:28] Je peux être là.
+[00:38:29 → 00:38:31] Et si on regarde là,
+[00:38:31 → 00:38:31] en fait,
+[00:38:31 → 00:38:34] l'erreur que j'ai,
+[00:38:34 → 00:38:36] l'erreur que j'ai,
+[00:38:36 → 00:38:37] elle est assez grande
+[00:38:37 → 00:38:37] parce que l'erreur,
+[00:38:38 → 00:38:38] si tu la calcules,
+[00:38:38 → 00:38:39] c'est ça,
+[00:38:39 → 00:38:41] plus là,
+[00:38:41 → 00:38:42] j'ai ça d'erreur,
+[00:38:42 → 00:38:42] là,
+[00:38:42 → 00:38:43] j'ai ça d'erreur,
+[00:38:44 → 00:38:44] là,
+[00:38:44 → 00:38:45] j'ai ça en erreur.
+[00:38:45 → 00:38:45] Moi,
+[00:38:45 → 00:38:46] je ne suis pas très droit,
+[00:38:46 → 00:38:47] mais là,
+[00:38:47 → 00:38:48] j'ai ça et là,
+[00:38:48 → 00:38:48] j'ai ça.
+[00:38:50 → 00:38:50] Donc,
+[00:38:50 → 00:38:50] en fait,
+[00:38:50 → 00:38:51] mon modèle sur le jeu
+[00:38:51 → 00:38:52] d'entraînement,
+[00:38:52 → 00:38:53] il fait une erreur
+[00:38:53 → 00:38:54] qui est quasi à zéro,
+[00:38:54 → 00:38:55] quasi nulle.
+[00:38:56 → 00:38:56] Par contre,
+[00:38:56 → 00:38:57] sur mon jeu de test,
+[00:38:58 → 00:39:00] il fait des grosses erreurs.
+[00:39:01 → 00:39:04] C'est comme ça qu'on va pouvoir
+[00:39:04 → 00:39:05] détecter l'overfitting.
+[00:39:06 → 00:39:07] Alors que si on prend
+[00:39:07 → 00:39:09] le modèle qui est bon
+[00:39:09 → 00:39:10] à côté,
+[00:39:10 → 00:39:12] le fit,
+[00:39:12 → 00:39:14] si je prends des données
+[00:39:14 → 00:39:17] qui sont à peu près
+[00:39:17 → 00:39:19] dans mes trucs,
+[00:39:20 → 00:39:20] tu vois,
+[00:39:21 → 00:39:21] je vais avoir,
+[00:39:22 → 00:39:23] mon erreur,
+[00:39:23 → 00:39:25] elle est beaucoup plus uniforme
+[00:39:25 → 00:39:26] et beaucoup plus basse
+[00:39:26 → 00:39:26] en moyenne,
+[00:39:26 → 00:39:26] au final.
+[00:39:28 → 00:39:29] Le modèle,
+[00:39:29 → 00:39:30] il généralise mieux,
+[00:39:30 → 00:39:30] en fait.
+[00:39:32 → 00:39:33] J'ai moins d'erreurs partout.
+[00:39:34 → 00:39:34] Alors que là,
+[00:39:34 → 00:39:35] au final,
+[00:39:35 → 00:39:35] en test,
+[00:39:35 → 00:39:36] je vais avoir plein d'erreurs.
+[00:39:36 → 00:39:37] Donc, mon modèle,
+[00:39:37 → 00:39:38] il ne généralise pas assez.
+[00:39:39 → 00:39:39] D'accord.
+[00:39:40 → 00:39:40] OK.
+[00:39:41 → 00:39:42] Il est beaucoup trop près
+[00:39:42 → 00:39:43] des données.
+[00:39:43 → 00:39:43] Donc,
+[00:39:43 → 00:39:44] dès qu'on s'en éloigne
+[00:39:44 → 00:39:45] un peu dans la réalité,
+[00:39:46 → 00:39:47] on a plus de chances
+[00:39:47 → 00:39:48] de faire des erreurs
+[00:39:48 → 00:39:49] que si on prend un modèle
+[00:39:49 → 00:39:51] qui a un peu plus de souplesse,
+[00:39:51 → 00:39:53] qui devrait pouvoir s'adapter
+[00:39:53 → 00:39:55] à quelques petits changements.
+[00:39:56 → 00:39:57] C'est exactement ça.
+[00:39:57 → 00:39:57] Et puis,
+[00:39:57 → 00:39:58] c'est se dire,
+[00:39:58 → 00:39:58] je ne sais pas,
+[00:39:59 → 00:39:59] admettons,
+[00:40:00 → 00:40:00] enfin oui,
+[00:40:00 → 00:40:01] c'est exactement ça.
+[00:40:01 → 00:40:02] Et du coup,
+[00:40:02 → 00:40:03] tu es trop spécifique
+[00:40:03 → 00:40:04] à tes données d'entraînement
+[00:40:04 → 00:40:06] et ton modèle
+[00:40:06 → 00:40:07] ne généralise pas assez.
+[00:40:08 → 00:40:08] Donc,
+[00:40:08 → 00:40:08] ça,
+[00:40:08 → 00:40:09] c'est quelque chose
+[00:40:09 → 00:40:10] avec les réseaux de neurones
+[00:40:10 → 00:40:12] qu'il va falloir vérifier.
+[00:40:13 → 00:40:13] Parce que comme c'est
+[00:40:13 → 00:40:14] des modèles complexes,
+[00:40:15 → 00:40:16] des gros modèles,
+[00:40:16 → 00:40:17] vous pouvez,
+[00:40:17 → 00:40:18] ils peuvent être
+[00:40:18 → 00:40:20] vite en overfitting.
+[00:40:21 → 00:40:21] Et ça,
+[00:40:21 → 00:40:22] du coup,
+[00:40:22 → 00:40:23] il faut s'en méfier
+[00:40:23 → 00:40:25] et donc,
+[00:40:25 → 00:40:26] il faut calculer
+[00:40:26 → 00:40:28] en fait l'erreur.
+[00:40:28 → 00:40:28] C'est pour ça
+[00:40:28 → 00:40:29] qu'on a les jeux de validation,
+[00:40:30 → 00:40:30] etc.
+[00:40:30 → 00:40:31] C'est pour vérifier
+[00:40:31 → 00:40:32] que le modèle,
+[00:40:32 → 00:40:33] il n'est pas que bon
+[00:40:33 → 00:40:34] pendant l'entraînement,
+[00:40:34 → 00:40:35] il est aussi bon
+[00:40:35 → 00:40:36] pendant le jeu de validation,
+[00:40:37 → 00:40:37] par exemple.
+[00:40:41 → 00:40:42] Donc,
+[00:40:42 → 00:40:42] voilà.
+[00:40:42 → 00:40:42] Donc,
+[00:40:42 → 00:40:46] vous avez ces données-là.
+[00:40:46 → 00:40:46] Je ne sais pas où je suis.
+[00:40:51 → 00:40:51] Après,
+[00:40:52 → 00:40:54] vous avez plein de choses
+[00:40:54 → 00:40:54] en plus
+[00:40:54 → 00:40:55] que vous pouvez faire
+[00:40:55 → 00:40:56] avec les réseaux de neurones
+[00:40:56 → 00:40:57] et avec votre architecture.
+[00:40:59 → 00:41:00] vous pouvez du coup
+[00:41:00 → 00:41:02] avoir le drop-out
+[00:41:02 → 00:41:03] qui est pareil
+[00:41:03 → 00:41:04] où vous allez venir
+[00:41:04 → 00:41:05] de manière aléatoire
+[00:41:05 → 00:41:08] annuler des réseaux de neurones,
+[00:41:08 → 00:41:08] etc.
+[00:41:09 → 00:41:09] Et ça,
+[00:41:09 → 00:41:10] ça permet justement
+[00:41:10 → 00:41:12] d'éviter l'overfitting
+[00:41:12 → 00:41:15] parce que ça a réparti
+[00:41:15 → 00:41:16] un peu l'information partout
+[00:41:16 → 00:41:18] sur tous nos neurones
+[00:41:18 → 00:41:19] plutôt qu'avoir,
+[00:41:19 → 00:41:20] je ne sais pas,
+[00:41:20 → 00:41:20] par exemple,
+[00:41:20 → 00:41:20] ce neurone
+[00:41:20 → 00:41:21] qui a toutes les informations
+[00:41:21 → 00:41:23] et qui sait très bien prédire.
+[00:41:23 → 00:41:23] Du coup,
+[00:41:23 → 00:41:24] les autres,
+[00:41:24 → 00:41:24] ils n'ont pas besoin
+[00:41:24 → 00:41:25] de s'optimiser.
+[00:41:26 → 00:41:26] En fait,
+[00:41:26 → 00:41:26] tout se fait là.
+[00:41:27 → 00:41:28] Mais le jour où lui se trompe,
+[00:41:28 → 00:41:29] du coup,
+[00:41:29 → 00:41:30] tout le monde se trompe.
+[00:41:30 → 00:41:31] Alors que s'ils ont tous
+[00:41:31 → 00:41:32] un peu l'information,
+[00:41:34 → 00:41:35] dans ces cas-là,
+[00:41:35 → 00:41:36] ça va être meilleur.
+[00:41:36 → 00:41:37] Et le drop-out,
+[00:41:37 → 00:41:37] du coup,
+[00:41:37 → 00:41:38] permet de faire ça
+[00:41:38 → 00:41:40] pour que l'information
+[00:41:40 → 00:41:41] soit répartie
+[00:41:42 → 00:41:43] sur les différents neurones.
+[00:41:49 → 00:41:50] Et du coup,
+[00:41:50 → 00:41:50] quelque chose
+[00:41:50 → 00:41:51] qui va être très utile
+[00:41:51 → 00:41:52] pendant votre entraînement,
+[00:41:52 → 00:41:53] ça va être
+[00:41:53 → 00:41:53] l'orly stopping.
+[00:41:54 → 00:41:54] Et l'orly stopping
+[00:41:54 → 00:41:55] vous permet de voir
+[00:41:55 → 00:41:56] quand est-ce que vous passez
+[00:41:56 → 00:41:57] en overfitting ou pas.
+[00:41:58 → 00:41:58] en fait,
+[00:41:59 → 00:42:00] à chaque badge
+[00:42:00 → 00:42:01] que vous envoyez
+[00:42:01 → 00:42:02] de données,
+[00:42:03 → 00:42:04] vous allez évaluer
+[00:42:04 → 00:42:05] le critère d'évaluation
+[00:42:05 → 00:42:07] sur le jeu
+[00:42:07 → 00:42:09] de données de validation.
+[00:42:11 → 00:42:12] Et vous allez avoir,
+[00:42:12 → 00:42:13] du coup,
+[00:42:14 → 00:42:14] au début,
+[00:42:14 → 00:42:16] vous partez d'un modèle
+[00:42:16 → 00:42:16] qui est aléatoire.
+[00:42:17 → 00:42:17] Donc forcément,
+[00:42:17 → 00:42:19] quand vous allez l'entraîner,
+[00:42:19 → 00:42:20] vous allez largement
+[00:42:20 → 00:42:21] diminuer la fonction
+[00:42:21 → 00:42:22] de coût
+[00:42:22 → 00:42:23] des deux modèles.
+[00:42:24 → 00:42:25] Et au fur et à mesure,
+[00:42:25 → 00:42:25] donc vous diminuez,
+[00:42:25 → 00:42:26] vous diminuez.
+[00:42:26 → 00:42:27] Et puis là,
+[00:42:27 → 00:42:27] après,
+[00:42:27 → 00:42:28] vous allez passer
+[00:42:28 → 00:42:29] en overfitting.
+[00:42:29 → 00:42:29] Donc votre modèle
+[00:42:29 → 00:42:30] est largement meilleur
+[00:42:30 → 00:42:31] sur vos données d'entraînement,
+[00:42:32 → 00:42:33] quitte à aller vers zéro,
+[00:42:33 → 00:42:34] vers une erreur
+[00:42:34 → 00:42:34] qui tend à zéro.
+[00:42:35 → 00:42:35] Par contre,
+[00:42:35 → 00:42:36] il est trop spécifique,
+[00:42:36 → 00:42:38] il ne généralise pas assez.
+[00:42:39 → 00:42:39] Donc sur votre jeu
+[00:42:39 → 00:42:40] de validation,
+[00:42:41 → 00:42:41] vous allez avoir
+[00:42:41 → 00:42:43] le coût,
+[00:42:43 → 00:42:44] la loss
+[00:42:44 → 00:42:45] qui va commencer
+[00:42:45 → 00:42:46] à remonter
+[00:42:46 → 00:42:47] ou une métrique
+[00:42:47 → 00:42:48] d'évaluation.
+[00:42:49 → 00:42:49] Donc ça,
+[00:42:49 → 00:42:50] vous allez pouvoir
+[00:42:50 → 00:42:51] le voir.
+[00:42:51 → 00:42:52] Et comme ça,
+[00:42:52 → 00:42:52] ça va vous permettre
+[00:42:52 → 00:42:53] de savoir
+[00:42:53 → 00:42:53] quand est-ce que
+[00:42:53 → 00:42:54] vous arrêtez
+[00:42:54 → 00:42:55] votre entraînement.
+[00:42:56 → 00:42:56] Un peu comme du coup,
+[00:42:57 → 00:42:57] ce que Ismaël
+[00:42:57 → 00:42:58] t'a fait ce matin,
+[00:42:58 → 00:42:59] c'est se dire
+[00:42:59 → 00:43:00] quand est-ce que
+[00:43:00 → 00:43:00] j'arrête
+[00:43:00 → 00:43:01] de faire mes allers-retours
+[00:43:01 → 00:43:03] pour modifier
+[00:43:03 → 00:43:04] mes paramètres,
+[00:43:05 → 00:43:05] là,
+[00:43:05 → 00:43:06] vous allez avoir
+[00:43:06 → 00:43:07] le modèle
+[00:43:07 → 00:43:08] qui va dire
+[00:43:08 → 00:43:08] c'est là
+[00:43:08 → 00:43:09] que je m'arrête.
+[00:43:09 → 00:43:09] En fait,
+[00:43:09 → 00:43:10] il va commencer
+[00:43:10 → 00:43:12] à continuer,
+[00:43:12 → 00:43:13] il va voir
+[00:43:13 → 00:43:13] que l'erreur
+[00:43:13 → 00:43:14] de test
+[00:43:14 → 00:43:16] augmente.
+[00:43:16 → 00:43:16] Il va dire
+[00:43:16 → 00:43:17] ok,
+[00:43:17 → 00:43:17] je reviens
+[00:43:17 → 00:43:18] à ce modèle-là
+[00:43:18 → 00:43:19] où mes paramètres
+[00:43:19 → 00:43:20] valaient
+[00:43:20 → 00:43:20] tant et tant.
+[00:43:21 → 00:43:21] Du coup,
+[00:43:21 → 00:43:22] vous allez avoir
+[00:43:22 → 00:43:23] votre meilleur modèle ici.
+[00:43:24 → 00:43:25] Ça oblige
+[00:43:25 → 00:43:25] de faire
+[00:43:25 → 00:43:26] l'entraînement
+[00:43:26 → 00:43:27] et le test
+[00:43:27 → 00:43:28] en même temps ?
+[00:43:28 → 00:43:29] C'est entraînement
+[00:43:29 → 00:43:30] et jeu de validation.
+[00:43:30 → 00:43:31] Il met le test,
+[00:43:31 → 00:43:32] erreur de test,
+[00:43:32 → 00:43:33] mais le jeu
+[00:43:33 → 00:43:34] de test final,
+[00:43:34 → 00:43:35] vous le gardez vraiment
+[00:43:35 → 00:43:35] pour une fois
+[00:43:35 → 00:43:35] que votre modèle
+[00:43:35 → 00:43:36] est entraîné.
+[00:43:37 → 00:43:37] Mais par contre,
+[00:43:38 → 00:43:38] pendant l'entraînement,
+[00:43:39 → 00:43:39] vous évaluez du coup
+[00:43:39 → 00:43:41] sur le jeu d'entraînement
+[00:43:41 → 00:43:42] et sur le jeu de validation.
+[00:43:43 → 00:43:45] ça permet de comparer
+[00:43:45 → 00:43:46] et de voir
+[00:43:46 → 00:43:47] quand est-ce qu'on s'arrête.
+[00:43:49 → 00:43:50] Parce que sinon,
+[00:43:50 → 00:43:52] c'est vous qui dites
+[00:43:52 → 00:43:53] « vas-y,
+[00:43:53 → 00:43:55] tu fais 20 allers-retours ».
+[00:43:55 → 00:43:55] Oui,
+[00:43:55 → 00:43:56] mais est-ce qu'au bout
+[00:43:56 → 00:43:56] de 20 allers-retours,
+[00:43:57 → 00:43:58] il aura les résultats
+[00:43:58 → 00:43:58] optimaux ?
+[00:43:58 → 00:43:59] Vous ne savez pas.
+[00:43:59 → 00:44:00] Et surtout,
+[00:44:00 → 00:44:01] vous ne savez pas
+[00:44:01 → 00:44:02] si le résultat optimal,
+[00:44:02 → 00:44:03] il était au bout
+[00:44:03 → 00:44:03] de 10 allers-retours.
+[00:44:05 → 00:44:05] Donc ça,
+[00:44:05 → 00:44:06] on va venir le monitorer
+[00:44:06 → 00:44:07] et faire
+[00:44:07 → 00:44:07] l'orly-stopping.
+[00:44:07 → 00:44:08] Et l'orly-stopping,
+[00:44:08 → 00:44:09] ça va vous permettre
+[00:44:09 → 00:44:09] en plus comme ça
+[00:44:09 → 00:44:10] de dire
+[00:44:10 → 00:44:11] « je lance mon entraînement,
+[00:44:13 → 00:44:14] je te laisse tourner,
+[00:44:14 → 00:44:15] tu peux aller
+[00:44:15 → 00:44:15] si tu veux
+[00:44:15 → 00:44:16] jusqu'à 100 allers-retours,
+[00:44:17 → 00:44:17] je m'en fiche.
+[00:44:18 → 00:44:18] Par contre,
+[00:44:18 → 00:44:19] tu t'arrêtes
+[00:44:19 → 00:44:20] dès que tu vois
+[00:44:20 → 00:44:22] que tu n'es plus
+[00:44:22 → 00:44:23] sur le modèle optimal
+[00:44:23 → 00:44:24] et tu reviens
+[00:44:24 → 00:44:24] sur le modèle optimal.
+[00:44:27 → 00:44:27] C'est comme ça
+[00:44:27 → 00:44:28] que vous allez faire.
+[00:44:31 → 00:44:31] En fait,
+[00:44:31 → 00:44:32] généralement,
+[00:44:32 → 00:44:33] il s'arrête là
+[00:44:33 → 00:44:34] quand il fait
+[00:44:34 → 00:44:36] un certain nombre
+[00:44:36 → 00:44:37] d'allers-retours
+[00:44:37 → 00:44:37] et que le résultat
+[00:44:37 → 00:44:38] reste le même.
+[00:44:38 → 00:44:40] Oui,
+[00:44:40 → 00:44:40] c'est ça.
+[00:44:41 → 00:44:41] Alors,
+[00:44:42 → 00:44:42] ce n'est même pas
+[00:44:42 → 00:44:43] rester le même.
+[00:44:43 → 00:44:43] C'est que même
+[00:44:43 → 00:44:44] sur l'erreur de validation,
+[00:44:45 → 00:44:46] il va carrément augmenter
+[00:44:46 → 00:44:46] parce que le modèle
+[00:44:46 → 00:44:47] va être
+[00:44:47 → 00:44:48] meilleur
+[00:44:48 → 00:44:48] sur le jeu d'entraînement
+[00:44:48 → 00:44:49] et du coup,
+[00:44:50 → 00:44:51] tu vas venir rajouter
+[00:44:51 → 00:44:51] des erreurs
+[00:44:51 → 00:44:52] sur le jeu de validation.
+[00:44:56 → 00:44:58] Là où sur le XGBoost,
+[00:44:58 → 00:44:58] c'est un peu
+[00:44:58 → 00:44:59] ce que tu dis.
+[00:45:01 → 00:45:01] Mais même,
+[00:45:01 → 00:45:02] ça va être de l'overfitting
+[00:45:02 → 00:45:03] aussi au bout d'un moment
+[00:45:03 → 00:45:04] donc tu vas carrément
+[00:45:04 → 00:45:05] aussi avoir
+[00:45:05 → 00:45:06] le jeu de validation
+[00:45:06 → 00:45:06] qui,
+[00:45:07 → 00:45:07] enfin l'erreur de validation
+[00:45:07 → 00:45:08] qui remonte en fait.
+[00:45:09 → 00:45:09] Le modèle,
+[00:45:10 → 00:45:10] il est moins bon
+[00:45:10 → 00:45:11] sur son jeu de validation.
+[00:45:19 → 00:45:20] Ça,
+[00:45:20 → 00:45:21] je vous laisserai regarder.
+[00:45:24 → 00:45:25] Et en gros,
+[00:45:25 → 00:45:25] vous allez voir
+[00:45:25 → 00:45:27] mais pour créer
+[00:45:27 → 00:45:28] un modèle,
+[00:45:28 → 00:45:29] vous allez dire
+[00:45:29 → 00:45:29] que vous laissez
+[00:45:29 → 00:45:30] un modèle
+[00:45:30 → 00:45:31] séquential,
+[00:45:31 → 00:45:33] donc séquence par séquence
+[00:45:33 → 00:45:34] et vous avez
+[00:45:34 → 00:45:35] ajouté des couches.
+[00:45:36 → 00:45:36] Vous allez ajouter
+[00:45:36 → 00:45:38] une couche dense,
+[00:45:38 → 00:45:39] c'est qu'on connecte
+[00:45:39 → 00:45:39] tous les neurones,
+[00:45:40 → 00:45:41] de 64
+[00:45:41 → 00:45:42] qui est le nombre
+[00:45:42 → 00:45:43] de neurones
+[00:45:43 → 00:45:43] que vous voulez
+[00:45:43 → 00:45:44] dans la couche.
+[00:45:44 → 00:45:44] Si vous voulez
+[00:45:44 → 00:45:45] de la base
+[00:45:45 → 00:45:45] normalisation
+[00:45:45 → 00:45:46] à la sortie,
+[00:45:46 → 00:45:47] vous pouvez mettre
+[00:45:47 → 00:45:48] et après,
+[00:45:48 → 00:45:48] vous me dites
+[00:45:48 → 00:45:49] la fonction d'activation
+[00:45:49 → 00:45:50] que vous venez chercher.
+[00:45:51 → 00:45:51] Ça,
+[00:45:51 → 00:45:52] vous verrez tout ça.
+[00:45:54 → 00:45:54] Donc voilà.
+[00:45:56 → 00:45:56] Est-ce qu'il y a
+[00:45:56 → 00:45:57] des questions déjà
+[00:45:57 → 00:46:00] sur les réseaux de neurones ?
+[00:46:00 → 00:46:07] Est-ce que ça va ou pas ?
+[00:46:07 → 00:46:08] Parce que du coup,
+[00:46:08 → 00:46:08] ça,
+[00:46:08 → 00:46:09] c'est l'architecture
+[00:46:09 → 00:46:10] des réseaux de neurones
+[00:46:10 → 00:46:11] qu'on peut utiliser
+[00:46:11 → 00:46:11] pour,
+[00:46:12 → 00:46:12] dès qu'on a
+[00:46:12 → 00:46:13] des features
+[00:46:13 → 00:46:14] en entrée,
+[00:46:14 → 00:46:14] etc.
+[00:46:15 → 00:46:16] Quand on a de l'image,
+[00:46:16 → 00:46:17] on a vraiment
+[00:46:17 → 00:46:17] pixel par pixel
+[00:46:17 → 00:46:18] donc on va avoir
+[00:46:18 → 00:46:18] des traitements
+[00:46:18 → 00:46:19] qui sont un peu différents
+[00:46:19 → 00:46:21] parce qu'il faut aller
+[00:46:21 → 00:46:22] carrément sortir
+[00:46:22 → 00:46:23] les features du modèle.
+[00:46:25 → 00:46:25] Donc on va faire
+[00:46:25 → 00:46:26] ce qu'on appelle
+[00:46:26 → 00:46:28] des réseaux de neurones
+[00:46:28 → 00:46:29] de convolution.
+[00:46:30 → 00:46:31] L'idée,
+[00:46:31 → 00:46:31] ça va être de se dire
+[00:46:31 → 00:46:32] vous avez votre image
+[00:46:32 → 00:46:33] qui est votre matrice
+[00:46:33 → 00:46:33] de pixels.
+[00:46:34 → 00:46:35] Donc une image
+[00:46:35 → 00:46:37] au sens mathématique
+[00:46:37 → 00:46:38] suivant
+[00:46:38 → 00:46:40] comment vous prenez
+[00:46:40 → 00:46:40] la photo,
+[00:46:41 → 00:46:42] suivant l'éclairage,
+[00:46:42 → 00:46:44] suivant l'arrière-plan,
+[00:46:44 → 00:46:45] etc.
+[00:46:45 → 00:46:46] Ça peut varier énormément.
+[00:46:47 → 00:46:48] Donc pour être exploité,
+[00:46:48 → 00:46:48] le but,
+[00:46:48 → 00:46:49] c'est pas de dire
+[00:46:49 → 00:46:51] c'est un chat
+[00:46:51 → 00:46:52] parce que tel pixel
+[00:46:52 → 00:46:53] est égal à telle valeur
+[00:46:53 → 00:46:54] mais c'est du coup
+[00:46:54 → 00:46:54] de venir extraire
+[00:46:54 → 00:46:55] des features
+[00:46:55 → 00:46:56] de manière automatique.
+[00:46:57 → 00:46:58] Pour ça,
+[00:46:58 → 00:46:58] on va faire
+[00:46:58 → 00:46:59] de la convolution,
+[00:46:59 → 00:47:00] c'est-à-dire qu'il va
+[00:47:00 → 00:47:01] y avoir des masques
+[00:47:01 → 00:47:02] qui vont venir
+[00:47:02 → 00:47:03] être mis sur les images
+[00:47:03 → 00:47:04] et qui vont venir
+[00:47:04 → 00:47:06] détecter des éléments
+[00:47:06 → 00:47:07] intéressants de votre image.
+[00:47:09 → 00:47:09] Et ces filtres-là,
+[00:47:10 → 00:47:10] au début,
+[00:47:10 → 00:47:11] ils vont être choisis
+[00:47:11 → 00:47:11] de manière aléatoire
+[00:47:11 → 00:47:12] et au fur et à mesure,
+[00:47:12 → 00:47:13] c'est le modèle
+[00:47:13 → 00:47:13] qui va trouver
+[00:47:13 → 00:47:15] des filtres
+[00:47:15 → 00:47:15] qui permettent
+[00:47:15 → 00:47:17] de trouver
+[00:47:17 → 00:47:18] qu'il y a des oreilles
+[00:47:18 → 00:47:19] donc ça peut être un chat
+[00:47:19 → 00:47:21] et venir trouver
+[00:47:21 → 00:47:24] des filtres intéressants
+[00:47:24 → 00:47:25] par rapport à votre sujet.
+[00:47:27 → 00:47:28] Donc c'est ça qu'on va
+[00:47:28 → 00:47:29] appeler convolution,
+[00:47:29 → 00:47:30] c'est aller mettre
+[00:47:30 → 00:47:31] les filtres,
+[00:47:31 → 00:47:32] passer le filtre
+[00:47:32 → 00:47:32] sur l'image
+[00:47:32 → 00:47:35] et voir ce que ça donne.
+[00:47:39 → 00:47:41] Donc en gros,
+[00:47:41 → 00:47:41] ce que vous avez,
+[00:47:42 → 00:47:42] c'est que ça,
+[00:47:42 → 00:47:43] c'est votre matrice
+[00:47:43 → 00:47:44] de pixels
+[00:47:44 → 00:47:46] et vous allez avoir
+[00:47:46 → 00:47:47] un filtre
+[00:47:47 → 00:47:48] qui a des valeurs
+[00:47:48 → 00:47:48] et en fait,
+[00:47:48 → 00:47:49] c'est ces valeurs-là
+[00:47:49 → 00:47:49] que le modèle
+[00:47:49 → 00:47:50] va venir optimiser.
+[00:47:51 → 00:47:51] Là,
+[00:47:51 → 00:47:52] c'est des valeurs
+[00:47:52 → 00:47:52] comme si c'était
+[00:47:52 → 00:47:53] un filtre vertical
+[00:47:53 → 00:47:55] mais ça va venir
+[00:47:55 → 00:47:56] calculer,
+[00:47:56 → 00:47:57] venir faire une sortie
+[00:47:57 → 00:47:57] et on va faire
+[00:47:57 → 00:47:58] plein de couches
+[00:47:58 → 00:47:58] comme ça
+[00:47:58 → 00:48:00] qui viennent chercher
+[00:48:00 → 00:48:00] des features.
+[00:48:02 → 00:48:03] L'idée,
+[00:48:03 → 00:48:03] c'est ça,
+[00:48:03 → 00:48:04] c'est que si vous avez
+[00:48:04 → 00:48:04] cette image-là,
+[00:48:05 → 00:48:06] si on met un filtre
+[00:48:06 → 00:48:07] qui est vertical,
+[00:48:07 → 00:48:09] ça sort ça,
+[00:48:09 → 00:48:09] si on met un filtre
+[00:48:09 → 00:48:10] horizontal,
+[00:48:10 → 00:48:10] ça sort ça
+[00:48:10 → 00:48:12] et le modèle
+[00:48:12 → 00:48:13] va venir lui,
+[00:48:13 → 00:48:14] choisir lui-même
+[00:48:14 → 00:48:15] les filtres
+[00:48:15 → 00:48:15] qu'il veut.
+[00:48:19 → 00:48:19] Et du coup,
+[00:48:20 → 00:48:21] c'est à ça,
+[00:48:21 → 00:48:22] c'est là qu'on retrouve
+[00:48:22 → 00:48:24] la même architecture
+[00:48:24 → 00:48:24] que sur des réseaux
+[00:48:24 → 00:48:25] de neurones classiques,
+[00:48:25 → 00:48:27] c'est que la multiplication
+[00:48:27 → 00:48:28] des filtres,
+[00:48:28 → 00:48:29] c'est comme la combinaison,
+[00:48:29 → 00:48:29] c'est l'équivalent
+[00:48:29 → 00:48:31] de la combinaison linéaire
+[00:48:31 → 00:48:31] sur les réseaux
+[00:48:31 → 00:48:32] de neurones classiques
+[00:48:32 → 00:48:33] auquel on vient faire
+[00:48:33 → 00:48:35] une fonction d'activation,
+[00:48:35 → 00:48:35] donc par exemple,
+[00:48:36 → 00:48:36] Relu
+[00:48:36 → 00:48:37] qui vient donner une sortie
+[00:48:37 → 00:48:39] et vous allez faire
+[00:48:39 → 00:48:39] des couches comme ça
+[00:48:39 → 00:48:40] les unes à la suite
+[00:48:40 → 00:48:40] des autres
+[00:48:40 → 00:48:41] et après,
+[00:48:42 → 00:48:43] faire un réseau de neurones
+[00:48:43 → 00:48:43] classique
+[00:48:43 → 00:48:44] de classification
+[00:48:44 → 00:48:45] et c'est comme ça
+[00:48:45 → 00:48:46] que vous avez la partie
+[00:48:46 → 00:48:46] du coup,
+[00:48:47 → 00:48:47] Extraction of Features
+[00:48:47 → 00:48:48] qui se fait automatiquement
+[00:48:48 → 00:48:50] plus la partie
+[00:48:50 → 00:48:50] classification
+[00:48:50 → 00:48:51] qui se fait automatiquement.
+[00:48:53 → 00:48:53] Et donc,
+[00:48:54 → 00:48:56] sur tous les couches,
+[00:48:57 → 00:48:59] tous les modèles
+[00:48:59 → 00:49:00] de convolution,
+[00:49:00 → 00:49:01] vous allez devoir
+[00:49:01 → 00:49:02] créer l'architecture
+[00:49:02 → 00:49:06] avec combien de couches
+[00:49:06 → 00:49:07] je mets de convolution,
+[00:49:08 → 00:49:09] combien de filtres
+[00:49:09 → 00:49:10] à chaque fois je mets
+[00:49:10 → 00:49:11] et après,
+[00:49:11 → 00:49:11] c'est le modèle
+[00:49:11 → 00:49:12] qui vient faire
+[00:49:12 → 00:49:13] sa descente de gradient,
+[00:49:13 → 00:49:14] il vient optimiser
+[00:49:14 → 00:49:14] et il vient faire
+[00:49:14 → 00:49:16] tout ce qu'il y a.
+[00:49:18 → 00:49:21] du coup,
+[00:49:21 → 00:49:24] ce que je vous propose,
+[00:49:25 → 00:49:25] c'est que je vais
+[00:49:25 → 00:49:26] vous donner du coup
+[00:49:26 → 00:49:28] un TP
+[00:49:28 → 00:49:29] pour qu'on puisse
+[00:49:29 → 00:49:29] tester
+[00:49:29 → 00:49:31] et créer
+[00:49:31 → 00:49:32] un premier
+[00:49:32 → 00:49:35] réseau de neurones
+[00:49:35 → 00:49:35] de convolution
+[00:49:35 → 00:49:35] du coup
+[00:49:35 → 00:49:36] sur les images
+[00:49:36 → 00:49:36] et après,
+[00:49:37 → 00:49:37] vous verrez,
+[00:49:37 → 00:49:38] on prendra
+[00:49:38 → 00:49:39] des réseaux neurones
+[00:49:39 → 00:49:40] qui existent
+[00:49:40 → 00:49:41] mais du coup,
+[00:49:41 → 00:49:42] on va le faire
+[00:49:42 → 00:49:42] sur des données
+[00:49:42 → 00:49:44] qui sont pareilles,
+[00:49:44 → 00:49:45] je vous envoie
+[00:49:45 → 00:49:46] le markdown
+[00:49:46 → 00:49:47] et vous verrez
+[00:49:47 → 00:49:49] et je vais vous mettre
+[00:49:49 → 00:49:50] ce slide aussi
+[00:49:50 → 00:49:52] où il y a beaucoup
+[00:49:52 → 00:49:52] d'infos
+[00:49:52 → 00:49:55] derrière sur,
+[00:49:55 → 00:49:56] je vais peut-être
+[00:49:56 → 00:49:56] vous montrer celui-là,
+[00:49:57 → 00:50:00] sur la partie mathématique
+[00:50:00 → 00:50:00] etc.
+[00:50:00 → 00:50:01] des CNN,
+[00:50:03 → 00:50:04] si vous voulez aller regarder,
+[00:50:04 → 00:50:05] je vous laisse aller regarder
+[00:50:05 → 00:50:06] et me poser des questions
+[00:50:06 → 00:50:06] dessus,
+[00:50:07 → 00:50:08] peut-être que je détaillerai
+[00:50:08 → 00:50:08] à des moments
+[00:50:08 → 00:50:08] des sujets
+[00:50:08 → 00:50:09] mais voilà.
+[00:50:09 → 00:50:10] En gros,
+[00:50:10 → 00:50:11] un réseau
+[00:50:11 → 00:50:12] qui prend en entrée
+[00:50:12 → 00:50:13] une image,
+[00:50:13 → 00:50:14] voilà ce qu'il va faire,
+[00:50:14 → 00:50:14] c'est qu'il va le faire
+[00:50:14 → 00:50:16] convolution et relu
+[00:50:16 → 00:50:17] ici,
+[00:50:18 → 00:50:18] après il y a des étapes
+[00:50:18 → 00:50:19] de simplification
+[00:50:19 → 00:50:20] qui viennent résumer
+[00:50:20 → 00:50:21] l'information plus petite,
+[00:50:22 → 00:50:23] une autre convolution
+[00:50:23 → 00:50:24] relu,
+[00:50:24 → 00:50:25] une autre convolution relu,
+[00:50:26 → 00:50:26] ça lui donne
+[00:50:26 → 00:50:27] des petits tableaux
+[00:50:27 → 00:50:27] comme ça de chiffres,
+[00:50:28 → 00:50:28] on met tout à plat
+[00:50:28 → 00:50:29] et après on fait
+[00:50:29 → 00:50:30] un réseau de neurones
+[00:50:30 → 00:50:31] classique
+[00:50:31 → 00:50:33] avec une classification
+[00:50:33 → 00:50:34] à la suite.
+[00:50:35 → 00:50:36] Donc vous avez vraiment
+[00:50:36 → 00:50:37] la partie extraction
+[00:50:37 → 00:50:38] des features
+[00:50:38 → 00:50:39] et classification
+[00:50:39 → 00:50:41] de votre image
+[00:50:41 → 00:50:42] et le modèle
+[00:50:42 → 00:50:43] quand il va s'entraîner,
+[00:50:43 → 00:50:44] vous allez lui donner
+[00:50:44 → 00:50:45] une image,
+[00:50:46 → 00:50:46] vous allez lui donner
+[00:50:46 → 00:50:48] la target
+[00:50:48 → 00:50:49] et il va passer
+[00:50:49 → 00:50:50] il va faire
+[00:50:50 → 00:50:51] tout le passage,
+[00:50:52 → 00:50:52] il va faire
+[00:50:52 → 00:50:53] sa prédiction,
+[00:50:53 → 00:50:54] il va comparer
+[00:50:54 → 00:50:55] la prédiction
+[00:50:55 → 00:50:55] à la réalité,
+[00:50:56 → 00:50:56] calculer l'erreur
+[00:50:56 → 00:50:57] de coût
+[00:50:57 → 00:50:59] et il va venir
+[00:50:59 → 00:51:00] faire des petites
+[00:51:00 → 00:51:01] modifications
+[00:51:01 → 00:51:02] sur tous les paramètres
+[00:51:02 → 00:51:02] qu'il y a.
+[00:51:03 → 00:51:03] Donc les paramètres
+[00:51:03 → 00:51:04] c'est autant
+[00:51:04 → 00:51:05] les valeurs des filtres
+[00:51:05 → 00:51:06] que les paramètres
+[00:51:06 → 00:51:08] qui sont toutes les liaisons
+[00:51:08 → 00:51:08] entre les réseaux
+[00:51:08 → 00:51:09] de neurones classiques,
+[00:51:10 → 00:51:11] entre les neurones classiques.
+[00:51:11 → 00:51:13] Et c'est pour ça
+[00:51:13 → 00:51:14] que les modèles,
+[00:51:14 → 00:51:15] les CNN là,
+[00:51:15 → 00:51:16] les modèles de convolution
+[00:51:16 → 00:51:17] sont des gros modèles
+[00:51:17 → 00:51:18] et donc sont des modèles
+[00:51:18 → 00:51:20] qui sont longs
+[00:51:20 → 00:51:21] à entraîner
+[00:51:21 → 00:51:21] parce qu'il y a
+[00:51:21 → 00:51:22] beaucoup de couches,
+[00:51:22 → 00:51:24] et il y a
+[00:51:24 → 00:51:25] beaucoup de paramètres
+[00:51:25 → 00:51:25] à entraîner.
+[00:51:28 → 00:51:30] Du coup,
+[00:51:30 → 00:51:32] je vous mettrai
+[00:51:32 → 00:51:33] les slides,
+[00:51:34 → 00:51:34] vous verrez,
+[00:51:34 → 00:51:35] il y a pas mal
+[00:51:35 → 00:51:36] d'infos dessus
+[00:51:36 → 00:51:36] si vous voulez creuser
+[00:51:36 → 00:51:37] le sujet
+[00:51:37 → 00:51:40] des CNN
+[00:51:40 → 00:51:45] et sinon on va passer
+[00:51:45 → 00:51:55] surtout sur notre pays.
+[00:51:59 → 00:52:00] Je vous envoie
+[00:52:00 → 00:52:01] sur consigne
+[00:52:01 → 00:52:01] du coup
+[00:52:01 → 00:52:03] le markdown du TP.
+[00:52:08 → 00:52:09] On va pouvoir le regarder
+[00:52:09 → 00:52:10] vite fait ensemble.
+[00:52:39 → 00:52:42] Du coup,
+[00:52:42 → 00:52:43] vous avez
+[00:52:43 → 00:52:45] plusieurs étapes.
+[00:52:45 → 00:52:45] Donc déjà,
+[00:52:46 → 00:52:47] vous allez pouvoir utiliser
+[00:52:47 → 00:52:48] un jeu de données.
+[00:52:51 → 00:52:52] alors vous pouvez faire
+[00:52:52 → 00:53:02] ceci,
+[00:53:02 → 00:53:03] faire 10.
+[00:53:06 → 00:53:06] Oui,
+[00:53:06 → 00:53:06] mais non,
+[00:53:06 → 00:53:07] mais attendez,
+[00:53:07 → 00:53:07] je vous ai donné
+[00:53:07 → 00:53:09] le mauvais truc.
+[00:53:11 → 00:53:11] Attendez,
+[00:53:11 → 00:53:12] je vous ai donné
+[00:53:12 → 00:53:18] le mauvais markdown.
+[00:53:22 → 00:53:29] Tu parles du markdown
+[00:53:29 → 00:53:31] dont on parlait ce matin ?
+[00:53:31 → 00:53:32] Non,
+[00:53:32 → 00:53:32] c'est un autre
+[00:53:32 → 00:53:33] que j'étais en train
+[00:53:33 → 00:53:33] de vous envoyer
+[00:53:33 → 00:53:34] mais je vous ai envoyé
+[00:53:34 → 00:53:35] une ancienne version
+[00:53:35 → 00:53:38] donc je vais vous montrer
+[00:53:38 → 00:53:38] on va voir
+[00:53:38 → 00:53:50] du coup déjà
+[00:53:50 → 00:53:51] on va voir
+[00:53:51 → 00:53:52] par rapport à
+[00:53:52 → 00:53:53] il va y en avoir
+[00:53:53 → 00:53:53] deux
+[00:53:53 → 00:53:54] à la suite
+[00:53:54 → 00:54:06] et du coup
+[00:54:06 → 00:54:06] je vais vous montrer
+[00:54:06 → 00:54:07] quelques trucs encore
+[00:54:07 → 00:54:08] de comment
+[00:54:08 → 00:54:09] gérer les données.
+[00:54:14 → 00:54:15] Déjà le but
+[00:54:15 → 00:54:16] ça va être
+[00:54:16 → 00:54:16] de gérer les données
+[00:54:16 → 00:54:18] des images
+[00:54:18 → 00:54:19] voir comment
+[00:54:19 → 00:54:20] on gère
+[00:54:20 → 00:54:21] sur les images
+[00:54:21 → 00:54:24] des choses différentes.
+[00:54:29 → 00:54:30] Du coup,
+[00:54:30 → 00:54:30] voilà,
+[00:54:30 → 00:54:31] donc là je l'ai mis
+[00:54:31 → 00:54:31] je l'ai mis
+[00:54:31 → 00:54:32] je viens de le mettre
+[00:54:32 → 00:54:33] sur le Discord
+[00:54:33 → 00:54:34] le B6
+[00:54:34 → 00:54:35] la préparation
+[00:54:35 → 00:54:35] des données
+[00:54:35 → 00:54:36] images
+[00:54:36 → 00:54:38] l'idée c'est
+[00:54:38 → 00:54:39] qu'on va partir
+[00:54:39 → 00:54:40] d'un dataset
+[00:54:40 → 00:54:41] la MVTech
+[00:54:41 → 00:54:43] qui a
+[00:54:43 → 00:54:44] je vais vous montrer
+[00:54:44 → 00:54:45] il a plein
+[00:54:45 → 00:54:46] d'images
+[00:54:46 → 00:54:50] d'objets
+[00:54:50 → 00:54:51] qui ont
+[00:54:51 → 00:54:52] des défauts.
+[00:54:52 → 00:54:52] L'idée c'est
+[00:54:52 → 00:54:53] de se dire
+[00:54:53 → 00:54:53] que dans notre
+[00:54:53 → 00:54:55] projet
+[00:54:55 → 00:54:56] on pourrait se dire
+[00:54:56 → 00:54:56] aussi
+[00:54:56 → 00:54:56] je vais faire
+[00:54:56 → 00:54:57] un contrôle qualité
+[00:54:57 → 00:54:58] sur les images
+[00:54:58 → 00:55:00] et donc là
+[00:55:00 → 00:55:02] vous pouvez avoir
+[00:55:02 → 00:55:04] si vous faites
+[00:55:04 → 00:55:07] si vous downloadez
+[00:55:07 → 00:55:08] les datasets
+[00:55:08 → 00:55:26] ici vous vous retrouvez
+[00:55:26 → 00:55:26] en fait
+[00:55:26 → 00:55:27] vous allez avoir
+[00:55:27 → 00:55:28] ça c'est le lien
+[00:55:28 → 00:55:29] exact de cette page là
+[00:55:29 → 00:55:30] comme ça
+[00:55:30 → 00:55:32] vous allez tomber
+[00:55:32 → 00:55:32] directement dessus
+[00:55:32 → 00:55:34] il faut remplir
+[00:55:34 → 00:55:36] un forme
+[00:55:36 → 00:55:36] mais on s'en fiche
+[00:55:36 → 00:55:37] vous pouvez mettre
+[00:55:37 → 00:55:39] n'importe quoi dedans
+[00:55:39 → 00:55:42] il n'y a pas
+[00:55:42 → 00:55:42] de vérification
+[00:55:42 → 00:55:43] etc.
+[00:55:44 → 00:55:45] Et donc l'idée
+[00:55:45 → 00:55:45] c'est que vous allez
+[00:55:45 → 00:55:46] choisir un objet
+[00:55:46 → 00:55:46] par exemple
+[00:55:46 → 00:55:48] je vais choisir
+[00:55:48 → 00:55:48] les noisettes
+[00:55:48 → 00:55:49] et vous allez avoir
+[00:55:49 → 00:55:50] plein d'images
+[00:55:50 → 00:55:51] de noisettes
+[00:55:51 → 00:55:52] qui sont bien faites
+[00:55:52 → 00:55:54] et l'idée
+[00:55:54 → 00:55:54] ça va être
+[00:55:54 → 00:55:55] de détecter
+[00:55:55 → 00:55:56] quand une image
+[00:55:56 → 00:55:58] a un défaut
+[00:55:58 → 00:55:59] et où est le défaut
+[00:55:59 → 00:56:00] donc on va essayer
+[00:56:00 → 00:56:00] de faire
+[00:56:00 → 00:56:03] un projet
+[00:56:03 → 00:56:05] qui correspond à ça
+[00:56:05 → 00:56:07] l'idée
+[00:56:07 → 00:56:10] dès que vous avez
+[00:56:10 → 00:56:11] de la classification
+[00:56:11 → 00:56:11] par image
+[00:56:11 → 00:56:13] quand on fait
+[00:56:13 → 00:56:14] de la classification
+[00:56:14 → 00:56:14] ou ce qu'on appelle
+[00:56:14 → 00:56:15] de la segmentation
+[00:56:15 → 00:56:18] on a plein
+[00:56:18 → 00:56:19] de modèles
+[00:56:19 → 00:56:20] type
+[00:56:20 → 00:56:21] donc comme là
+[00:56:21 → 00:56:21] vous avez vraiment
+[00:56:21 → 00:56:22] une librairie
+[00:56:22 → 00:56:22] de modèles
+[00:56:22 → 00:56:23] de deep learning
+[00:56:23 → 00:56:23] qui existe
+[00:56:23 → 00:56:24] qui fonctionne
+[00:56:24 → 00:56:26] très bien
+[00:56:26 → 00:56:27] type par exemple
+[00:56:27 → 00:56:28] YOLO
+[00:56:28 → 00:56:29] qui est inconnu
+[00:56:29 → 00:56:30] mais par contre
+[00:56:30 → 00:56:31] il lui faut
+[00:56:31 → 00:56:31] énormément
+[00:56:31 → 00:56:32] d'images
+[00:56:32 → 00:56:34] et d'exemples
+[00:56:34 → 00:56:34] et là nous
+[00:56:34 → 00:56:35] on est un peu
+[00:56:35 → 00:56:35] dans le cas
+[00:56:35 → 00:56:37] de ce qu'on avait
+[00:56:37 → 00:56:37] au machine learning
+[00:56:37 → 00:56:38] c'est qu'on a plein
+[00:56:38 → 00:56:39] de données
+[00:56:39 → 00:56:39] de ce qui va bien
+[00:56:39 → 00:56:40] mais on n'a pas
+[00:56:40 → 00:56:40] d'exemples
+[00:56:40 → 00:56:41] de ce qui va pas
+[00:56:41 → 00:56:43] donc pour ça
+[00:56:43 → 00:56:44] on va faire
+[00:56:44 → 00:56:46] vous allez le voir
+[00:56:46 → 00:56:47] et vous pouvez du coup
+[00:56:47 → 00:56:49] aussi faire des recherches
+[00:56:49 → 00:56:49] dessus
+[00:56:49 → 00:56:51] pour essayer d'expliquer
+[00:56:51 → 00:56:52] comment fonctionne
+[00:56:52 → 00:56:53] un auto encodeur
+[00:56:53 → 00:56:54] c'est à dire
+[00:56:54 → 00:56:55] qu'on va apprendre
+[00:56:55 → 00:56:55] au modèle
+[00:56:55 → 00:56:56] à reconstruire
+[00:56:56 → 00:56:57] uniquement
+[00:56:57 → 00:56:59] des images valides
+[00:56:59 → 00:56:59] c'est à dire
+[00:56:59 → 00:57:00] vous allez lui donner
+[00:57:00 → 00:57:01] énormément d'images
+[00:57:01 → 00:57:03] valides
+[00:57:03 → 00:57:04] et vous allez lui dire
+[00:57:04 → 00:57:04] ben voilà
+[00:57:04 → 00:57:06] tu les encodes
+[00:57:06 → 00:57:06] c'est à dire
+[00:57:06 → 00:57:07] que tu passes
+[00:57:07 → 00:57:07] d'une image
+[00:57:07 → 00:57:08] à un vecteur
+[00:57:08 → 00:57:09] et ensuite
+[00:57:09 → 00:57:09] tu apprends
+[00:57:09 → 00:57:10] à décoder
+[00:57:10 → 00:57:10] du vecteur
+[00:57:10 → 00:57:11] à l'image
+[00:57:11 → 00:57:12] le but c'est que
+[00:57:12 → 00:57:13] si le modèle
+[00:57:13 → 00:57:14] ne sait que encoder
+[00:57:14 → 00:57:14] des images
+[00:57:14 → 00:57:15] de bonne qualité
+[00:57:15 → 00:57:16] le jour
+[00:57:16 → 00:57:17] où il y a
+[00:57:17 → 00:57:18] un problème
+[00:57:18 → 00:57:19] dessus
+[00:57:19 → 00:57:19] ben du coup
+[00:57:19 → 00:57:20] vous allez avoir
+[00:57:20 → 00:57:21] il va pas réussir
+[00:57:21 → 00:57:23] à tout recréer
+[00:57:23 → 00:57:24] ça va être problématique
+[00:57:24 → 00:57:26] ouais Cyprien
+[00:57:26 → 00:57:28] Marine
+[00:57:28 → 00:57:32] quand on se connecte
+[00:57:32 → 00:57:33] sur certains sites
+[00:57:33 → 00:57:33] pour vérifier
+[00:57:33 → 00:57:34] que c'est bien
+[00:57:34 → 00:57:34] nous
+[00:57:34 → 00:57:35] il nous envoie
+[00:57:35 → 00:57:37] des images
+[00:57:37 → 00:57:38] à sélectionner
+[00:57:38 → 00:57:40] il y a des chats
+[00:57:40 → 00:57:41] il y a des vélos
+[00:57:41 → 00:57:41] comme ça
+[00:57:41 → 00:57:41] et ça
+[00:57:41 → 00:57:43] c'est du deep learning
+[00:57:43 → 00:57:43] aussi
+[00:57:43 → 00:57:46] ça c'est du deep learning
+[00:57:46 → 00:57:46] ouais
+[00:57:46 → 00:57:48] alors il y a du coup
+[00:57:48 → 00:57:48] il y a des légendes
+[00:57:48 → 00:57:49] qui disaient
+[00:57:49 → 00:57:49] que justement
+[00:57:49 → 00:57:51] quand tu sélectionnes
+[00:57:51 → 00:57:51] quand tu sélectionnes
+[00:57:51 → 00:57:52] tous les feux
+[00:57:52 → 00:57:52] tricolores
+[00:57:52 → 00:57:53] ou tous les camions
+[00:57:53 → 00:57:54] sur une image
+[00:57:54 → 00:57:55] pour justement
+[00:57:55 → 00:57:57] te paramétrer
+[00:57:57 → 00:57:58] en fait il y en a plein
+[00:57:58 → 00:57:58] qui disaient
+[00:57:58 → 00:57:59] que c'était
+[00:57:59 → 00:58:00] du coup
+[00:58:00 → 00:58:02] de l'entraînement
+[00:58:02 → 00:58:04] pour les modèles
+[00:58:04 → 00:58:05] que ça permettait
+[00:58:05 → 00:58:05] parce qu'en fait
+[00:58:05 → 00:58:06] le plus compliqué
+[00:58:06 → 00:58:07] pour les projets
+[00:58:07 → 00:58:07] de deep learning
+[00:58:07 → 00:58:08] comme ça
+[00:58:08 → 00:58:09] c'est la notation
+[00:58:09 → 00:58:10] c'est à dire
+[00:58:10 → 00:58:10] que ça prend
+[00:58:10 → 00:58:11] énormément de temps
+[00:58:11 → 00:58:12] d'avoir plein d'images
+[00:58:12 → 00:58:13] et de les valider
+[00:58:13 → 00:58:14] une par une
+[00:58:14 → 00:58:14] en disant
+[00:58:14 → 00:58:14] ben oui
+[00:58:14 → 00:58:15] là il y a ça
+[00:58:15 → 00:58:16] là il y a ça
+[00:58:16 → 00:58:16] là il y a ça
+[00:58:16 → 00:58:17] donc il y avait
+[00:58:17 → 00:58:18] un peu une légende
+[00:58:18 → 00:58:18] qui disait
+[00:58:18 → 00:58:19] que les gens
+[00:58:19 → 00:58:21] enfin les entreprises
+[00:58:21 → 00:58:21] derrière
+[00:58:21 → 00:58:23] récupéraient ces images
+[00:58:23 → 00:58:23] que nous
+[00:58:23 → 00:58:24] on avait annotées
+[00:58:24 → 00:58:24] en tant qu'humains
+[00:58:24 → 00:58:25] ouais
+[00:58:25 → 00:58:27] c'est ça
+[00:58:27 → 00:58:29] mais oui
+[00:58:29 → 00:58:30] sinon
+[00:58:30 → 00:58:31] tout ce qui est
+[00:58:31 → 00:58:33] détection
+[00:58:33 → 00:58:34] détection de visage
+[00:58:34 → 00:58:35] détection
+[00:58:35 → 00:58:36] sur les voitures
+[00:58:36 → 00:58:37] autonomes
+[00:58:37 → 00:58:37] etc
+[00:58:37 → 00:58:38] ça c'est du deep learning
+[00:58:38 → 00:58:40] donc dès qu'il y a
+[00:58:40 → 00:58:40] l'image
+[00:58:40 → 00:58:42] et que c'est de la détection
+[00:58:42 → 00:58:42] sur l'image
+[00:58:42 → 00:58:43] pas de la génération
+[00:58:43 → 00:58:43] d'images
+[00:58:43 → 00:58:45] on est sur du deep learning
+[00:58:45 → 00:58:46] pur
+[00:58:46 → 00:58:48] du coup c'est comme ça
+[00:58:48 → 00:58:49] que ça fonctionne
+[00:58:49 → 00:58:53] du coup là
+[00:58:53 → 00:58:54] sur ce TP là
+[00:58:54 → 00:58:55] l'idée c'est de récupérer
+[00:58:55 → 00:58:56] les données
+[00:58:56 → 00:58:57] et de récupérer
+[00:58:57 → 00:58:58] par exemple
+[00:58:58 → 00:58:59] les noisettes
+[00:58:59 → 00:59:00] enfin vous récupérez
+[00:59:00 → 00:59:01] si vous voulez
+[00:59:01 → 00:59:02] le jeu de données
+[00:59:02 → 00:59:04] qui vous plaît le plus
+[00:59:04 → 00:59:05] en service
+[00:59:05 → 00:59:08] et après
+[00:59:08 → 00:59:08] de voir
+[00:59:08 → 00:59:10] pour les préparer
+[00:59:10 → 00:59:10] en fait
+[00:59:10 → 00:59:12] il va falloir
+[00:59:12 → 00:59:13] des images
+[00:59:13 → 00:59:14] par contre
+[00:59:14 → 00:59:14] il faut les préparer
+[00:59:14 → 00:59:15] à passer
+[00:59:15 → 00:59:15] dans un modèle
+[00:59:15 → 00:59:16] il faut
+[00:59:16 → 00:59:18] redimensionner
+[00:59:18 → 00:59:19] il faut normaliser
+[00:59:19 → 00:59:19] les données
+[00:59:19 → 00:59:21] il faut du coup
+[00:59:21 → 00:59:21] faire comme
+[00:59:21 → 00:59:22] ce que vous avez fait
+[00:59:22 → 00:59:23] sur le machine learning
+[00:59:23 → 00:59:23] c'est à dire
+[00:59:23 → 00:59:25] diviser
+[00:59:25 → 00:59:26] en jeu
+[00:59:26 → 00:59:27] d'entraînement
+[00:59:27 → 00:59:29] et jeu de validation
+[00:59:29 → 00:59:30] et jeu de test
+[00:59:30 → 00:59:33] etc
+[00:59:33 → 00:59:33] et puis après
+[00:59:33 → 00:59:34] on parlera du coup
+[00:59:34 → 00:59:35] de tout ce qui est
+[00:59:35 → 00:59:36] l'augmentation
+[00:59:36 → 00:59:36] des données
+[00:59:36 → 00:59:37] etc
+[00:59:37 → 00:59:39] donc là
+[00:59:39 → 00:59:39] on prépare
+[00:59:39 → 00:59:40] nos données
+[00:59:40 → 00:59:40] pour ensuite
+[00:59:40 → 00:59:41] pouvoir faire
+[00:59:41 → 00:59:42] des modèles
+[00:59:42 → 00:59:43] de deep learning
+[00:59:43 → 00:59:43] dessus
+[00:59:43 → 00:59:46] donc ouais
+[00:59:46 → 00:59:46] je voulais
+[00:59:46 → 00:59:47] normalement
+[00:59:47 → 00:59:47] vous avez
+[00:59:47 → 00:59:48] le .md
+[00:59:48 → 00:59:48] du coup
+[00:59:48 → 00:59:49] qui est envoyé
+[00:59:49 → 00:59:53] et vous me dites
+[00:59:53 → 00:59:55] s'il y a des questions
+[00:59:55 → 00:59:56] ou quoi
+[00:59:56 → 00:59:56] et sinon
+[00:59:56 → 00:59:56] je vous laisse
+[00:59:56 → 00:59:58] prendre le TP
+[00:59:58 → 01:00:00] en main
+[01:00:00 → 01:00:04] vous les lavez
+[01:00:04 → 01:00:04] ici
+[01:00:04 → 01:00:07] sans fond
+[01:00:07 → 01:00:16] voilà
+[01:00:16 → 01:00:16] quand vous allez
+[01:00:16 → 01:00:17] quand vous allez
+[01:00:17 → 01:00:18] sur le lien
+[01:00:18 → 01:00:19] que je vous ai envoyé
+[01:00:19 → 01:00:20] vous mettez n'importe quoi
+[01:00:20 → 01:00:20] après
+[01:00:20 → 01:00:21] mais du coup
+[01:00:21 → 01:00:22] vous vous retrouvez
+[01:00:22 → 01:00:22] il y a des données
+[01:00:22 → 01:00:23] il y a des images
+[01:00:23 → 01:00:23] en fait
+[01:00:23 → 01:00:25] pour plusieurs
+[01:00:25 → 01:00:26] dans plusieurs catégories
+[01:00:26 → 01:00:27] donc il y a des bouteilles
+[01:00:27 → 01:00:28] il y a des
+[01:00:28 → 01:00:30] il y a des noisettes
+[01:00:30 → 01:00:31] qui sont là
+[01:00:31 → 01:00:32] il y a des pilules
+[01:00:32 → 01:00:34] il y a
+[01:00:34 → 01:00:35] plusieurs outils
+[01:00:35 → 01:00:35] il y a des
+[01:00:35 → 01:00:36] droits à dents
+[01:00:36 → 01:00:36] etc
+[01:00:36 → 01:00:38] donc je vous laisse
+[01:00:38 → 01:00:38] prendre
+[01:00:38 → 01:00:39] peut-être pas forcément
+[01:00:39 → 01:00:40] les plus gros
+[01:00:40 → 01:00:41] parce que
+[01:00:41 → 01:00:42] après il faut les
+[01:00:42 → 01:00:44] carpets
+[01:00:44 → 01:00:44] ça va
+[01:00:44 → 01:00:48] et comme ça
+[01:00:48 → 01:00:49] déjà le prendre en main
+[01:00:49 → 01:00:50] prendre en main
+[01:00:50 → 01:00:50] les données
+[01:00:50 → 01:00:52] faire un notebook
+[01:00:52 → 01:00:52] un peu
+[01:00:52 → 01:00:53] un peu comme ce que
+[01:00:53 → 01:00:53] vous avez fait
+[01:00:53 → 01:00:54] sur le machine learning
+[01:00:54 → 01:00:54] c'est à dire
+[01:00:54 → 01:00:55] regarder vos données
+[01:00:55 → 01:00:56] à quoi elles ressemblent
+[01:00:56 → 01:00:56] etc
+[01:00:56 → 01:00:57] et ensuite
+[01:00:57 → 01:00:59] les préparer
+[01:00:59 → 01:01:00] donc dimensionnement
+[01:01:00 → 01:01:02] normalisation
+[01:01:02 → 01:01:03] et les splitter
+[01:01:03 → 01:01:05] en jeu d'entraînement
+[01:01:05 → 01:01:05] et jeu de test
+[01:01:05 → 01:01:11] et vous n'hésitez pas
+[01:01:11 → 01:01:12] s'il y a des questions
+[01:01:12 → 01:01:13] les données
+[01:01:13 → 01:01:14] vous
+[01:01:14 → 01:01:16] tu les as mis
+[01:01:16 → 01:01:16] quelque part
+[01:01:16 → 01:01:18] non
+[01:01:18 → 01:01:18] tu les as
+[01:01:18 → 01:01:19] sur le
+[01:01:19 → 01:01:20] sur le
+[01:01:20 → 01:01:21] sur le
+[01:01:21 → 01:01:22] sur le lien
+[01:01:22 → 01:01:23] là que j'ai envoyé
+[01:01:23 → 01:01:24] dans la conversation
+[01:01:24 → 01:01:25] ou alors
+[01:01:25 → 01:01:25] elles sont aussi
+[01:01:25 → 01:01:26] dans le markdown
+[01:01:26 → 01:01:27] dessus
+[01:01:27 → 01:01:28] il faut juste remplir
+[01:01:28 → 01:01:29] à un moment
+[01:01:29 → 01:01:29] un truc
+[01:01:29 → 01:01:30] savoir
+[01:01:30 → 01:01:31] est-ce que t'es prof
+[01:01:31 → 01:01:31] machin
+[01:01:31 → 01:01:32] mais tu mets n'importe quoi
+[01:01:32 → 01:01:34] tu mets X
+[01:01:34 → 01:01:34] ils ne regardent pas
+[01:01:34 → 01:01:35] et après
+[01:01:35 → 01:01:36] t'as un lien
+[01:01:36 → 01:01:37] de téléchargement
+[01:01:37 → 01:01:40] des images
+[01:01:40 → 01:01:41] par catégorie
+[01:01:41 → 01:01:42] d'accord
+[01:01:42 → 01:01:47] par exemple
+[01:01:47 → 01:01:48] sur les
+[01:01:48 → 01:01:50] il y a des catégories
+[01:01:50 → 01:01:50] où c'est plus facile
+[01:01:50 → 01:01:52] de voir les défauts
+[01:01:52 → 01:01:52] que d'autres
+[01:01:52 → 01:01:53] je sais que
+[01:01:53 → 01:01:53] les loisettes
+[01:01:53 → 01:01:54] ça marche bien
+[01:01:54 → 01:01:55] metal nut
+[01:01:55 → 01:01:55] je crois que ça marche
+[01:01:55 → 01:01:56] aussi pas trop mal
+[01:01:56 → 01:01:58] bottle
+[01:01:58 → 01:01:59] il n'y en a pas
+[01:01:59 → 01:02:00] il n'y en a pas trop
+[01:02:00 → 01:02:04] voilà
+[01:02:04 → 01:02:05] tout ça
+[01:02:05 → 01:02:24] Simon
+[01:02:24 → 01:02:25] t'as ton micro ouvert
+[01:02:25 → 01:02:26] ah pardon
+[01:02:26 → 01:02:28] t'inquiète

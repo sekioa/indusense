@@ -1,0 +1,1139 @@
+# POC ML, baseline et rappel des métriques ROC/PR AUC
+
+Langue détectée : fr
+
+> Transcription automatique locale (whisper.cpp, modèle `large-v3-turbo`, VAD Silero activé). Les hésitations, coupures et termes mal reconnus peuvent nécessiter une correction éditoriale. Segmentation issue du VAD : la durée affichée entre deux répliques peut inclure un silence, pas seulement la parole.
+
+Support associé : `07_poc_ml.pdf`, `10_metriques_ROC_PR_AUC.pdf`.
+
+[00:00:04 → 00:00:57] on va attendre que tout le monde arrive
+[00:00:57 → 00:03:34] bonjour
+[00:03:34 → 00:03:39] alors attend c'est que je vous entends pas
+[00:03:39 → 00:04:10] est-ce que quelqu'un peut parler de votre côté s'il vous plaît
+[00:04:10 → 00:04:12] un deux en deux
+[00:04:12 → 00:04:14] je vous entends pas
+[00:04:14 → 00:05:02] est-ce que quelqu'un peut redire quelque chose s'il vous plaît
+[00:05:02 → 00:05:09] un deux en deux
+[00:05:09 → 00:05:10] ah yes c'est bon
+[00:05:10 → 00:05:12] parfait
+[00:05:12 → 00:05:14] ce son de l'ordi des fois je comprends rien
+[00:05:14 → 00:05:16] je suis sur les bons trucs je suis le son à fond
+[00:05:16 → 00:05:19] mais ça marche pas
+[00:05:19 → 00:05:29] du coup
+[00:05:29 → 00:05:31] je vais vous demander tant que
+[00:05:31 → 00:05:32] si tout le monde n'est pas arrivé
+[00:05:32 → 00:05:34] est-ce que vous pouvez me dire chacun
+[00:05:34 → 00:05:35] ou est-ce que vous en essayez du coup à la fin
+[00:05:35 → 00:05:37] par rapport au TP de Machine Army
+[00:05:37 → 00:05:40] de la semaine dernière
+[00:05:40 → 00:05:43] parce qu'on le reprendra un peu après
+[00:05:43 → 00:05:46] mais voilà juste pour avoir un état des lieux de tout le monde
+[00:05:46 → 00:05:50] yes
+[00:05:50 → 00:05:52] je l'ai fait avec
+[00:05:52 → 00:05:57] avec Random Forest
+[00:05:57 → 00:06:01] et Random Search
+[00:06:01 → 00:06:02] ok
+[00:06:02 → 00:06:05] là il tourne sur Optuna pour voir
+[00:06:05 → 00:06:06] ok
+[00:06:06 → 00:06:10] et est-ce que t'as vu des améliorations
+[00:06:10 → 00:06:12] du coup là c'est en train de tourner pour la première fois
+[00:06:12 → 00:06:14] les deux ou pas
+[00:06:14 → 00:06:14] non
+[00:06:14 → 00:06:16] Random Search
+[00:06:16 → 00:06:18] il est terminé
+[00:06:18 → 00:06:24] et donc il y a une amélioration du score de validation croisé
+[00:06:24 → 00:06:27] mais pas de l'avage précisé
+[00:06:27 → 00:06:29] ok
+[00:06:29 → 00:06:34] et sur le test ?
+[00:06:34 → 00:06:36] je sais pas si je l'ai fait tourner sur le test
+[00:06:36 → 00:06:38] ouais peut-être pas encore
+[00:06:38 → 00:06:39] ok
+[00:06:39 → 00:06:40] ça sera juste pour voir ça
+[00:06:40 → 00:06:41] ok
+[00:06:41 → 00:06:42] ok merci
+[00:06:42 → 00:06:43] à jar
+[00:06:43 → 00:06:45] euh
+[00:06:45 → 00:06:49] moi juste à un moment je cherche mes notes
+[00:06:49 → 00:06:50] ouais pas de soucis
+[00:06:50 → 00:06:51] attends
+[00:06:51 → 00:06:53] bah Cyprien du coup qui est à côté
+[00:06:53 → 00:06:58] genre le micro c'est mieux
+[00:06:58 → 00:07:02] c'est lundi matin c'est dur pour tout le monde
+[00:07:02 → 00:07:07] et du coup moi j'ai réussi à griger mon problème
+[00:07:07 → 00:07:11] et j'ai fait tourner sur mes trois meilleurs
+[00:07:11 → 00:07:14] les trois meilleurs modèles que j'avais vus
+[00:07:14 → 00:07:16] bah Grid Search, Random Search et Optuna
+[00:07:16 → 00:07:19] ok
+[00:07:19 → 00:07:21] alors ça c'est pas les modèles ?
+[00:07:21 → 00:07:22] oui oui
+[00:07:22 → 00:07:25] les modèles c'est Random Forest, East Gradient et XGBoost
+[00:07:25 → 00:07:26] ok
+[00:07:26 → 00:07:30] donc t'as fait les trois méthodes de recherche sur les trois modèles à chaque fois ?
+[00:07:30 → 00:07:30] ouais
+[00:07:30 → 00:07:31] ok
+[00:07:31 → 00:07:33] donc ouais
+[00:07:33 → 00:07:34] ça a dû tourner un petit moment
+[00:07:34 → 00:07:35] c'est ça
+[00:07:35 → 00:07:40] et du coup là c'est fini les entraînements ou pas ?
+[00:07:40 → 00:07:41] oui oui
+[00:07:41 → 00:07:43] et du coup c'est lequel qui a le...
+[00:07:43 → 00:07:46] c'est le East Gradient en boosting avec Optuna
+[00:07:46 → 00:07:49] j'ai le mieux
+[00:07:49 → 00:07:57] ok
+[00:07:57 → 00:07:58] dans la...
+[00:07:58 → 00:08:01] juste pour prendre là, t'as tout testé comme ça ?
+[00:08:01 → 00:08:02] dans la...
+[00:08:02 → 00:08:06] dans la méthodologie on aurait plus tendance à se dire
+[00:08:06 → 00:08:07] on prend... on teste un peu
+[00:08:07 → 00:08:08] là c'était pour trop tester je me doute
+[00:08:08 → 00:08:09] mais...
+[00:08:09 → 00:08:12] oui c'était pour voir les trois entre eux pour...
+[00:08:12 → 00:08:13] oui oui bien sûr
+[00:08:13 → 00:08:14] ok
+[00:08:14 → 00:08:14] parfait
+[00:08:14 → 00:08:22] Mariyama ?
+[00:08:22 → 00:08:23] oui
+[00:08:23 → 00:08:25] alors j'ai fait...
+[00:08:25 → 00:08:28] tourner sur Random Forest et XGBoost
+[00:08:28 → 00:08:29] Random Forest et XGBoost
+[00:08:29 → 00:08:36] j'ai fait générer une comparaison de la régression et les deux autres
+[00:08:36 → 00:08:42] j'avoue que je suis pas certaine d'interpréter correctement le résultat
+[00:08:42 → 00:08:46] le modèle recommandé reste Random Forest
+[00:08:46 → 00:08:47] ok
+[00:08:47 → 00:08:54] mais je pense que je dois creuser plus sur les raisons de performance et de choix
+[00:08:54 → 00:09:03] je pense que c'est plus le gain de détection des pannes qui justifie la recommandation de Random Forest
+[00:09:03 → 00:09:12] mais je m'interroge sur... on a plein de paramètres dans le PR-AUC
+[00:09:12 → 00:09:17] j'aimerais savoir en fait quand on parle de performance
+[00:09:17 → 00:09:20] quels paramètres on vise exactement
+[00:09:20 → 00:09:30] et comment on interprète justement ces paramètres par rapport à... est-ce qu'ils sont plus grands ? ils sont plus petits ?
+[00:09:30 → 00:09:32] j'avoue que j'ai un peu de mal
+[00:09:32 → 00:09:37] je vais... de toute façon on l'avait pas vu encore donc je vais vous faire un point sur la PR-AUC justement
+[00:09:37 → 00:09:39] pour comment l'interpréter
+[00:09:39 → 00:09:41] et à quoi on va commencer par ça là ce matin
+[00:09:41 → 00:09:57] et est-ce qu'on peut parler déjà de performance ? est-ce que quand on parle de performance on parle de la capacité à détecter les pannes de manière plus fiable ? ou qu'est-ce qu'on entend par performance ? ce modèle là est plus performant que l'autre par exemple ?
+[00:09:57 → 00:10:06] quand on parle justement de performance c'est que tu as là par exemple le PR-AUC ça a été la métrique d'évaluation qui a été décidée pour être la meilleure
+[00:10:06 → 00:10:08] la meilleure mais la plus adaptée
+[00:10:08 → 00:10:15] et du coup si on parle de performance c'est... tu vas calculer ta performance avec cet indicateur là
+[00:10:15 → 00:10:21] donc plus tu as une valeur de PR-AUC grande plus ton modèle est performant
+[00:10:21 → 00:10:29] et donc après ce qu'il faut essayer de venir faire c'est faire l'interprétation d'une PR-AUC grande
+[00:10:29 → 00:10:33] et essayer aussi de voir où est-ce que votre modèle pêche et où est-ce qu'il est bon
+[00:10:33 → 00:10:40] et ça on peut le faire justement en écrivant la matrice de confusion etc. pour interpréter
+[00:10:40 → 00:10:48] parce que la performance le PR-AUC par exemple si vous dites aux utilisateurs j'ai une valeur de PR-AUC qui est très bonne donc voilà
+[00:10:48 → 00:10:52] on va dire bah super mais moi je connais pas je sais pas ce que ça veut dire
+[00:10:52 → 00:10:58] donc il faut pouvoir le traduire en valeur un peu plus compréhensible
+[00:10:58 → 00:11:04] et du coup en général prendre la matrice de confusion ça permet de faire une interprétation qui est beaucoup plus logique
+[00:11:04 → 00:11:11] pour le métier en tout cas mais on mesure en fait avec un critère d'évaluation que tu as choisi au préalable
+[00:11:11 → 00:11:20] donc là par exemple PR-AUC et ensuite on va venir du coup interpréter les résultats
+[00:11:20 → 00:11:25] je sais pas si c'est plus clair du coup pour ça
+[00:11:25 → 00:11:43] mais je vais vous montrer une fois que j'ai fait le tour de tout le monde à voir pour vous montrer exactement PR-AUC en quoi ça consiste aussi
+[00:11:43 → 00:11:51] parce qu'on l'a pas vu et que c'est intéressant quand même de bien comprendre cette métrique là
+[00:11:51 → 00:11:56] Ludovic ?
+[00:11:56 → 00:12:06] alors moi j'ai fait avec random search après grid search sur des valeurs
+[00:12:06 → 00:12:08] ok sur random forest
+[00:12:08 → 00:12:17] ouais ouais et donc c'est un peu mieux avec des variables manuelles sur grid search
+[00:12:17 → 00:12:25] ouais mais de toute façon le random search t'a permis de diminuer les valeurs possibles je suppose
+[00:12:25 → 00:12:27] et après t'as fait avec random search dessus
+[00:12:27 → 00:12:29] c'est ça
+[00:12:29 → 00:12:34] ok très bien
+[00:12:34 → 00:12:40] et niveau compréhension etc ça va ?
+[00:12:40 → 00:12:41] à peu près
+[00:12:41 → 00:12:42] ok
+[00:12:42 → 00:12:45] c'est lundi
+[00:12:45 → 00:12:47] c'est lundi
+[00:12:47 → 00:12:48] c'est lundi ouais
+[00:12:48 → 00:12:50] ok merci
+[00:12:50 → 00:12:53] Ismaël bonjour tu vas bien
+[00:12:53 → 00:12:58] bonjour ça va et toi ?
+[00:12:58 → 00:12:59] ça va
+[00:12:59 → 00:13:05] je disais je demandais à tout le monde un peu de faire un tour pour savoir où vous en étiez
+[00:13:05 → 00:13:10] est-ce que vous étiez arrêté sur du coup sur l'ETP s'il y avait des résultats etc
+[00:13:10 → 00:13:18] moi je me suis arrêté sur la dernière consigne là où t'avais demandé de faire
+[00:13:18 → 00:13:24] j'avoue que je n'ai pas retouché depuis
+[00:13:24 → 00:13:26] non non mais c'était pas le but de ma vie
+[00:13:26 → 00:13:33] la dernière fois je suis partie aussi un peu plus tôt mais
+[00:13:33 → 00:13:39] laisse-moi me reprendre s'il te plaît
+[00:13:39 → 00:13:41] ouais pas de soucis
+[00:13:41 → 00:13:46] Ajar du coup je pense que c'est bon
+[00:13:46 → 00:13:50] yes alors pour moi j'ai utilisé la méthode random forest
+[00:13:50 → 00:13:56] et pour l'optimisation des modèles j'ai utilisé Optuna parce que
+[00:13:56 → 00:14:00] je pense que j'ai posé la question c'est quoi la différence entre les trois
+[00:14:00 → 00:14:05] et tu m'as déjà expliqué que Optuna pour notre cas c'est la meilleure
+[00:14:05 → 00:14:13] c'est la meilleure je pense et je suis toujours dans l'étape la définition de l'espace de recherche
+[00:14:13 → 00:14:16] ok voilà
+[00:14:16 → 00:14:19] du coup pour le coup quand tu utilises Optuna
+[00:14:19 → 00:14:24] ça va être la différence justement entre Optuna, Randomized et Grid Search
+[00:14:24 → 00:14:27] Grid Search si vous vous souvenez il prend toutes vos valeurs
+[00:14:27 → 00:14:29] vous devez donner des valeurs possibles de vos paramètres
+[00:14:29 → 00:14:33] et il va faire des compétitions des valeurs possibles et il va tout tester
+[00:14:33 → 00:14:40] Randomized vous donnez un espace et il prend des valeurs des combinaisons au milieu qui sont aléatoires
+[00:14:40 → 00:14:46] donc plus vous avez un espace qui est grand plus vous allez tester des points qui sont éloignés les uns des autres
+[00:14:46 → 00:14:55] parce que justement du coup en fait Randomized il y a un nombre un peu d'itérations et si vous avez
+[00:14:55 → 00:15:02] je sais pas si vous devez tester le nombre d'arbres entre 50 et 200 et le nombre de
+[00:15:02 → 00:15:06] je sais pas de profondeur entre 3 et 8
+[00:15:06 → 00:15:15] c'est pas pareil que si vous dites que vous allez tester entre 100 et 150 pour les arbres et entre 5 et 7 pour la profondeur
+[00:15:15 → 00:15:22] donc plus vous avez un espace grand plus votre Random il va tester des points qui sont éloignés
+[00:15:22 → 00:15:30] donc le point que vous pourrez trouver sera peut-être le meilleur de ce qu'il a trouvé
+[00:15:30 → 00:15:33] mais sera peut-être pas le meilleur de ce qui peut être trouvé si on le reprécise derrière
+[00:15:33 → 00:15:38] d'où le fait d'avoir fait comme Ludovic aussi un Grid Search après autour de ce poilon
+[00:15:38 → 00:15:43] Optuna par contre du coup on peut rester sur un espace assez grand
+[00:15:43 → 00:15:50] mais toujours par contre l'idée c'est que comme il va apprendre des espaces des tests précédents
+[00:15:50 → 00:15:58] il y a des chances que je sais pas s'ils testent par exemple un grand nombre d'arbres et une profondeur basse et que ça marche pas du tout
+[00:15:58 → 00:16:01] bah du coup ils ne testent plus jamais autour de ces trucs là et qu'ils réduisent l'espace
+[00:16:01 → 00:16:07] en fait Optuna réduit l'espace au fur et à mesure donc tu peux prendre un espace quand même assez grand
+[00:16:07 → 00:16:13] après pour vous donner des idées sur Random Forest sur les arbres on part de dizaines jusqu'à des centaines d'arbres
+[00:16:13 → 00:16:19] mais n'allez pas jusqu'à 500 ou 1000 arbres ça va commencer à faire énormément
+[00:16:19 → 00:16:28] surtout que vous n'avez pas non plus 500 colonnes et 300 000 lignes dans vos données
+[00:16:28 → 00:16:35] donc on n'a pas non plus des tombereaux de données donc il faut prendre quand même des arbres qui peuvent être réalisés
+[00:16:35 → 00:16:42] plus on met en nombre d'arbres grands alors qu'on a peu de données plus il y a des chances qu'il y ait des arbres qui soient sensiblement les mêmes
+[00:16:42 → 00:16:52] parce qu'on va prendre des extraits des données etc donc il y a des chances qu'ils se recoupent donc ça n'a pas forcément d'intérêt
+[00:16:52 → 00:16:59] donc déjà si vous pouvez vous arrêter à 200 300 arbres c'est déjà pas mal
+[00:16:59 → 00:17:02] alors il y en a peut-être qui sont allés jusqu'à plus et dans l'idée voilà
+[00:17:02 → 00:17:11] profondeur il y a des valeurs aussi qui... enfin on va pas faire des arbres avec des 15 étages de profondeur
+[00:17:11 → 00:17:17] en fait la profondeur est censée être un critère d'arrêt donc arrêtez votre arbre avant qu'il soit trop détaillé
+[00:17:17 → 00:17:25] si vous mettez 15 en profondeur votre arbre il est forcément très détaillé vous allez finir par avoir un élément par feuille
+[00:17:25 → 00:17:39] donc voilà donc il y a des valeurs un peu qui passent un peu partout qui vous permettent de dire de voir les espaces que vous mettez pour chaque paramètre
+[00:17:39 → 00:17:45] je sais pas si ça t'aide un peu à genre pour mettre le...
+[00:17:45 → 00:17:48] oui oui merci beaucoup
+[00:17:48 → 00:17:57] est-ce qu'on peut utiliser deux méthodes c'est-à-dire j'utilise une pour réduire ma recherche et une autre par la suite non ?
+[00:17:57 → 00:18:04] oui bah c'est ce qu'a fait du coup Ludovic en se disant on fait un random search c'est quelque chose qui est assez large
+[00:18:04 → 00:18:15] et par exemple je sais pas le random search je dis que ta valeur optimale ton résultat optimal est avec 100 arbres ou 100 arbres 2 arbres et une profondeur à 3
+[00:18:15 → 00:18:23] bah du coup tu peux te dire ok bah je vais je fais après par exemple un grid search ou un optional n'importe une deuxième passe
+[00:18:23 → 00:18:30] avec avec plus proche du coup un espace beaucoup plus proche de ce résultat là
+[00:18:30 → 00:18:32] d'accord
+[00:18:32 → 00:18:37] après à voir faut tester voir si ça fonctionne
+[00:18:37 → 00:18:43] en première intention la première intention c'est déjà d'en choisir une et pas d'en faire deux à la suite
+[00:18:43 → 00:18:49] c'est du coup vous êtes dans d'une ultra optimisation enfin ultra optimisation on va dire si vous en faites deux à la suite déjà
+[00:18:49 → 00:18:58] mais c'est possible vous pouvez aller essayer de chercher de grappiller des points de performance du coup sur votre PRA UC en faisant comme ça
+[00:18:58 → 00:19:00] ok ça marche merci
+[00:19:00 → 00:19:06] ok
+[00:19:06 → 00:19:20] Ismaël est-ce que tu as retrouvé tes notes ou pas ?
+[00:19:20 → 00:19:26] Marine je vais devoir m'absenter dans 7 minutes pour une réunion je reviendrai dès que je finis
+[00:19:26 → 00:19:27] ok
+[00:19:26 → 00:19:29] je vais faire un
+[00:19:29 → 00:19:33] une petite aparté là sur le PRA UC et le ROC
+[00:19:33 → 00:19:35] quoique je le ferai peut-être après
+[00:19:35 → 00:19:37] c'est quoi c'est une heure de réunion ou moins ?
+[00:19:37 → 00:19:38] non non une demi-heure
+[00:19:38 → 00:19:41] ok je le ferai peut-être après alors du coup
+[00:19:41 → 00:19:42] comme ça tu seras là
+[00:19:42 → 00:19:43] ce sera plus simple
+[00:19:43 → 00:19:45] merci
+[00:19:47 → 00:19:49] du coup pour ce matin ce que je vous propose c'est que
+[00:19:49 → 00:19:53] alors finis vous allez voir on va reprendre
+[00:19:53 → 00:19:58] on reprendra sur la dernière journée le projet de machine learning
+[00:19:58 → 00:20:02] mais il y a une étape là après où on passe sur du deep learning de l'image etc
+[00:20:02 → 00:20:09] donc le but c'est que ce matin vous encapsulez bien votre modèle
+[00:20:09 → 00:20:13] du coup bien comprendre vos résultats pour ceux qui ont des résultats
+[00:20:13 → 00:20:14] essayez de les interpréter
+[00:20:14 → 00:20:21] et si vous deviez faire une du coup justification que votre modèle fonctionne bien
+[00:20:21 → 00:20:28] sur aux utilisateurs qu'est-ce que vous leur diriez comment vous vendriez un peu votre
+[00:20:28 → 00:20:30] votre modèle
+[00:20:30 → 00:20:33] s'il y a des questions sur votre code du coup on peut regarder ça
+[00:20:33 → 00:20:40] et comme ça après la réunion de Mariama on fera un point sur les métriques
+[00:20:40 → 00:20:42] sur ROCAUC et PRAUC
+[00:20:42 → 00:20:45] mais si vous voulez du coup essayer de comprendre déjà en amont les deux
+[00:20:45 → 00:20:48] la différence entre les deux et comment fonctionnent les deux
+[00:20:48 → 00:20:53] comme ça l'idée c'est que ça soit clair après quand je le présente pour tout le monde
+[00:20:53 → 00:20:56] donc n'hésitez pas s'il y a des questions sur votre code
+[00:20:56 → 00:20:58] s'il y a des choses qui sont pas claires
+[00:20:58 → 00:21:05] s'il y a des mèmes, des interprétations etc. que vous n'avez pas ou que vous n'êtes pas sûr de vous
+[00:21:05 → 00:21:08] de me dire et comme ça après on fait le point sur les métriques
+[00:21:08 → 00:21:11] bah du coup à 10h je suppose
+[00:21:11 → 00:21:15] donc voilà
+[00:21:15 → 00:21:21] donc je vous laisse me dire reprendre du coup le ETP et vous refamiliariser avec le sujet aussi
+[00:21:21 → 00:21:25] et puis comme ça à 10h on fait un point sur les métriques
+[00:21:25 → 00:21:39] donc ça marche
+[00:21:39 → 00:21:44] est-ce que tu penses qu'il est encore temps que je demande une licence Claude ?
+[00:21:44 → 00:21:46] t'en as pas ?
+[00:21:46 → 00:21:51] j'en ai pas j'utilisais celle du boulot et du coup j'explose le quota du boulot
+[00:21:51 → 00:21:52] oui
+[00:21:52 → 00:21:57] tu peux demander et je peux essayer de faire passer la demande à Xavier
+[00:21:57 → 00:21:59] rapidement
+[00:21:59 → 00:22:04] je vais lui envoyer un message directement
+[00:22:04 → 00:22:04] ok
+[00:22:04 → 00:22:08] je vais l'appeler là comme ça je vais voir s'il me répond
+[00:22:08 → 00:22:09] comme ça je lui demande
+[00:22:09 → 00:22:10] ça roule
+[00:22:10 → 00:22:11] merci beaucoup
+[00:22:11 → 00:23:56] Marine moi c'est pareil j'ai une licence Claude mais j'ai jamais reçu les informations
+[00:23:56 → 00:24:02] donc s'il peut me les envoyer c'est bien
+[00:24:02 → 00:24:03] 20-30 secondes
+[00:24:03 → 00:24:04] Ludovic c'est toi qui a parlé ?
+[00:24:04 → 00:24:06] ouais
+[00:24:06 → 00:24:09] toi aussi pareil t'as le compte du taf c'est ça ?
+[00:24:09 → 00:24:13] bah moi voilà j'ai dû prendre ce compte du taf parce que je sais qu'il m'en a mis une
+[00:24:13 → 00:24:16] mais j'ai jamais reçu les infos
+[00:24:16 → 00:24:18] ok bah je vais voir je vais jouer avec lui alors
+[00:24:18 → 00:24:19] merci
+[00:24:19 → 00:25:10] question du coup Simon et Ludovic votre abonnement alors surtout sur Simon du coup ton abonnement il est sur quel mail ?
+[00:25:10 → 00:25:13] parce que du coup sur quel mail il faudrait qu'on mette l'abonnement ?
+[00:25:13 → 00:25:19] sur mon mail pro du coup Simon je m'en suggère à ta lien sur you
+[00:25:19 → 00:25:23] ok du coup ça passe sur ton pro l'autre compte il est pas dessus ?
+[00:25:23 → 00:25:28] euh si mais c'est un compte codex
+[00:25:28 → 00:25:30] ah c'est un compte codex ?
+[00:25:30 → 00:25:31] ouais ouais
+[00:25:31 → 00:25:33] oui oui donc t'as pas de compte Claude associé à ce mail là ?
+[00:25:33 → 00:25:34] non
+[00:25:34 → 00:25:35] parfait
+[00:25:35 → 00:25:44] et Ludovic du coup toi t'en as pas non plus ?
+[00:25:44 → 00:25:45] non non c'est pas
+[00:25:45 → 00:25:50] ok donc sur vos deux comptes de mails pro c'est bon quoi ?
+[00:25:50 → 00:25:51] ouais
+[00:25:51 → 00:26:18] ok du coup c'est lancé donc vous devriez recevoir des mails dans la matinée sur du coup vos comptes pro
+[00:26:18 → 00:26:22] pour mettre les guerriers les comptes
+[00:26:22 → 00:34:08] Marine ?
+[00:34:08 → 00:34:12] yes
+[00:34:12 → 00:34:19] et du coup moi dans mon entraînement au final je fais d'utiliser le XZ boost
+[00:34:19 → 00:34:20] ouais
+[00:34:20 → 00:34:26] pour améliorer du coup avec une combinaison early stopping
+[00:34:26 → 00:34:29] ok
+[00:34:29 → 00:34:34] le early stopping du coup qui permet que j'utilisais que ça permettait au fait de
+[00:34:34 → 00:34:42] c'est de au lieu de fixer manuellement ou à l'avance le nombre d'art ou bien à quel moment il s'arrête et tout ça
+[00:34:42 → 00:35:11] après ce que j'ai compris lui il permet en fait de stopper dès que l'itération en fait dès qu'on perd de performance en fait c'est à dire qu'au bout d'un moment donné quand le père a réussi et s'il va dans un stagne au bout de 30 itérations de suite en gros il stoppe des coups il stoppe l'entraînement il stoppe l'entraînement il stoppe la création d'arbre quoi
+[00:35:11 → 00:35:26] oui c'est ça c'est ça le early stopping de toute façon on va le voir XZ boost du coup je vous présenterai aussi comment il est fait parce que il est fait d'une manière différente que les radon forest mais du coup oui il est fait en ajoutant les arbres les uns à la suite des autres
+[00:35:26 → 00:35:37] et le early stopping ça vient regarder si tu rajoutes un arbre est-ce que tu as de meilleurs résultats qu'avant si oui tu continues sinon tu arrêtes l'entraînement sur le du coup le modèle que tu avais créé jusque là
+[00:35:37 → 00:35:46] bah c'est moi si j'utilisais ça bah de toute façon j'ai demandé à Claude il m'a fait plusieurs propositions donc comme ça j'ai choisi cette option là
+[00:35:46 → 00:35:55] et donc du coup du coup sur lequel après ça me sort un bilan un bilan 10 bilan honnête de l'optimisation
+[00:35:55 → 00:36:15] où tu as un P R A I C avant peut-être si tu veux 0618 et après 0612 quoi des choses comme ça après t'as précision de pan t'as du requin pan et t'as FN pan aussi donc du coup j'ai un tableau comme ça si tu veux
+[00:36:15 → 00:36:26] après je sais pas trop comment l'interpréter ce tableau et si tu veux je te le montre
+[00:36:26 → 00:36:33] ouais je veux bien ouais si tu veux partager ton écran comme ça on le regarde ensemble et il y en a peut-être d'autres qui vont vouloir voir aussi
+[00:36:33 → 00:36:42] bah voilà le tableau il est là le tableau final
+[00:36:42 → 00:37:00] ouais du coup c'est que t'as alors P R A I C du coup ça c'est les valeurs donc tu au final ton P R A I C a pas forcément été amélioré en fait ce que tu vois que tu as amélioré entre les deux c'est vraiment la précision
+[00:37:00 → 00:37:05] oui c'est ça exactement qui a pris un peu exactement
+[00:37:05 → 00:37:25] c'est ça et donc précision c'est que tu vas avoir moins de fausses alertes tu vas avoir plus de précision c'est vraiment quand tu as un résultat est-ce que tu es sûr que ce que le modèle prédit est vraiment une panne
+[00:37:25 → 00:37:55] c'est le vrai positif quoi c'est ça en fait tu vas essayer d'avoir de moins en moins de faux positifs donc là tu as amélioré ça pardon quand tu as diminué un peu le récol donc ça il y a quelques il y a quelques pannes qui vont être manquées en plus donc là ça va être un peu un choix métier de te dire ok j'ai amélioré donc maintenant quand je dis qu'il y a une
+[00:37:55 → 00:38:02] pannes il y a plus de chances que ce soit une vraiment par contre il y a beaucoup de
+[00:38:02 → 00:38:15] il y a beaucoup de pannes manquées et en plus 05 c'est pas excellent excellent comme comme résultat donc du coup qu'est-ce qui te coûte le plus cher et qu'est-ce que si tu devais critiquer le modèle parce que là ça en trop
+[00:38:15 → 00:38:30] vous rentrez dans l'examen et les votre modèle les données sont pas les meilleurs modèles de la terre etc justement pour qu'aussi que vous puissiez venir critiquer votre modèle que vous n'avez pas un modèle qui marche pas parfaitement et dire ok bah du coup je sais ce modèle qui marche super bien
+[00:38:30 → 00:38:34] là ça va être de critiquer du coup de dire est-ce que en fait entre les deux
+[00:38:37 → 00:38:48] il a changé le seuil entre les en fait il a changé le il a changé le seuil à 06 au lieu de 05 est-ce que qu'est-ce que tu préfères entre avoir une meilleure précision
+[00:38:48 → 00:38:57] ou un meilleur recol parce qu'en fait le f1 score qui en gros la moyenne des deux est augmentée seulement de 0,01 donc il n'y a pas une énorme différence entre les deux
+[00:38:57 → 00:39:04] donc là après c'est à toi de faire l'arbitrage entre est-ce que tu préfères avoir une précision plus haute ou un recol plus haut
+[00:39:04 → 00:39:14] d'ailleurs ce qu'il explique un peu en bas il dit ce qui change réellement c'est de s'est optimisé déplacer donc le compromis vers moins de fausses alertes
+[00:39:14 → 00:39:19] précisément au prix des quelques pannes manquées en plus ce que tu viens de dire
+[00:39:19 → 00:39:26] c'est ça mais du coup tu vois c'est ce qui est dit après c'est un guerre réelle mais qui dépend d'un choix métier
+[00:39:26 → 00:39:34] si le coût d'une panne est beaucoup plus gros que le coût d'une fausses alertes le seuil de gauche là est meilleur
+[00:39:34 → 00:39:41] donc c'est là que toi tu dois venir voir en disant ce que je disais la semaine dernière avec en mettant par exemple
+[00:39:41 → 00:39:47] que je sais pas une panne ça coûte 10 000 euros une fausses alertes ça coûte 300 euros qu'est-ce que tu vas vouloir préférer
+[00:39:47 → 00:39:52] en gros le modèle il se fait c'est une vraie dans la décision si tu veux au final c'est à dire que ça
+[00:39:52 → 00:39:58] ah oui oui tu vois là tu mets en évidence les choses devant le métier tu dis à maintenant vous de choisir je décide pas votre place voici ce que j'ai trouvé
+[00:39:58 → 00:40:07] donc pour ce cas là si vous préférez qu'il y ait moins de panne détectée dans ce cas et avoir une précision quand même
+[00:40:07 → 00:40:16] quand on vous donne on vous dit que c'est une panne c'est quasiment c'est sûr que c'est une panne ou bien on détecte plus de panne mais sans être précis que cela sera une panne quoi
+[00:40:16 → 00:40:29] c'est ça et sauf que ce choix là plutôt que de le faire maintenant tu vois et d'avoir les deux modèles l'idée c'est d'avoir discuté avec le métier en amont d'avoir bien compris leurs besoins
+[00:40:29 → 00:40:35] et que du coup tu saches que justement quand tu vois ces dérôles
+[00:40:35 → 00:40:45] proposer le meilleur modèle du coup en fonction de ce qu'ils ont de ce qu'ils ont reprendu c'est ça c'est que toi dès le départ tu vas avoir fait en fait tu vas avoir compris avec parler avec le métier etc
+[00:40:45 → 00:40:57] ils vont t'avoir dit ben nous ce qui nous intéresse c'est surtout par exemple de détecter absolument le plus de panne possible même s'il y a des fausses alertes avec un nombre de fausses alertes maximum peut-être ou quelque chose comme ça
+[00:40:57 → 00:41:09] mais donc tu as ça mais par contre du coup ce qu'il faut tu le dis avant du coup ce qui va te permettre toi de pouvoir faire l'arbitrage directement quand tu as ces deux colonnes là
+[00:41:09 → 00:41:17] l'idée c'est que tu connaisses ton arbitrage toi que t'es pas besoin d'aller voir le métier en leur disant ben j'ai le choix entre ça et ça vous préférez quoi
+[00:41:17 → 00:41:26] c'est à toi d'arbitrer par contre c'est à toi d'arbitrer avec les informations que t'as du métier et donc de justifier ton choix en disant ben voilà on est parti du départ
+[00:41:26 → 00:41:34] on est parti du fait que vous vouliez détecter le plus de panne possible parce que c'est ce qui coûte cher à détecter quitte à ce qu'il y ait un peu de maintenance en trop
+[00:41:34 → 00:41:45] donc ben voilà mes résultats voilà sur une simulation sur 100 sur 100 nouvelles je sais pas sur 100 nouvelles données combien j'aurais de panne etc
+[00:41:45 → 00:41:53] enfin ce que je détecte etc le pourcentage de panne que je détecte le pourcentage de fausses alertes que je peux avoir aussi
+[00:41:53 → 00:41:57] et du coup ça tu peux le justifier en écrivant la matrice de confusion
+[00:41:57 → 00:42:08] donc ça gardez vous bien ça en tête aussi pour du coup le projet que vous allez faire d'avoir du coup le
+[00:42:08 → 00:42:11] comment ça s'appelle
+[00:42:11 → 00:42:18] de dès le départ essayer d'avoir une compréhension pour vous dire ok je fais des choix enfin le métier c'est ça
+[00:42:18 → 00:42:25] donc qu'est-ce que qu'est-ce qui va qu'est-ce que je veux optimiser et quelles sont du coup les valeurs que je veux que je veux préférer quoi
+[00:42:25 → 00:42:32] en gros il faut chercher à poser les doutes avant de commencer un nouveau métier poser les bonnes questions au métier
+[00:42:32 → 00:42:43] en l'occurrence ça sera du coup à les formateurs d'Alien du coup qui me dira vous posez une informe en tant que métier du coup ça sert à vous de répondre à certaines questions concernant
+[00:42:43 → 00:42:58] alors les formateurs ça sera pas à nous en tant que formateur tous ceux que vous voyez là que ce soit Jean-Luc moi ou Thomas que vous allez voir après on n'a pas accès à votre soutenance à votre projet
+[00:42:58 → 00:43:02] et on ne connaît pas et on n'a pas le droit de savoir ce que c'est
+[00:43:02 → 00:43:08] d'accord donc on a le droit de vous aider sur la méthode O c'est ce que fait Jean-Luc à la fin où il reprend après votre truc mais en gros il vous dit
+[00:43:08 → 00:43:13] ben voilà me dites pas quel est le problème quelle est la problématique est-ce que c'est de l'industrie de la médecine etc j'ai pas
+[00:43:13 → 00:43:17] n'a pas le droit de savoir en gros mais par contre
+[00:43:17 → 00:43:19] ben l'idée ça sera si
+[00:43:19 → 00:43:22] si dans vos données et dans ce qu'on vous donne
+[00:43:22 → 00:43:28] c'est explicité par exemple là si on vous avait donné ces données là et qu'on vous dit une panne coûte 10 000 euros
+[00:43:28 → 00:43:30] une
+[00:43:30 → 00:43:36] une fausse maintenance enfin une maintenance une fausse alerte coûte 300 euros bon ben là vous vous pouvez faire votre choix
+[00:43:36 → 00:43:38] de manière arbitraire dès le départ
+[00:43:38 → 00:43:45] tout en critiquant en disant mais par contre si vous faites énormément de fausses alertes ben du coup c'est le mode modèle est pas pris en
+[00:43:45 → 00:43:46] pris au sérieux etc
+[00:43:46 → 00:43:50] mais du coup voilà donc
+[00:43:50 → 00:43:52] en gros le coup c'est de savoir
+[00:43:52 → 00:43:56] faire un choix et justifier son choix quoi
+[00:43:56 → 00:43:57] c'est ça exactement
+[00:43:57 → 00:44:00] c'est ça c'est exactement ça et
+[00:44:00 → 00:44:03] donc après il peut y avoir plusieurs
+[00:44:03 → 00:44:04] enfin suivant les
+[00:44:04 → 00:44:07] suivant les sujets il peut y avoir
+[00:44:07 → 00:44:09] plusieurs possibilités et
+[00:44:09 → 00:44:11] il n'y en a pas forcément une qui est
+[00:44:11 → 00:44:13] la vérité mais tant que
+[00:44:13 → 00:44:15] c'est justifié c'est ce qu'on vous demande surtout
+[00:44:15 → 00:44:18] surtout pendant la soutenance ça va être de justifier vos choix
+[00:44:18 → 00:44:22] justifier les résultats que vous avez et bien les comprendre et bien que ben voilà vous
+[00:44:22 → 00:44:28] si vous montrez la précision et le récolte que vous sachiez expliquer qu'est ce que la précision qu'est ce que le récolte si vous nous dites ben j'ai
+[00:44:28 → 00:44:32] j'ai testé random forest et que j'ai boost savoir expliquer le
+[00:44:32 → 00:44:33] le
+[00:44:33 → 00:44:35] le
+[00:44:35 → 00:44:36] le comportement de
+[00:44:36 → 00:44:46] enfin l'expliquer comment fonctionne une random forest expliquer comment fonctionne un exe boost de manière alors vous n'êtes pas obligé de savoir exactement tous les paramètres etc
+[00:44:46 → 00:44:48] mais du coup vous avez vous avez
+[00:44:48 → 00:44:49] vous avez tout ça
+[00:44:49 → 00:44:52] donc
+[00:44:52 → 00:44:53] c'est bien pensé à tout
+[00:44:53 → 00:44:56] bien pensé à tout justifié donc c'est pour ça que si là vous avez déjà des résultats
+[00:44:56 → 00:45:00] essayez de prendre en main tout votre projet pour pouvoir raconter une histoire
+[00:45:00 → 00:45:06] savoir où vous arrivez savoir comment vous justifiez vos résultats comment vous
+[00:45:06 → 00:45:10] vous présentez les modèles que vous avez fait etc
+[00:45:10 → 00:45:24] donc ouais récolte et précision même si c'est
+[00:45:24 → 00:45:26] c'est c'est faux positif etc
+[00:45:26 → 00:45:30] on se mélange les deux assez souvent puis après au bout d'un moment
+[00:45:30 → 00:45:31] ça rentre
+[00:45:31 → 00:45:46] merci madame
+[00:45:46 → 00:45:48] avec plaisir
+[00:45:48 → 00:53:20] t'as ton écran qui est toujours partagé Ismaël si tu veux l'envoyer
+[00:53:20 → 01:10:36] est-ce que tout le monde est là ou pas
+[01:10:36 → 01:10:42] oui
+[01:10:42 → 01:10:48] j'ai vu Mariam revenir
+[01:10:48 → 01:10:51] du coup je vous propose de juste faire un petit point
+[01:10:51 → 01:10:53] sur du coup
+[01:10:53 → 01:10:54] PRAUC
+[01:10:54 → 01:10:55] ROCAUC etc
+[01:10:55 → 01:10:57] du coup les métriques un peu plus complexes
+[01:10:57 → 01:10:59] que du coup vous avez calculé mais
+[01:10:59 → 01:11:02] pour les expliquer un peu si jamais vous avez des questions
+[01:11:02 → 01:11:19] donc dans les métriques les métriques vous avez aussi tout ce qui est précision
+[01:11:19 → 01:11:21] récolte etc d'ailleurs
+[01:11:21 → 01:11:29] pour les métriques d'évaluation alors là c'est la liste n'est pas exhaustive
+[01:11:29 → 01:11:32] mais voilà tout ce que vous avez sur la régression
+[01:11:32 → 01:11:37] on avait vu tout ce qui est MAE, MSE, RMSE, MAPE
+[01:11:37 → 01:11:42] en gros toutes les erreurs moyennes entre la prédiction et la vraie valeur
+[01:11:42 → 01:11:47] et du coup il y a MSE pour l'erreur au carré
+[01:11:47 → 01:11:50] MAE pour l'erreur en valeur absolue
+[01:11:50 → 01:11:52] MAPE pour si vous voulez l'erreur en pourcentage
+[01:11:52 → 01:11:53] etc etc
+[01:11:53 → 01:11:59] et le R2 score aussi qui est donc ça c'est les plus connus on va dire
+[01:11:59 → 01:12:05] qui vous permettent de savoir comment est votre modèle par rapport à un modèle totalement naïf
+[01:12:05 → 01:12:11] l'idée c'est d'avoir quelque chose le plus proche de 1 possible si vous êtes un négatif c'est que vous êtes pire qu'un modèle constant
+[01:12:11 → 01:12:17] donc pour les métriques si vous avez des sujets de régression vous allez piocher
+[01:12:17 → 01:12:20] dans celle-là pour des sujets de classification donc ce qui nous amène nous
+[01:12:20 → 01:12:26] est-ce que tu pourrais nous parler de chaque métrique MAE, MSE, RMSE
+[01:12:26 → 01:12:28] ouais c'est ce qu'on a
+[01:12:28 → 01:12:28] et le R2
+[01:12:28 → 01:12:31] ouais MAE c'était celle qu'on avait vue
+[01:12:31 → 01:12:34] quand on calcule ça calcule la valeur
+[01:12:34 → 01:12:36] l'écart c'est
+[01:12:36 → 01:12:41] l'écart en valeur absolue
+[01:12:41 → 01:12:42] donc c'est min absolute error
+[01:12:42 → 01:12:44] donc c'est l'écart en valeur absolue
+[01:12:44 → 01:12:45] de la prédiction
+[01:12:45 → 01:12:48] par exemple si je suis sur l'exemple des prix des biens immobiliers
+[01:12:48 → 01:12:56] si je prédis un truc à 180 000 alors qu'il a été vendu 170 000 dans la réalité
+[01:12:56 → 01:12:59] parce que sur ton jeu d'entraînement du coup tu as les labels
+[01:12:59 → 01:13:01] enfin les vraies valeurs
+[01:13:01 → 01:13:03] mais dans ces cas-là on va dire que c'est 10 000
+[01:13:03 → 01:13:06] et on va faire
+[01:13:06 → 01:13:11] on va calculer sur toutes les données du jeu d'entraînement ou du jeu de test etc
+[01:13:11 → 01:13:17] et on va venir du coup sur la MAE calculer la valeur moyenne de l'erreur
+[01:13:17 → 01:13:18] en valeur absolue
+[01:13:18 → 01:13:22] la MSE c'est la même chose
+[01:13:22 → 01:13:24] mais on met les erreurs au carré
+[01:13:24 → 01:13:26] donc MAE c'est assez facile de se dire
+[01:13:26 → 01:13:29] ok en moyenne je fais une erreur à 10 000 euros près
+[01:13:29 → 01:13:33] par exemple sur l'exemple des prix des biens immobiliers
+[01:13:33 → 01:13:39] MSE du coup on met l'erreur qui est calculée au carré
+[01:13:39 → 01:13:41] donc du coup là c'est plus complexe un peu de se rendre compte
+[01:13:41 → 01:13:45] parce qu'une erreur de 10 000 deviendra 100 000
+[01:13:45 → 01:13:47] donc c'est moins représentatif
+[01:13:47 → 01:13:50] mais ça permet au modèle quand on l'évalue
+[01:13:50 → 01:13:55] si le modèle fait sur quelques données de très grosses erreurs
+[01:13:55 → 01:13:57] ça va le pénaliser énormément
+[01:13:57 → 01:14:00] donc ça va mettre en avant le fait qu'un modèle est meilleur
+[01:14:00 → 01:14:01] s'il est meilleur sur globalement tout
+[01:14:01 → 01:14:04] et s'il est un peu plus homogène
+[01:14:04 → 01:14:08] MSE du coup on le calcule en calculant l'erreur au carré
+[01:14:08 → 01:14:12] et on calcule la moyenne sur toutes les erreurs
+[01:14:12 → 01:14:15] la RMSE c'est la même chose
+[01:14:15 → 01:14:18] sauf qu'on prend le résultat
+[01:14:18 → 01:14:19] donc on prend la MSE
+[01:14:19 → 01:14:23] mais on prend la racine carrée de ce résultat là
+[01:14:23 → 01:14:26] c'est pour revenir à quelque chose qui est beaucoup plus interprétable
+[01:14:26 → 01:14:33] de dire qu'en fait on a une erreur de plus ou moins 10 000
+[01:14:33 → 01:14:33] par exemple
+[01:14:33 → 01:14:35] et du coup de se représenter un peu plus
+[01:14:35 → 01:14:39] de est-ce que c'est quelque chose qui est ok sur ce sujet là
+[01:14:39 → 01:14:43] le R de score
+[01:14:43 → 01:14:47] j'y vais assez vite parce qu'on l'avait vu
+[01:14:47 → 01:14:48] j'avais mis des slides et tout
+[01:14:48 → 01:14:49] mais s'il y a besoin du coup de
+[01:14:49 → 01:14:51] si vous avez plus de questions vous me dites
+[01:14:51 → 01:14:55] le R de score c'est qu'on va venir calculer
+[01:14:55 → 01:14:57] est-ce que notre modèle est meilleur
+[01:14:57 → 01:14:59] qu'un modèle naïf
+[01:14:59 → 01:15:01] un modèle naïf ça serait dire
+[01:15:01 → 01:15:03] en moyenne les appartements que je vends
+[01:15:03 → 01:15:04] je les vends à 300 000 euros
+[01:15:04 → 01:15:07] je marque la prédiction que fait le modèle
+[01:15:07 → 01:15:08] c'est 300 000 euros pour tout
+[01:15:08 → 01:15:11] et donc du coup on vient calculer l'erreur
+[01:15:11 → 01:15:13] que fait ce modèle là
+[01:15:13 → 01:15:16] et on vient nous comparer notre erreur moyenne
+[01:15:16 → 01:15:18] à l'erreur moyenne du modèle
+[01:15:18 → 01:15:20] qui met la moyenne tout le temps
+[01:15:20 → 01:15:22] et ça ça permet de voir
+[01:15:22 → 01:15:24] est-ce que notre modèle est meilleur
+[01:15:24 → 01:15:25] qu'un modèle naïf
+[01:15:25 → 01:15:27] si on a quelque chose de
+[01:15:27 → 01:15:30] le résultat il est dans les valeurs négatives
+[01:15:30 → 01:15:32] et son maximum ça va être égal à 1
+[01:15:32 → 01:15:34] si on est dans les négatives
+[01:15:34 → 01:15:35] ça veut dire que notre modèle
+[01:15:35 → 01:15:36] il fait encore plus d'erreurs
+[01:15:36 → 01:15:38] que ce que fait un modèle
+[01:15:38 → 01:15:40] qui calcule la moyenne tout le temps
+[01:15:40 → 01:15:42] si on est à 0
+[01:15:42 → 01:15:44] ça veut dire qu'il a globalement
+[01:15:44 → 01:15:46] les mêmes résultats
+[01:15:46 → 01:15:47] et si on est entre 0 et 1
+[01:15:47 → 01:15:48] et plus on va vers 1
+[01:15:48 → 01:15:50] plus ça veut dire que notre modèle
+[01:15:50 → 01:15:51] est largement meilleur
+[01:15:51 → 01:15:54] que le modèle naïf
+[01:15:54 → 01:15:55] donc là vous allez vouloir maximiser
+[01:15:55 → 01:15:56] ça vous permet de dire
+[01:15:56 → 01:15:58] je compare par rapport à un modèle
+[01:15:58 → 01:16:00] un modèle naïf complètement
+[01:16:00 → 01:16:01] où il n'y aurait pas besoin
+[01:16:01 → 01:16:02] de machine learning
+[01:16:02 → 01:16:04] et est-ce que je suis meilleure ou pas
+[01:16:04 → 01:16:06] donc ça permet de calculer ça
+[01:16:06 → 01:16:07] à l'erreur du score
+[01:16:07 → 01:16:11] donc voilà
+[01:16:11 → 01:16:12] est-ce que c'est plus clair du coup
+[01:16:12 → 01:16:18] Marie-Ama sur chacune ?
+[01:16:18 → 01:16:19] merci
+[01:16:19 → 01:16:21] donc voilà
+[01:16:21 → 01:16:23] et après du coup classification
+[01:16:23 → 01:16:25] vous avez du coup les évaluations
+[01:16:25 → 01:16:26] qu'on avait vues
+[01:16:26 → 01:16:28] donc l'accuratie
+[01:16:28 → 01:16:28] qui est le pourcentage
+[01:16:28 → 01:16:29] de prédiction correcte
+[01:16:29 → 01:16:30] ce qui par contre
+[01:16:30 → 01:16:32] dans notre cas
+[01:16:32 → 01:16:33] comme on a des données déséquilibrées
+[01:16:33 → 01:16:37] n'apporte pas assez d'informations
+[01:16:37 → 01:16:38] et ensuite vous avez
+[01:16:38 → 01:16:39] la précision du coup
+[01:16:39 → 01:16:42] la fiabilité des alertes positives
+[01:16:42 → 01:16:44] qui va essayer de diminuer
+[01:16:44 → 01:16:45] le nombre de faux positifs
+[01:16:45 → 01:16:47] plus vous avez une bonne précision
+[01:16:47 → 01:16:48] moins vous avez de faux positifs
+[01:16:48 → 01:16:51] le recall
+[01:16:51 → 01:16:53] qui lui voit
+[01:16:53 → 01:16:54] si vous arrivez bien
+[01:16:54 → 01:16:56] à détecter les positifs
+[01:16:56 → 01:16:57] donc lui qui va venir essayer
+[01:16:57 → 01:16:58] de minimiser les faux négatifs
+[01:16:58 → 01:17:00] donc essayer de minimiser
+[01:17:00 → 01:17:01] dans notre cas
+[01:17:01 → 01:17:02] le fait qu'on loupe
+[01:17:02 → 01:17:03] pour le recall
+[01:17:03 → 01:17:06] on va essayer de minimiser
+[01:17:06 → 01:17:06] le fait qu'on loupe
+[01:17:06 → 01:17:07] des pannes
+[01:17:07 → 01:17:08] pour la précision
+[01:17:08 → 01:17:10] on va essayer de minimiser
+[01:17:10 → 01:17:13] le nombre de fausses alertes
+[01:17:13 → 01:17:14] et vous avez le F1 score
+[01:17:14 → 01:17:16] qui est la moyenne harmonique
+[01:17:16 → 01:17:17] entre la précision
+[01:17:17 → 01:17:17] et le recall
+[01:17:17 → 01:17:18] si vous savez pas
+[01:17:18 → 01:17:19] lequel des deux
+[01:17:19 → 01:17:21] vous voulez optimiser
+[01:17:21 → 01:17:22] vous pouvez prendre le F1 score
+[01:17:22 → 01:17:23] qui va essayer d'optimiser
+[01:17:23 → 01:17:24] les deux en même temps
+[01:17:24 → 01:17:27] en parallèle
+[01:17:27 → 01:17:27] et du coup
+[01:17:27 → 01:17:29] il y a deux autres maîtres
+[01:17:29 → 01:17:30] qui sont le ROC AUC
+[01:17:30 → 01:17:32] que je vous avais un peu montré
+[01:17:32 → 01:17:33] mais qu'on va détailler
+[01:17:33 → 01:17:34] et le PRAIC
+[01:17:34 → 01:17:36] le ROC AUC
+[01:17:36 → 01:17:37] ça va permettre de dire
+[01:17:37 → 01:17:38] est-ce que le modèle
+[01:17:38 → 01:17:40] arrive à bien classer
+[01:17:40 → 01:17:41] les positifs d'un côté
+[01:17:41 → 01:17:42] les négatifs de l'autre
+[01:17:42 → 01:17:46] et le PRAIC
+[01:17:46 → 01:17:46] ça va être la même chose
+[01:17:46 → 01:17:48] mais que sur les classes positives
+[01:17:48 → 01:17:50] donc en fait
+[01:17:50 → 01:17:51] le PRAIC
+[01:17:51 → 01:17:52] on va beaucoup l'utiliser
+[01:17:52 → 01:17:53] dès qu'on a des données déséquilibrées
+[01:17:53 → 01:17:54] parce que ce qui nous intéresse
+[01:17:54 → 01:17:54] du coup
+[01:17:54 → 01:17:57] c'est la classe positive
+[01:17:57 → 01:17:58] qui est peu représentée
+[01:17:58 → 01:17:59] dans nos données
+[01:17:59 → 01:18:00] et donc c'est pour ça
+[01:18:00 → 01:18:01] qu'on va très souvent
+[01:18:01 → 01:18:02] dans les calculs
+[01:18:02 → 01:18:03] du PRAIC
+[01:18:03 → 01:18:04] si on est sur
+[01:18:04 → 01:18:08] de la donnée déséquilibrée
+[01:18:08 → 01:18:10] donc voilà
+[01:18:10 → 01:18:12] donc ROC AUC
+[01:18:12 → 01:18:13] et PRA AUC
+[01:18:13 → 01:18:14] ils évaluent
+[01:18:14 → 01:18:16] la probabilité
+[01:18:16 → 01:18:17] pas une décision
+[01:18:17 → 01:18:17] à un seuil fixe
+[01:18:17 → 01:18:18] il n'y aura pas de seuil
+[01:18:18 → 01:18:19] le recall
+[01:18:19 → 01:18:19] si vous
+[01:18:19 → 01:18:20] vous savez
+[01:18:20 → 01:18:22] votre modèle
+[01:18:22 → 01:18:23] il sort une probabilité
+[01:18:23 → 01:18:24] d'appartenir à la classe positive
+[01:18:24 → 01:18:26] si vous choisissez
+[01:18:26 → 01:18:27] votre seuil plus haut
+[01:18:27 → 01:18:28] si vous dites
+[01:18:28 → 01:18:28] de base
+[01:18:28 → 01:18:29] l'idée c'est de se dire
+[01:18:29 → 01:18:30] si je suis à 0,5
+[01:18:30 → 01:18:32] ou au-dessus
+[01:18:32 → 01:18:33] je suis de la classe positive
+[01:18:33 → 01:18:34] si je suis en dessous
+[01:18:34 → 01:18:34] de 0,5
+[01:18:34 → 01:18:36] je suis dans la classe négative
+[01:18:36 → 01:18:39] le ROC AUC
+[01:18:39 → 01:18:39] vous n'aurez pas
+[01:18:39 → 01:18:40] ce seuil là
+[01:18:40 → 01:18:41] à choisir
+[01:18:41 → 01:18:43] je vais montrer
+[01:18:43 → 01:18:45] ce que ça va faire
+[01:18:45 → 01:18:48] donc ROC AUC
+[01:18:48 → 01:18:49] le principe c'est ça
+[01:18:49 → 01:18:50] c'est qu'on va faire
+[01:18:50 → 01:18:51] ce seuil décision là
+[01:18:51 → 01:18:53] il va varier
+[01:18:53 → 01:18:54] et on va tracer du coup
+[01:18:54 → 01:18:55] le taux de vrai positif
+[01:18:55 → 01:18:56] en fonction
+[01:18:56 → 01:18:58] du taux de faux positif
+[01:18:58 → 01:19:00] donc les vrais positifs
+[01:19:00 → 01:19:00] les pannes détectées
+[01:19:00 → 01:19:01] qui sont vraiment des pannes
+[01:19:01 → 01:19:03] et les faux positifs
+[01:19:03 → 01:19:05] les fausses alertes
+[01:19:05 → 01:19:06] du coup
+[01:19:06 → 01:19:07] ceux où vous vous dites
+[01:19:07 → 01:19:08] qu'il y a une pannes
+[01:19:08 → 01:19:10] alors qu'en fait non
+[01:19:10 → 01:19:14] donc le vrai positive rate
+[01:19:14 → 01:19:15] ici
+[01:19:15 → 01:19:17] que vous retrouvez ici
+[01:19:17 → 01:19:18] ça va être l'équivalent
+[01:19:18 → 01:19:18] du recall
+[01:19:18 → 01:19:21] et du coup
+[01:19:21 → 01:19:24] le faux positive rate
+[01:19:24 → 01:19:28] c'est un rapport
+[01:19:28 → 01:19:29] sur le nombre
+[01:19:29 → 01:19:30] de faux positifs
+[01:19:30 → 01:19:30] que vous avez
+[01:19:30 → 01:19:32] et ce qu'on appelle
+[01:19:32 → 01:19:33] l'AUC
+[01:19:33 → 01:19:33] du coup
+[01:19:33 → 01:19:34] c'est l'air sous la courbe
+[01:19:34 → 01:19:34] ici
+[01:19:34 → 01:19:36] et donc c'est une valeur
+[01:19:36 → 01:19:36] qui va varier
+[01:19:36 → 01:19:37] entre 0 et 1
+[01:19:37 → 01:19:39] si vous êtes à 0
+[01:19:39 → 01:19:41] vous êtes pas bon
+[01:19:41 → 01:19:43] si vous êtes à 0.5
+[01:19:43 → 01:19:44] ça veut dire
+[01:19:44 → 01:19:45] que vous avez un modèle aléatoire
+[01:19:45 → 01:19:48] et si vous êtes à 1
+[01:19:48 → 01:19:49] vous avez un modèle
+[01:19:49 → 01:19:49] qui est parfait
+[01:19:49 → 01:19:52] donc l'idée va être
+[01:19:52 → 01:19:52] d'avoir
+[01:19:52 → 01:19:53] une valeur
+[01:19:53 → 01:19:54] de rock AIC
+[01:19:54 → 01:19:57] supérieure à 0.5
+[01:19:57 → 01:19:58] là la courbe
+[01:19:58 → 01:19:59] ici
+[01:19:59 → 01:20:00] qui est la ligne
+[01:20:00 → 01:20:00] là
+[01:20:00 → 01:20:01] c'est la ligne aléatoire
+[01:20:01 → 01:20:03] donc vous devez être au-dessus
+[01:20:03 → 01:20:05] si vous êtes en dessous
+[01:20:05 → 01:20:05] ça veut dire
+[01:20:05 → 01:20:06] que vous êtes encore moins bon
+[01:20:06 → 01:20:06] que l'aléatoire
+[01:20:06 → 01:20:09] et l'interprétation
+[01:20:09 → 01:20:10] du coup
+[01:20:10 → 01:20:11] c'est que
+[01:20:11 → 01:20:14] si je prends
+[01:20:14 → 01:20:16] un exemple
+[01:20:16 → 01:20:17] positif
+[01:20:17 → 01:20:18] tiré au hasard
+[01:20:18 → 01:20:18] c'est-à-dire
+[01:20:18 → 01:20:20] si je tire au hasard
+[01:20:20 → 01:20:21] une panne
+[01:20:21 → 01:20:22] il faut que la pro
+[01:20:22 → 01:20:23] que le score
+[01:20:23 → 01:20:25] que je lui ai donné
+[01:20:25 → 01:20:26] d'appartenir
+[01:20:26 → 01:20:27] à la classe positive
+[01:20:27 → 01:20:28] soit plus haute
+[01:20:28 → 01:20:30] que si je prends
+[01:20:30 → 01:20:31] un exemple
+[01:20:31 → 01:20:31] négatif
+[01:20:31 → 01:20:32] tiré au hasard
+[01:20:32 → 01:20:34] donc c'est pour ça
+[01:20:34 → 01:20:35] qu'il y a le seuil
+[01:20:35 → 01:20:36] qui augmente au fur et à mesure
+[01:20:36 → 01:20:36] et donc on mesure
+[01:20:36 → 01:20:39] la qualité du classement
+[01:20:39 → 01:20:41] indépendamment du seuil choisi
+[01:20:41 → 01:20:42] c'est juste savoir
+[01:20:42 → 01:20:43] est-ce que je suis au-dessus
+[01:20:43 → 01:20:44] de
+[01:20:44 → 01:20:44] est-ce que
+[01:20:44 → 01:20:45] quand je prends
+[01:20:45 → 01:20:47] un exemple positif
+[01:20:47 → 01:20:48] dans mes données d'entraînement
+[01:20:48 → 01:20:49] est-ce que son score
+[01:20:49 → 01:20:50] sa valeur
+[01:20:50 → 01:20:51] sa probabilité
+[01:20:51 → 01:20:52] d'appartenir à la classe positive
+[01:20:52 → 01:20:53] est plus haute
+[01:20:53 → 01:20:55] que n'importe quel négatif
+[01:20:55 → 01:20:55] que je prends
+[01:20:55 → 01:20:57] puisque les négatifs
+[01:20:57 → 01:20:57] leur probabilité
+[01:20:57 → 01:20:58] d'appartenir à la classe positive
+[01:20:58 → 01:20:59] est censée être proche de zéro
+[01:20:59 → 01:21:02] et pour les positifs
+[01:21:02 → 01:21:03] elle est censée être proche de 1
+[01:21:03 → 01:21:04] donc du coup
+[01:21:04 → 01:21:05] c'est vérifier
+[01:21:05 → 01:21:05] que vous arrivez bien
+[01:21:05 → 01:21:06] à détacher
+[01:21:06 → 01:21:07] les positifs
+[01:21:07 → 01:21:09] vers la valeur de 1
+[01:21:09 → 01:21:11] la plus haute possible
+[01:21:11 → 01:21:12] et les négatifs
+[01:21:12 → 01:21:13] vers la valeur de zéro
+[01:21:13 → 01:21:14] la plus haute possible
+[01:21:14 → 01:21:15] et c'est ça
+[01:21:15 → 01:21:16] que vient calculer
+[01:21:16 → 01:21:16] le ROC AUC
+[01:21:16 → 01:21:18] donc si vous êtes à 0,5
+[01:21:18 → 01:21:19] c'est que vous êtes
+[01:21:19 → 01:21:20] à un modèle à la tort
+[01:21:20 → 01:21:20] pas fou
+[01:21:20 → 01:21:22] donc c'est que vous n'êtes pas fou
+[01:21:22 → 01:21:24] en qualité
+[01:21:24 → 01:21:24] par contre
+[01:21:24 → 01:21:25] si vous commencez
+[01:21:25 → 01:21:26] à être à 0,8
+[01:21:26 → 01:21:27] vous commencez à être
+[01:21:27 → 01:21:29] sur des bonnes valeurs
+[01:21:29 → 01:21:29] de ROC AUC
+[01:21:29 → 01:21:32] donc le ROC AUC
+[01:21:32 → 01:21:32] donc le ROC AUC
+[01:21:32 → 01:21:35] peut être une métrique
+[01:21:35 → 01:21:36] que vous utilisez
+[01:21:36 → 01:21:42] pour les classifications
+[01:21:42 → 01:21:46] mais il y en a une
+[01:21:46 → 01:21:47] qui est encore meilleure
+[01:21:47 → 01:21:49] par rapport aux données déséquilibrées
+[01:21:49 → 01:21:50] c'est le PR
+[01:21:50 → 01:21:52] PR AUC
+[01:21:52 → 01:21:53] donc pour du coup
+[01:21:53 → 01:21:55] Area and the Curve
+[01:21:55 → 01:21:58] et PR pour précision
+[01:21:58 → 01:21:58] et recall
+[01:21:58 → 01:22:00] donc là
+[01:22:00 → 01:22:01] on va vraiment
+[01:22:01 → 01:22:02] tracer
+[01:22:02 → 01:22:03] la précision d'un côté
+[01:22:03 → 01:22:05] le recall de l'autre
+[01:22:05 → 01:22:07] et le but
+[01:22:07 → 01:22:08] c'est que
+[01:22:08 → 01:22:11] donc dans ces cas là
+[01:22:11 → 01:22:12] il n'y a pas de vrai négatif
+[01:22:12 → 01:22:13] dans tout ce qu'on calcule
+[01:22:13 → 01:22:14] donc là
+[01:22:14 → 01:22:15] on est vraiment
+[01:22:15 → 01:22:16] en train de se dire
+[01:22:16 → 01:22:19] quand on fait cette courbe là
+[01:22:19 → 01:22:21] c'est
+[01:22:21 → 01:22:22] est-ce que
+[01:22:22 → 01:22:23] on est
+[01:22:23 → 01:22:27] est-ce qu'on est vraiment bon
+[01:22:27 → 01:22:28] sur les valeurs positives
+[01:22:28 → 01:22:31] donc du coup
+[01:22:31 → 01:22:32] c'est ce que vous allez
+[01:22:32 → 01:22:34] chercher à
+[01:22:34 → 01:22:38] à avoir
+[01:22:38 → 01:22:38] et du coup
+[01:22:38 → 01:22:39] à maximiser
+[01:22:39 → 01:22:41] là pour le coup
+[01:22:41 → 01:22:43] pour le ROC AUC
+[01:22:43 → 01:22:44] la valeur
+[01:22:44 → 01:22:44] du coup
+[01:22:44 → 01:22:46] classique
+[01:22:46 → 01:22:46] moyenne
+[01:22:46 → 01:22:48] c'est
+[01:22:48 → 01:22:49] le
+[01:22:49 → 01:22:51] c'est 0.5
+[01:22:51 → 01:22:52] enfin la valeur
+[01:22:52 → 01:22:53] votre valeur de référence
+[01:22:53 → 01:22:54] c'est 0.5
+[01:22:54 → 01:22:56] pour le PR AUC
+[01:22:56 → 01:22:57] ça ne va pas être 0.5
+[01:22:57 → 01:22:59] mais ça va être
+[01:22:59 → 01:23:01] une variable aléatoire
+[01:23:01 → 01:23:01] qui va être du coup
+[01:23:01 → 01:23:02] la prévalence
+[01:23:02 → 01:23:03] ce qu'on appelle
+[01:23:03 → 01:23:03] la prévalence
+[01:23:03 → 01:23:04] du coup
+[01:23:04 → 01:23:04] c'est la proportion
+[01:23:04 → 01:23:05] de faux positifs
+[01:23:05 → 01:23:06] si par exemple
+[01:23:06 → 01:23:07] vous avez 15%
+[01:23:07 → 01:23:08] de positifs
+[01:23:08 → 01:23:10] votre PR AUC
+[01:23:10 → 01:23:12] si vous êtes à 0.15
+[01:23:12 → 01:23:13] si vous êtes au-dessus
+[01:23:13 → 01:23:13] de 0.15
+[01:23:13 → 01:23:14] vous êtes meilleur
+[01:23:14 → 01:23:15] qu'un modèle
+[01:23:15 → 01:23:17] aléatoire
+[01:23:17 → 01:23:17] en fait
+[01:23:17 → 01:23:19] donc
+[01:23:19 → 01:23:20] votre plancher
+[01:23:20 → 01:23:21] que vous
+[01:23:21 → 01:23:22] cherchez
+[01:23:22 → 01:23:23] à améliorer
+[01:23:23 → 01:23:23] il est beaucoup
+[01:23:23 → 01:23:24] plus bas
+[01:23:24 → 01:23:24] que ce que vous avez
+[01:23:24 → 01:23:25] par rapport
+[01:23:25 → 01:23:25] au ROC AUC
+[01:23:25 → 01:23:26] là dans notre cas
+[01:23:26 → 01:23:27] on va vouloir
+[01:23:27 → 01:23:28] être au-dessus
+[01:23:28 → 01:23:28] d'une valeur
+[01:23:28 → 01:23:29] qui est
+[01:23:29 → 01:23:31] à 0.15
+[01:23:31 → 01:23:32] au début
+[01:23:32 → 01:23:34] et donc
+[01:23:34 → 01:23:34] vous allez vouloir
+[01:23:34 → 01:23:35] maximiser
+[01:23:35 → 01:23:36] la précision
+[01:23:36 → 01:23:38] et le recall
+[01:23:38 → 01:23:38] donc vous allez
+[01:23:38 → 01:23:39] vouloir avoir
+[01:23:39 → 01:23:42] une courbe
+[01:23:42 → 01:23:42] en fait
+[01:23:42 → 01:23:43] la plus haute possible
+[01:23:43 → 01:23:43] donc une valeur
+[01:23:43 → 01:23:44] la plus haute possible
+[01:23:44 → 01:23:45] au-dessus
+[01:23:45 → 01:23:46] de cette valeur
+[01:23:46 → 01:23:47] de proportion
+[01:23:47 → 01:23:48] de valeur positive
+[01:23:48 → 01:23:51] donc voilà
+[01:23:51 → 01:23:52] si vous avez
+[01:23:52 → 01:23:53] un score de 1
+[01:23:53 → 01:23:54] vous avez un modèle
+[01:23:54 → 01:23:55] parfait
+[01:23:55 → 01:23:56] tous les vrais positifs
+[01:23:56 → 01:23:58] sont trouvés
+[01:23:58 → 01:23:59] sans faire
+[01:23:59 → 01:24:00] aucune erreur
+[01:24:00 → 01:24:01] de faux positif
+[01:24:01 → 01:24:02] si vous avez
+[01:24:02 → 01:24:03] une très bonne
+[01:24:03 → 01:24:05] score
+[01:24:05 → 01:24:06] du coup
+[01:24:06 → 01:24:06] le modèle
+[01:24:06 → 01:24:07] est très bon
+[01:24:07 → 01:24:08] donc voilà
+[01:24:08 → 01:24:09] donc votre score
+[01:24:09 → 01:24:09] de référence
+[01:24:09 → 01:24:10] vous allez voir
+[01:24:10 → 01:24:11] si vous avez
+[01:24:11 → 01:24:12] tracé votre ROC AUC
+[01:24:12 → 01:24:14] généralement
+[01:24:14 → 01:24:15] Claude va vous avoir
+[01:24:15 → 01:24:16] fait tracer
+[01:24:16 → 01:24:17] cette courbe-là
+[01:24:17 → 01:24:17] d'aléatoire
+[01:24:17 → 01:24:19] qui vous donne
+[01:24:19 → 01:24:21] qui vous donne
+[01:24:21 → 01:24:21] du coup
+[01:24:21 → 01:24:23] la valeur
+[01:24:23 → 01:24:24] à optimiser
+[01:24:24 → 01:24:25] la valeur
+[01:24:25 → 01:24:26] sur laquelle
+[01:24:26 → 01:24:27] vous devez
+[01:24:27 → 01:24:27] être au-dessus
+[01:24:27 → 01:24:33] donc l'idée
+[01:24:33 → 01:24:34] ça va être
+[01:24:34 → 01:24:34] d'avoir
+[01:24:34 → 01:24:37] une aire
+[01:24:37 → 01:24:37] sous la courbe
+[01:24:37 → 01:24:38] la plus haute
+[01:24:38 → 01:24:38] possible
+[01:24:38 → 01:24:39] donc vous pouvez
+[01:24:39 → 01:24:40] avoir
+[01:24:40 → 01:24:41] là c'est schématisé
+[01:24:41 → 01:24:41] comme ça
+[01:24:41 → 01:24:41] mais vous pouvez
+[01:24:41 → 01:24:42] avoir des courbes
+[01:24:42 → 01:24:44] qui sont
+[01:24:44 → 01:24:47] très en escalier
+[01:24:47 → 01:24:47] des fois
+[01:24:47 → 01:24:48] parce qu'au début
+[01:24:48 → 01:24:48] vous avez
+[01:24:48 → 01:24:49] une très bonne
+[01:24:49 → 01:24:50] précision
+[01:24:50 → 01:24:50] pendant un moment
+[01:24:50 → 01:24:51] puis après
+[01:24:51 → 01:24:51] hop
+[01:24:51 → 01:24:52] vous pêchez
+[01:24:52 → 01:24:52] etc
+[01:24:52 → 01:24:55] donc voilà
+[01:24:55 → 01:24:56] donc c'est pour ça
+[01:24:56 → 01:24:56] qu'on va venir
+[01:24:56 → 01:24:57] chercher le PR AUC
+[01:24:57 → 01:24:58] en général
+[01:24:58 → 01:24:58] sur les sujets
+[01:24:58 → 01:24:59] de classification
+[01:24:59 → 01:25:00] avec des données
+[01:25:00 → 01:25:00] déséquilibrées
+[01:25:00 → 01:25:02] parce que ça se concentre
+[01:25:02 → 01:25:03] sur est-ce qu'on arrive
+[01:25:03 → 01:25:04] bien à détecter
+[01:25:04 → 01:25:05] les classes positives
+[01:25:05 → 01:25:06] ou pas
+[01:25:06 → 01:25:07] et est-ce qu'on est
+[01:25:07 → 01:25:07] meilleur
+[01:25:07 → 01:25:08] qu'un modèle
+[01:25:08 → 01:25:10] qui met
+[01:25:10 → 01:25:12] oui il n'y a que
+[01:25:12 → 01:25:12] des pannes
+[01:25:12 → 01:25:13] et qui trouve
+[01:25:13 → 01:25:14] 15% des pannes
+[01:25:14 → 01:25:16] qui est bon
+[01:25:16 → 01:25:17] dans 15% des cas
+[01:25:17 → 01:25:17] par exemple
+[01:25:17 → 01:25:19] dans les données
+[01:25:19 → 01:25:20] déséquilibrées
+[01:25:20 → 01:25:21] on trouve
+[01:25:21 → 01:25:22] une réponse
+[01:25:22 → 01:25:24] qui est majoritaire
+[01:25:24 → 01:25:25] finalement
+[01:25:25 → 01:25:26] c'est ça
+[01:25:26 → 01:25:27] soit majoritairement
+[01:25:27 → 01:25:28] oui ou majoritairement
+[01:25:28 → 01:25:28] non
+[01:25:28 → 01:25:30] c'est ça
+[01:25:30 → 01:25:32] et dans la grande
+[01:25:32 → 01:25:33] majorité des cas
+[01:25:33 → 01:25:34] des cas d'usage
+[01:25:34 → 01:25:34] qu'on va avoir
+[01:25:34 → 01:25:35] ce qui va se passer
+[01:25:35 → 01:25:36] c'est que ta classe
+[01:25:36 → 01:25:37] minoritaire
+[01:25:37 → 01:25:38] c'est la classe
+[01:25:38 → 01:25:39] que tu veux détecter
+[01:25:39 → 01:25:39] là par exemple
+[01:25:39 → 01:25:40] dans notre cas
+[01:25:40 → 01:25:40] vous avez beaucoup
+[01:25:40 → 01:25:41] d'exemples
+[01:25:41 → 01:25:42] où il n'y a rien
+[01:25:42 → 01:25:42] qui se passe
+[01:25:42 → 01:25:43] enfin il n'y a pas de pannes
+[01:25:43 → 01:25:44] et peu d'exemples
+[01:25:44 → 01:25:45] où il y a des pannes
+[01:25:45 → 01:25:46] et ce qui nous intéresse
+[01:25:46 → 01:25:48] c'est de détecter les pannes
+[01:25:48 → 01:25:49] donc c'est ce qu'on appelle
+[01:25:49 → 01:25:50] la classe qu'on met
+[01:25:50 → 01:25:51] en classe positive
+[01:25:51 → 01:25:51] en général
+[01:25:51 → 01:25:53] c'est la classe
+[01:25:53 → 01:25:55] qui est à détecter
+[01:25:55 → 01:25:55] la plus importante
+[01:25:55 → 01:25:57] et en général
+[01:25:57 → 01:25:59] sur les données déséquilibrées
+[01:25:59 → 01:26:00] c'est souvent le cas
+[01:26:00 → 01:26:01] où c'est la classe positive
+[01:26:01 → 01:26:03] qui est sous-représentée
+[01:26:03 → 01:26:04] alors que c'est la classe
+[01:26:04 → 01:26:05] qui nous importe le plus
+[01:26:05 → 01:26:06] donc c'est ça
+[01:26:06 → 01:26:08] qu'il faut venir
+[01:26:08 → 01:26:09] essayer d'optimiser
+[01:26:09 → 01:26:10] ce cas là
+[01:26:10 → 01:26:10] et voir
+[01:26:10 → 01:26:12] si vous avez
+[01:26:12 → 01:26:13] si on avait eu
+[01:26:13 → 01:26:14] 50% de données
+[01:26:14 → 01:26:15] avec des pannes
+[01:26:15 → 01:26:17] et 50% sans pannes
+[01:26:17 → 01:26:18] vous ne seriez pas
+[01:26:18 → 01:26:19] forcément allé chercher
+[01:26:19 → 01:26:20] le PRAUC
+[01:26:20 → 01:26:20] il n'y aurait pas forcément
+[01:26:20 → 01:26:22] eu d'intérêt
+[01:26:22 → 01:26:23] parce que le ROCAUC
+[01:26:23 → 01:26:23] par exemple
+[01:26:23 → 01:26:24] aurait été très bien
+[01:26:24 → 01:26:25] le F1Score
+[01:26:25 → 01:26:26] aurait eu toutes les informations
+[01:26:26 → 01:26:27] etc.
+[01:26:27 → 01:26:29] si vous avez des données
+[01:26:29 → 01:26:29] déséquilibrées
+[01:26:29 → 01:26:30] le PRAUC
+[01:26:30 → 01:26:30] est très très bon
+[01:26:30 → 01:26:32] sur ça
+[01:26:32 → 01:26:33] mais vous voyez
+[01:26:33 → 01:26:33] ça se base encore
+[01:26:33 → 01:26:34] sur la précision
+[01:26:34 → 01:26:35] et le recall
+[01:26:35 → 01:26:36] donc ça se base encore
+[01:26:36 → 01:26:37] sur votre matrice de confusion
+[01:26:37 → 01:26:39] globalement
+[01:26:39 → 01:26:44] donc voilà
+[01:26:44 → 01:26:46] est-ce qu'il y a des questions
+[01:26:46 → 01:26:47] je crois que
+[01:26:47 → 01:26:48] ah oui
+[01:26:48 → 01:26:50] donc lequel choisir
+[01:26:50 → 01:26:50] entre les deux
+[01:26:50 → 01:26:52] ROCAUC
+[01:26:52 → 01:26:53] du coup
+[01:26:53 → 01:26:54] ça inclut
+[01:26:54 → 01:26:55] les vrais négatifs
+[01:26:55 → 01:26:57] donc vous incluez
+[01:26:57 → 01:26:57] en fait
+[01:26:57 → 01:26:58] tous les
+[01:26:58 → 01:26:59] toutes les
+[01:26:59 → 01:27:00] toutes les
+[01:27:00 → 01:27:01] toutes les
+[01:27:01 → 01:27:02] cases de votre matrice
+[01:27:02 → 01:27:02] de confusion
+[01:27:02 → 01:27:04] avec une référence
+[01:27:04 → 01:27:05] qui est du coup
+[01:27:05 → 01:27:05] à 0,5
+[01:27:05 → 01:27:07] donc s'il y a
+[01:27:07 → 01:27:08] du déséquilibre
+[01:27:08 → 01:27:08] ça reste
+[01:27:08 → 01:27:09] très souvent
+[01:27:09 → 01:27:11] une grosse valeur
+[01:27:11 → 01:27:12] alors qu'il y a
+[01:27:12 → 01:27:14] alors que potentiellement
+[01:27:14 → 01:27:15] il y a beaucoup
+[01:27:15 → 01:27:16] de vrais négatifs
+[01:27:16 → 01:27:17] donc c'est parfois
+[01:27:17 → 01:27:17] en fait
+[01:27:17 → 01:27:18] ce qu'on peut dire
+[01:27:18 → 01:27:19] trop optimiste
+[01:27:19 → 01:27:20] si vous avez
+[01:27:20 → 01:27:21] des données déséquilibrées
+[01:27:21 → 01:27:23] donc à privilégier
+[01:27:23 → 01:27:23] si vous êtes
+[01:27:23 → 01:27:24] si vous avez
+[01:27:24 → 01:27:25] des classes équilibrées
+[01:27:25 → 01:27:27] vous faites de la classification
+[01:27:27 → 01:27:28] et vous voulez comparer
+[01:27:28 → 01:27:29] plusieurs modèles
+[01:27:29 → 01:27:29] ben là
+[01:27:29 → 01:27:30] vous pouvez tout à fait
+[01:27:30 → 01:27:31] prendre le ROCAUC
+[01:27:31 → 01:27:33] à contrario
+[01:27:33 → 01:27:33] si vous avez
+[01:27:33 → 01:27:35] des classes déséquilibrées
+[01:27:35 → 01:27:36] ben on va plus
+[01:27:36 → 01:27:36] se pencher
+[01:27:36 → 01:27:38] sur le
+[01:27:38 → 01:27:40] PRAUC
+[01:27:40 → 01:27:41] donc avec
+[01:27:41 → 01:27:42] ben puisqu'il regarde
+[01:27:42 → 01:27:42] du coup
+[01:27:42 → 01:27:43] la précision
+[01:27:43 → 01:27:44] et le recall
+[01:27:44 → 01:27:45] les vrais négatifs
+[01:27:45 → 01:27:47] on s'y intéresse pas
+[01:27:47 → 01:27:49] et la référence
+[01:27:49 → 01:27:49] par contre
+[01:27:49 → 01:27:50] faites bien attention
+[01:27:50 → 01:27:51] à calculer la référence
+[01:27:51 → 01:27:52] pour voir
+[01:27:52 → 01:27:53] si vous êtes
+[01:27:53 → 01:27:54] meilleur que votre modèle
+[01:27:54 → 01:27:55] ou pas
+[01:27:55 → 01:27:57] qu'un modèle aléatoire
+[01:27:57 → 01:27:57] ou pas
+[01:27:58 → 01:27:58] donc bien calculé
+[01:27:58 → 01:28:00] et donc ça se calcule
+[01:28:00 → 01:28:01] c'est la proportion
+[01:28:01 → 01:28:02] de classes positives
+[01:28:02 → 01:28:04] et donc
+[01:28:04 → 01:28:04] dès qu'il y a
+[01:28:04 → 01:28:05] du déséquilibre
+[01:28:05 → 01:28:06] si les faux positifs
+[01:28:06 → 01:28:07] augmentent
+[01:28:07 → 01:28:08] votre PRAUC
+[01:28:08 → 01:28:10] va largement diminuer
+[01:28:10 → 01:28:12] donc vous allez
+[01:28:12 → 01:28:13] ça donnera
+[01:28:13 → 01:28:14] plus d'informations
+[01:28:14 → 01:28:14] sur est-ce que
+[01:28:14 → 01:28:15] votre modèle
+[01:28:15 → 01:28:16] est bon ou pas
+[01:28:16 → 01:28:17] donc vraiment
+[01:28:17 → 01:28:19] si vous êtes
+[01:28:19 → 01:28:20] sur du déséquilibre
+[01:28:20 → 01:28:20] alors évidemment
+[01:28:20 → 01:28:21] les deux sont
+[01:28:21 → 01:28:21] pour la classification
+[01:28:21 → 01:28:22] déjà
+[01:28:22 → 01:28:23] et si vous êtes
+[01:28:23 → 01:28:24] sur du déséquilibre
+[01:28:24 → 01:28:25] c'est PRAUC
+[01:28:25 → 01:28:27] et sinon
+[01:28:27 → 01:28:28] vous pouvez rester
+[01:28:28 → 01:28:29] largement
+[01:28:29 → 01:28:29] sur du ROCAUC
+[01:28:29 → 01:28:30] qui sera
+[01:28:30 → 01:28:31] tout aussi bien
+[01:28:31 → 01:28:32] si vous avez
+[01:28:32 → 01:28:32] des données
+[01:28:32 → 01:28:34] qui auraient
+[01:28:34 → 01:28:35] du coup voilà
+[01:28:35 → 01:28:37] qui a des questions
+[01:28:37 → 01:28:39] sur ces deux métriques là
+[01:28:39 → 01:28:40] est-ce que ça vous parait
+[01:28:40 → 01:28:46] clair ou pas
+[01:28:46 → 01:28:51] je vous envoie
+[01:28:51 → 01:28:51] du coup
+[01:28:51 → 01:28:51] je vous mets
+[01:28:51 → 01:28:52] le fichier
+[01:28:52 → 01:28:55] dans les docs partagés
+[01:28:55 → 01:28:57] et je vous propose
+[01:28:57 → 01:28:57] qu'on fasse
+[01:28:57 → 01:28:58] une petite
+[01:28:58 → 01:29:00] petite pause café
+[01:29:00 → 01:29:01] et qu'on se retrouve
+[01:29:01 → 01:29:02] à 10h50
+[01:29:02 → 01:29:03] si c'est bon
+[01:29:03 → 01:29:08] pour tout le monde
+[01:29:08 → 01:29:11] ok
+[01:29:11 → 01:29:14] fait, bah à de suite
