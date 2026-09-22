@@ -18,3 +18,8 @@ wheels/
 
 # Rendus intermédiaires utilisés uniquement pour le contrôle visuel local
 tmp/
+
+# Checkpoints de modèles (PatchCoreDetector.save, ~200 Mo — backbone ImageNet inclus) : à régénérer
+# localement via .fit(), jamais à committer.
+*.pt
+*.pth

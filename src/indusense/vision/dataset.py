@@ -64,6 +64,24 @@ def load_ground_truth_mask(path: Path, image_size: int = DEFAULT_IMAGE_SIZE) -> 
         return (np.asarray(resized, dtype=np.float32) / 255.0 > 0.5).astype(np.float32)
 
 
+def list_mask_paths(category_root: Path, defect: str) -> list[Path]:
+    """Liste les chemins des masques de vérité terrain d'une catégorie de défaut, triés.
+
+    Le tri par ordre alphabétique des noms de fichiers (``000_mask.png``, ``001_mask.png``, ...)
+    correspond à l'ordre des images de ``list_image_paths(category_root, 'test', defect)`` : les deux
+    dossiers partagent la même numérotation, image par image.
+    """
+    mask_root = category_root / "ground_truth" / defect
+    if not mask_root.is_dir():
+        raise FileNotFoundError(f"Dossier de masques introuvable : {mask_root}")
+    return sorted(mask_root.glob("*_mask.png"))
+
+
+def load_mask_batch(paths: list[Path], image_size: int = DEFAULT_IMAGE_SIZE) -> np.ndarray:
+    """Charge plusieurs masques de vérité terrain dans un seul tableau ``(N, H, W)`` binaire."""
+    return np.stack([load_ground_truth_mask(path, image_size) for path in paths], axis=0)
+
+
 @dataclass(frozen=True)
 class TrainValidationSplit:
     """Chemins des images saines d'entraînement et de validation."""

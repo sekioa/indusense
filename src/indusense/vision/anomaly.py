@@ -28,6 +28,32 @@ def reconstruction_error(originals: np.ndarray, reconstructions: np.ndarray) -> 
     return squared_error.mean(axis=tuple(range(1, originals.ndim)))
 
 
+def reconstruction_heatmap(originals: np.ndarray, reconstructions: np.ndarray) -> np.ndarray:
+    """Calcule la carte d'erreur par pixel ``(N, H, W)`` (MSE moyennée sur les canaux couleur).
+
+    Contrairement à ``reconstruction_error`` (un score scalaire par image), cette carte localise
+    spatialement où l'original et la reconstruction diffèrent le plus — la base des heatmaps affichées
+    en étape 4 et de l'AUROC pixel calculé par ``pixel_level_roc_auc``.
+    """
+    if originals.shape != reconstructions.shape:
+        raise ValueError(f"Formes différentes : {originals.shape} vs {reconstructions.shape}")
+    squared_error = (originals.astype(np.float64) - reconstructions.astype(np.float64)) ** 2
+    return squared_error.mean(axis=-1)
+
+
+def pixel_level_roc_auc(masks: np.ndarray, heatmaps: np.ndarray) -> float:
+    """AUROC pixel : classe chaque pixel de test (sain/défaut) à partir de son erreur de reconstruction.
+
+    ``masks`` (0/1, vérité terrain — tout à 0 pour une image saine) et ``heatmaps`` (erreur par pixel)
+    doivent avoir la même forme ``(N, H, W)``. Complémentaire à l'AUROC **image** (``ranking_metrics``) :
+    il évalue si le modèle localise correctement le défaut *dans* l'image, pas seulement s'il détecte
+    qu'il y en a un.
+    """
+    if masks.shape != heatmaps.shape:
+        raise ValueError(f"Formes différentes : {masks.shape} vs {heatmaps.shape}")
+    return float(roc_auc_score(masks.reshape(-1), heatmaps.reshape(-1)))
+
+
 def choose_threshold(validation_errors: np.ndarray, *, n_std: float = 3.0) -> float:
     """Calibre le seuil d'anomalie sur les erreurs d'un jeu de validation sain.
 
@@ -113,6 +139,7 @@ class TrainingRun:
     pr_auc: float
     metrics_at_threshold: ThresholdMetrics
     mean_error_by_defect: dict[str, float]
+    kernel_size: int = 3
 
     def to_json(self, path: Path) -> None:
         payload = asdict(self)
