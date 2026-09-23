@@ -36,3 +36,7 @@ dl = [
     "scikit-image>=0.26.0",
     "tensorflow>=2.21.0 ; python_version < '3.14'",
 ]
+ml = [
+    "codecarbon>=3.0",
+    "shap>=0.48",
+]
