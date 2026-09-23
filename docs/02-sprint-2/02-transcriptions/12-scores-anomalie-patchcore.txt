@@ -1,0 +1,860 @@
+vous permettre de mesurer à quel point votre modèle est bon.
+Et c'est surtout ce qui va vous permettre de mesurer la différence
+entre votre image de sortie de l'autorecoudeur et votre image d'entrée.
+Et c'est ce qui va vous permettre de dire, il y a un score d'anomalie.
+Au-dessus d'un certain seuil, je considère qu'il y a une anomalie.
+Et en dessous, je considère que l'image est normale.
+Donc, vous avez le choix entre plusieurs scores.
+Le plus simple, c'est la MSE.
+Donc, le calcul est fait de la même manière que pour la MSE,
+comme on a vu dans la régression, si vous vous souvenez sur le machine learning.
+Ça va être le score du coup le plus direct et le plus facile à calculer.
+C'est qu'on va prendre la différence pixel à pixel entre l'image et sa reconstruction.
+Si vous avez du coup une image de 256 fois 256, vous allez du coup pixel par pixel prendre la différence.
+Et donc, vous avez deux possibilités de voir votre résultat.
+Soit vous avez déjà un score global.
+Du coup, sur l'image entière, vous avez la moyenne du carré des écarts de pixel par pixel.
+Et ça vous permet de dire, OK, en moyenne, cette image est très différente de l'image d'entrée ou pas.
+Et vous pouvez aussi faire la carte d'erreur, donc par pixel, pour localiser le défaut.
+C'est-à-dire faire apparaître sur, du coup, tout ce que vous avez fait au niveau heatmap,
+faire apparaître les défauts, donc faire apparaître les pixels qui sont vraiment différents
+du même pixel en entrée.
+Ça, ça permet de pouvoir un peu plus localiser les défauts
+et de pouvoir interpréter un peu vos résultats,
+de voir où est-ce que le modèle s'est trompé,
+où est-ce qu'il n'a pas réussi à reconstruire.
+L'avantage de cette métrique, c'est qu'elle est simple à calculer,
+rapide, du coup, à calculer.
+Et en plus, vous pouvez vite voir à quoi elle correspond, voir les pixels, etc.
+Donc, on peut l'utiliser pour l'entraînement.
+L'entraînement, ça va être, du coup, la fonction de coût qu'on va utiliser,
+qui va être calculée à chaque passe et là, à partir de laquelle le modèle
+va venir calculer les dérivés, les gradients, pour faire la descente de gradients
+et modifier les parallèbres.
+Donc, elle est très pratique, elle est très utilisée.
+Par contre, la problématique, c'est que, du coup,
+elle est sensible à l'intensité et au bruit.
+Si vous avez votre image de sortie qui est à peine un peu plus lumineuse
+pour toute l'image que votre image de base,
+en fait, vous allez largement augmenter votre MSE,
+alors qu'en soi, l'image est sensiblement pareille.
+Je veux dire, si c'est les mêmes contrastes, etc.,
+mais juste un peu plus lumineux, l'objet n'a pas vraiment changé.
+Donc, il y a des décalages qui peuvent être détectés
+alors que l'objet en lui-même n'a pas été modifié.
+Donc, c'est ce qui va manquer sur cette métrique-là,
+c'est que vous allez manquer de défauts structurels.
+C'est-à-dire que vous allez manquer de précision sur les pixels
+qui sont différents parce que la structure de l'objet est différente à cet endroit-là.
+Donc, vous pouvez l'utiliser.
+On va l'utiliser quand...
+Alors, s'il y a des défauts qui se voient avec l'intensité,
+là, clairement, ça va être très bon parce que du coup, ça va les mettre en avant.
+C'est rapide à calculer.
+Donc, voilà.
+Et vous pouvez l'utiliser comme l'os de reconstruction aussi lors de l'entraînement.
+Donc, ça, c'est la plus simple à calculer.
+Et il y en a une deuxième qui peut améliorer un peu vos résultats,
+qui est du coup le SSIM,
+qui est donc l'indice de similarité structurelle.
+Là, l'idée, ça ne va pas être de comparer pixel par pixel,
+mais plutôt de comparer les structures.
+Alors, on ne va pas comparer la structure globale de l'image,
+mais plutôt par petits carrés dans l'image.
+Comparer les structures localement, en fait,
+à la structure dans la photo de départ.
+Donc, pour ça, ça calcule trois...
+Enfin, ça prend en compte trois paramètres.
+La luminance des images.
+Donc, ça prend la moyenne locale des deux images.
+Le contraste.
+Donc, à quel point votre image...
+Il y a les variations qu'il y a dans votre image.
+Donc, l'équivalent de l'écart type.
+Et la structure.
+Donc, le motif qu'il y a sur votre image.
+Donc, sur votre image dans l'image.
+Comme si...
+Il faut imaginer comme si on avait un petit carré dedans.
+Le score, du coup, qui est donné par le SSIM,
+il varie entre moins 1 et 1.
+Si vous êtes...
+De base, c'est...
+Moins 1, c'est des images identiques.
+Et plus vous augmentez, plus vous avez des images différentes.
+Et donc, on va utiliser 1 moins SSIM
+comme...
+Enfin, 1, c'est des images identiques, pardon.
+Moins 1, c'est des images complètement différentes.
+Et du coup, on va utiliser majoritairement 1 moins SSIM
+comme la carte d'anomalie.
+Donc, comme ce qui va vous permettre de regarder localement
+où est-ce qu'il y a des différences
+entre votre image de sortie et votre image d'entrée.
+Pour le coup, même s'il y a des variations d'éclairage,
+de contraste, etc.,
+ça ne va pas être trop impacté.
+Mais par contre, ça va venir détecter
+toutes les modifications de structure.
+Donc, c'est plus proche de notre perception à nous
+de dire, ah, il y a quelque chose qui est différent
+sur cette image déjà, à tel endroit de l'image,
+plutôt que ce que fait la MSE
+où ça fait vraiment pixel par pixel.
+Donc, ça va détecter des déformations,
+même si vous n'êtes pas sur la même intensité
+de lumière, etc.
+Donc, vous avez plus de détails, en fait, sur la structure
+et vous pouvez avoir, du coup, de maires résultats
+avec le SSIM qu'avec la MSE.
+Donc ça, vous pouvez le tester.
+Vous pouvez, pour le coup, même si vous avez entraîné
+avec l'an, vous pouvez quand même calculer les deux en sortie
+et après entraîner avec l'an ou avec l'an.
+Donc, que choisir ?
+Ça, ça va dépendre, mais en tout cas,
+si vous devez défendre votre choix,
+en général, la MSE, du coup, ça mesure l'écart pixel à pixel.
+Donc, ça a une forte sensibilité au bruit et à la luminosité.
+Donc, si c'est ce que vous voulez détecter,
+allez-y et utilisez la MSE.
+C'est plus rapide, pour le coup, que le SSIM.
+Et par contre, ça rate les défauts structurels.
+Donc, c'est vraiment idéal pour la faire en perte d'entraînement,
+pour le coup, et pour avoir des défauts qui sont vraiment marqués,
+pour la part de la luminosité, etc.
+La SSIM, c'est plutôt, du coup, sur la structure de votre image,
+sur des parties d'objets, etc.
+Donc, par contre, c'est plus coûteux, c'est plus long à calculer.
+Donc, ça, il faut potentiellement y faire attention.
+Mais au moins, si vous avez des défauts de texture
+ou de structure beaucoup plus fins,
+ça aura sûrement de meilleurs résultats.
+Mais rien ne vous empêche, du coup, de combiner les deux.
+Au moins, d'afficher les deux, potentiellement,
+de voir la qualité sur les deux,
+ou de les combiner, etc.
+Parce que rien ne dit que vous pouvez avoir des défauts
+qui sont de luminosité et des défauts structurels.
+Donc, vous pouvez tout aussi bien mettre les deux
+et essayer de trouver les défauts qui sont soit sur les deux,
+soit sur l'un ou sur l'autre.
+Le but que vous allez avoir, c'est que le score, du coup,
+d'anomalie que vous allez trouver,
+que ce soit avec la MSE ou la SSCM,
+ce n'est pas ça qui va vous décider
+quand est-ce qu'un objet, une image,
+est considérée comme une anomalie.
+Donc, il va falloir que vous,
+vous fixiez une frontière entre normal et anomalie.
+Donc, pour ça,
+alors, il y a une règle qui est très souvent utilisée,
+mais il faudra la tester sur vos données.
+C'est le principe d'utiliser
+c'est le 99e centile
+des erreurs mesurées sur les images normales.
+Donc, en gros,
+pardon,
+en gros, on va tolérer
+1% de faux positifs.
+Donc là, vous allez avoir les faux positifs.
+Ça va être ceux qui sont détectés comme étant une anomalie,
+mais qui n'en sont pas.
+Donc là, vous voyez ici,
+c'est la distribution des erreurs
+et des...
+Enfin, distribution du coup de normales et d'anomalies
+avec ma variable-là d'erreurs de reconstruction.
+Donc, par exemple, mon SSCM.
+Et vous avez ici,
+vous voyez énormément d'images du coup qui sont...
+Alors, ça ne se voit plus, ça a été passé dessus,
+mais les bleus, c'est les images normales
+et les roses, c'est les anomalies.
+Et vous allez avoir du coup,
+une grosse distribution en dessous de 0,3,
+on va dire, des normales
+et les anomalies qui sont au-dessus.
+Ce que vous allez faire pour choisir votre seuil,
+en fait, vous pouvez le choisir,
+vous pouvez faire le plot comme ça,
+vous pouvez afficher votre graphe
+et choisir à l'œil.
+Mais sinon, dans la majorité des cas,
+ce qu'on va choisir,
+c'est le 99e centile,
+c'est-à-dire que sur toute la distribution
+qu'il y a là des images normales,
+on va prendre 1% de faux positifs ici.
+Ils sont là, c'est les bleus qui sont par là.
+On va accepter 1% de faux positifs
+et le reste, du coup, bascule en anomalies.
+Donc, les faux positifs,
+c'est ceux qui sont détectés comme des anomalies,
+alors qu'ils ne le sentent pas.
+Donc, c'est ceux qui sont au-dessus de ce seuil-là,
+mais qui sont en fait en bleu.
+Donc, c'est comme ça qu'on va choisir le seuil
+dans la majorité des cas,
+mais vous pouvez le faire varier.
+Si vous voyez que vous avez une distribution
+qui est plus par ici, par exemple,
+vous allez mettre votre seuil peut-être plus par là.
+Mais par contre, ça veut dire que vous acceptez
+d'avoir pas mal de faux positifs.
+Après, c'est à voir par rapport à vous
+et par rapport à votre objectif,
+aux alertes,
+comme sur les pannes,
+est-ce que ça vaut le coup de faire une fausse alerte, etc.
+Est-ce que ça nous pénalise beaucoup
+d'avoir une fausse alerte ou pas ?
+Donc, par contre, ce graphe-là des distributions
+vous permet de voir si votre modèle arrive à bien séparer.
+Si vous avez les deux distributions les unes sur les autres,
+ça veut dire que votre modèle,
+il n'arrive pas à bien séparer les normales d'un côté
+et les anomalies de l'autre.
+Ça veut dire sur les auto-encodeurs,
+si vous êtes sur les auto-encodeurs en général,
+que votre modèle est trop puissant
+et qu'il arrive du coup à reconstruire n'importe quelle image
+en partant d'une image que ce soit normal,
+ou avec un défaut.
+Donc, vous allez avoir ça à faire.
+Et donc, après,
+si vous changez...
+Attendez, je vais en faire c'est ça.
+Si vous bougez le centile, là, on est au 90e,
+si on prend un centile plus bas,
+du coup, on va être ici.
+Donc, du coup, on est plus sensible sur les anomalies.
+Par contre, plus haut, c'est que si vous êtes ici,
+ça veut dire que vous n'avez aucun faux positif,
+mais par contre, vous allez manquer des anomalies.
+Donc, voilà.
+Donc, en fait, vous allez combiner les deux.
+Vous allez calculer l'AMSE ou le SSIM.
+Et ensuite, pour choisir votre seuil,
+vous pouvez faire au centile 99
+ou en trouver d'autres
+suivant votre distribution,
+comment elles sont calculées
+et la tête qu'elles ont.
+Est-ce qu'il y a des questions
+par rapport, justement,
+à ces deux métriques-là ?
+Est-ce que vous avez des courbes
+qui sont similaires à ça ?
+J'en ai vu quelques-unes.
+Donc, ça, c'est pour...
+Ça, ça serait vrai, de toute façon,
+sur vos auto-encodeurs,
+mais aussi sur les autres modèles.
+Et pour ceux, du coup,
+qui sont passés sur patch core,
+qui est, du coup, le modèle
+qui a fait cette épreuve,
+on va dire,
+pour la détection d'anomalies
+et qui fonctionne très bien,
+il a une architecture assez particulière.
+Donc, je peux détailler un peu
+sur ce sujet-là
+pour voir à quoi ça ressemble.
+Donc, le principe de patch core,
+c'est que vous avez une partie entraînement
+et une partie, du coup,
+de test qui va être de l'autre côté,
+qui va fonctionner en...
+qui va fonctionner chacune de son côté.
+Patch core, du coup,
+ça va être une méthode
+qui est largement utilisée, du coup,
+pour détecter des défauts
+sur des images industrielles
+en n'ayant vu
+que des exemples de pièces normales.
+Donc, tout à fait notre besoin.
+Et l'idée, c'est que,
+vous allez avoir comme un modèle
+qui a passé énormément de temps
+et qui a regardé
+des milliers de pièces parfaites.
+Il ne connaît pas, du coup,
+les défauts possibles,
+mais il connaît par cœur
+ce à quoi correspond le normal.
+Et donc, quand une nouvelle pièce arrive,
+dès qu'il y a une zone
+qui ne ressemble pas
+à ce qu'il a déjà vu,
+il va, du coup,
+la flaguer
+comme étant une anomalie.
+Donc, étape par étape,
+comment ça marche
+dans l'entraînement.
+Il y a ici un encodeur.
+Donc, ça va être
+un réseau de neurones
+qui est déjà entraîné.
+Donc, ça, c'est des réseaux de neurones
+qui sont créés
+par d'autres personnes
+qui ont été déjà entraînées
+sur plein d'images
+et qui ont déjà une architecture.
+Du coup, il y a un entraînement
+qui a été fait.
+On va les passer
+dans, du coup,
+ce modèle-là
+pour décrire, en fait,
+l'image
+par petits morceaux.
+en fait,
+on va garder, du coup,
+les représentations.
+Là, c'est les patches
+des features.
+En fait, ça va regarder
+les représentations
+intermédiaires.
+Donc, pour chaque
+petite zone de l'image,
+c'est ce qu'on appelle
+les patches,
+on obtient
+comme une feature,
+une caractéristique,
+comme une caractéristique
+qui va décrire
+la texture,
+les formes
+et le contexte local
+de cette partie
+de l'image.
+Et ensuite,
+on va constituer, du coup,
+une mémoire
+de ce qui est normal.
+Donc, pour toutes les images
+normales d'entraînement,
+on va collecter
+toutes ces caractéristiques-là
+et on va les ranger
+ici, là, après,
+une fois qu'elles sont passées,
+dans une grande bibliothèque,
+dans une mémoire
+qui va être là.
+Donc, en fait,
+on a tous les sous-entraînements
+qui sont là.
+Et par contre,
+cette mémoire,
+elle va être un peu compressée
+puisque si le catalogue,
+en gros, de base,
+il y a énormément,
+énormément d'exemples
+et donc, il y a
+qui peuvent être
+très redondants.
+Donc, ici,
+c'est ce que vous voyez ici.
+Là, c'est tous les exemples
+qu'on a
+et en fait,
+on va garder
+un nombre
+de features
+caractéristiques
+qui couvrent
+toute la diversité
+du normal.
+Vous voyez à peu près
+à quoi ça correspond.
+Donc, on divise,
+en général,
+tous les exemples
+et on divise la taille
+pour avoir
+une mémoire
+qui, du coup,
+est gérable.
+Donc, ça,
+c'est l'entraînement
+qui va se passer.
+C'est en gros,
+découper toutes les images
+que vous avez
+en petits bouts,
+regarder les features
+qu'il y a,
+les stocker
+dans une bibliothèque
+et ensuite,
+résumer cette bibliothèque
+avec une partie
+en fait
+des features
+qui sont intéressantes.
+Lorsque vous avez
+une autre image
+qui arrive,
+une nouvelle image
+dans votre test
+qui arrive,
+elle passe
+par le même encodeur,
+par exactement
+le même modèle
+qu'on a ici
+et donc,
+elle va être,
+elle aussi,
+découpée en patch
+et on va calculer,
+du coup,
+les mêmes caractéristiques,
+les features.
+Et pour chacune,
+on va chercher,
+du coup,
+dans la mémoire,
+les features
+qui sont les plus proches,
+qui sont les plus proches,
+du coup,
+de ce qu'il y a
+entre les caractéristiques
+des features
+que j'ai ici,
+les caractéristiques
+des features
+que j'ai dans ma mémoire
+et je regarde
+si j'ai des caractéristiques,
+enfin,
+si j'ai des features
+de la mémoire
+qui sont très proches
+de ma caractéristique,
+je considère
+que je suis en normal.
+Sinon,
+je vais pouvoir considérer
+qu'en fait,
+je suis trop éloignée
+de ce qu'il y a en mémoire,
+donc,
+qu'il y a une anomalie.
+Et donc là,
+les distances,
+du coup,
+patch par patch,
+ça va pouvoir vous faire
+là les heat maps
+avec ce qu'on voit
+en jaune,
+c'est du coup
+la carte de chaleur
+de votre défaut
+et ça va vous permettre
+de localiser
+le défaut sur l'image.
+Et du coup,
+la distance du coup maximale
+va donner un score global
+pour dire,
+ok,
+c'est une pièce,
+le score d'anomalie
+qui est ici,
+ça va être le score max
+de distance
+et qui va vous dire,
+ok,
+c'est une pièce
+où il y a une grosse anomalie,
+donc est-ce que c'est
+un défaut,
+une pièce à rejeter
+ou est-ce que c'est
+une pièce qui est ok
+et qui ressemble
+à toutes celles
+que j'ai vues
+en entraînement.
+Donc,
+c'est comme ça
+qu'on fonctionne
+Patchcore
+et l'avantage
+et pourquoi
+c'est devenu
+une référence
+dans ces sujets-là,
+c'est que
+c'est un modèle
+où il y a besoin
+de zéro exemple
+de défaut,
+zéro entraînement
+de réseau,
+donc on va utiliser
+un modèle
+qui existe.
+Donc,
+vous n'avez pas
+à refaire
+une architecture
+ici,
+etc.
+Et en plus,
+ça va venir
+localiser le défaut,
+pas juste dire
+il y a un problème
+et c'est une,
+attention,
+c'est une image
+qui ne va pas bien
+par rapport
+à ce que je connais,
+ça va vous permettre
+de localiser les défauts.
+vous avez du coup,
+vous avez du coup,
+après,
+et du coup,
+il a eu,
+je voulais donner
+du coup,
+pour ceux qui veulent
+tester,
+parce que c'est un modèle
+qui a eu
+de très bons résultats
+sur le benchmark
+du coup,
+MVTEC AD,
+donc le dataset
+sur lequel on est,
+avec du coup
+un temps d'inférence,
+donc un temps
+de traitement
+qui est assez rapide
+pour pouvoir être
+en ligne de protection.
+Donc voilà comment
+fonctionne ce modèle-là.
+Donc il n'y a pas
+de reconstruction,
+comme le fait
+l'auto-encoder,
+et pas d'entraînement
+du réseau.
+Vous utilisez
+quelque chose
+qui est déjà créé.
+Ce que va venir
+faire le modèle
+juste pendant son espèce
+d'entraînement,
+c'est mémoriser
+à quoi ressemblent
+les features
+d'image normale,
+puis mesurer la distance.
+Donc il y a
+ce qu'on appelle
+un backbone gelé,
+c'est vraiment
+le CNN,
+donc un réseau neurone
+qui est pré-entraîné
+sur un dataset d'images
+qui est connu,
+qui a des millions d'images
+avec des poids figés,
+etc.
+Donc en fait,
+c'est l'extracteur
+de features,
+il a marché
+sur des millions
+d'images différentes,
+donc il marchera
+aussi sur le vôtre.
+Voilà,
+c'est le principe.
+Ensuite,
+du coup,
+la...
+Je vais devoir partir
+en marrant une déco.
+Yes,
+pas de souci,
+mais de toute façon,
+je mets,
+j'ai enregistré en plus
+si jamais tu veux
+récupérer la fin
+et je mettrai
+ce document-là
+sur les ressources,
+sur les documents
+partagés.
+Ok,
+ça marche.
+Merci beaucoup.
+Bonne soirée tout le monde.
+Bonne soirée.
+Donc vous avez la banque
+de mémoire
+qui stocke
+les features
+de vos patches
+issus de vos images
+normales
+et ensuite,
+le score,
+c'est la distance.
+Et donc,
+c'est à dire...
+Donc voilà.
+Donc l'idée,
+c'est ça,
+c'est de se dire
+une image normale
+va toujours avoir
+un voisin proche
+en mémoire
+alors qu'une anomalie
+n'en a pas,
+donc il y a une grande distance
+qui va être calculée.
+du coup,
+ça reprend exactement
+ce qu'on vient de dire
+et le score global,
+du coup,
+c'est le max
+des distances
+de toutes les distances
+et vous avez
+la heatmap
+qui permet
+de localiser
+le défaut.
+Et donc,
+ça a une inférence
+qui est très rapide.
+Et donc là,
+le ResNet,
+c'est un type de CNN,
+c'est une architecture
+de CNN
+qui a été éprouvée,
+qui a fait ses preuves
+sur ça.
+En fait,
+il y a plein
+de CNN classiques
+qui ont été créés
+sur des banques d'images
+qui contiennent
+des millions d'images.
+La plus connue,
+c'est ImageNet.
+Et donc,
+vous pouvez globalement
+réutiliser
+ces modèles-là
+pré-entraînés,
+soit directement,
+soit en faisant
+ce qu'on appelle
+du transfert learning.
+Et donc,
+le fait que
+le ResNet
+soit gelé,
+ça veut dire que
+là,
+les images,
+il n'y a pas
+réellement
+de ré-entraînement
+pour être spécifique
+à vos images.
+Le modèle va être
+très bon
+sur des images.
+Il en a vu
+tellement des différentes
+qu'il sera très bon
+sur les vôtres.
+Et donc,
+l'entraînement,
+pour le patch core,
+c'est juste remplir
+la banque de features.
+Et c'est du coup
+très rapide.
+Il n'y a pas
+de rétropropagation
+comme il y a
+sur les réseaux classiques,
+etc.
+Donc,
+sur l'auto-encoder,
+vous entraînez le réseau
+à reconstruire l'image.
+Sur le patch core,
+il y a un extracteur
+qui vient extraire
+les features,
+les mettre en mémoire
+et du coup,
+vous venez comparer
+vos images après
+à vos features
+qui sortent
+des images normales.
+Donc,
+l'auto-encoder,
+il y a de l'entraînement
+là où pour le patch core,
+il n'y en a pas.
+Ce qui est appris
+pour l'auto-encoder,
+c'est la reconstruction
+du coup fidèle
+du normal,
+alors que pour l'autre,
+c'est la banque,
+du coup,
+la mémoire des features.
+le score,
+c'est l'erreur
+de reconstruction,
+MSC ou SSCM
+suivant ce que vous choisissez,
+alors que le score
+de patch core,
+c'est la distance
+au plus proche voisin.
+L'avantage,
+c'est que du coup,
+vous pouvez faire
+votre propre auto-encoder
+sur ce que vous voulez,
+etc.
+et aussi voir
+les architectures.
+L'avantage de patch core,
+c'est que ça fonctionne
+très, très bien
+sur ce genre de sujet.
+et les limites du coup
+de l'auto-encoder,
+et c'est ce que certains
+d'entre vous ont vu
+sur le résultat,
+c'est que le modèle
+peut trop bien
+reconstruire les défauts.
+Les modèles sont un peu
+du coup,
+trop puissants actuellement
+et du coup,
+peuvent,
+arrivent quand même
+même si vous avez
+un espace latin
+qui est très petit
+et un taux de compression
+qui est assez grand,
+les modèles arrivent quand même
+à recréer vos images
+avec des défauts,
+ce qui fait que vous avez
+un modèle
+qui n'est pas
+le plus performant.
+Ça va dépendre
+des sujets
+que vous avez.
+Limite du patch core
+par contre,
+c'est que c'est un modèle
+plus lourd,
+même s'il n'y a pas
+à l'entraîner.
+Il y a une mémoire,
+il y a un ResNet
+qui est un très gros modèle
+de CNN.
+qu'il faut faire attention
+à ça.
+Donc,
+voilà pour les deux
+pour la comparaison
+des modèles
+et si vous devez
+expliquer
+à quoi
+correspond
+un patch core.
+Est-ce qu'il y a
+des questions
+sur cette partie-là ?
+Je sais que tout le monde
+n'y est pas encore
+sur patch core,
+mais c'était
+pour vous le présenter.
+Est-ce qu'il y a
+des questions
+sinon sur l'erreur
+de reconstruction
+et ces modèles-là ?
+Ok.
+Du coup,
+je vous laisse
+sur la dernière demi-heure
+pour continuer
+l'ETP.
+Si vous voyez,
+il y en a quelques-uns
+qui m'ont envoyé
+des rapports
+un peu
+des résultats
+et de comment
+est fait
+leur prédiction
+et leur courbe
+de distribution
+des anomalies
+et des normaux,
+donc comme ça,
+si vous avez
+des résultats
+de les envoyer
+et savoir
+si vous arrivez
+à bien les interpréter.
+N'hésitez pas
+à m'envoyer
+les rapports
+de vos TP.
+Et je vous mets
+ce slide-là
+sur les documents.
+Merci.

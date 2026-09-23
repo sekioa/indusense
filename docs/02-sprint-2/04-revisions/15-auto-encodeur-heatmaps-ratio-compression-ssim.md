@@ -235,6 +235,8 @@ la quasi-totalité des politiques testées, à un coût de fausses alertes bien 
 ## Sources du cours
 
 - [Transcription du cours auto-encodeurs du 22/09](../02-transcriptions/11-jour-4-cours-auto-encodeurs.txt) (session de questions-réponses en présentiel, sans support de slides déposé).
+- [Transcription du cours magistral « scores d'anomalie »](../02-transcriptions/12-scores-anomalie-patchcore.txt) (MSE, SSIM, choix du seuil par centile, principe détaillé de PatchCore), support :
+  [`14_Scores_anomalie_PatchCore.pdf`](../01-cours/14_Scores_anomalie_PatchCore.pdf).
 
 ---
 
