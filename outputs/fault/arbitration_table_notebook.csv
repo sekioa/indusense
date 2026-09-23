@@ -1,0 +1,2 @@
+modele,pr_auc,gco2eq,interpretabilite,decision
+tuned,0.6026411126181758,0.5564098537793296,"SHAP top-1 = incident_count_prev_24h (impact 0.0731, 29.0% du top 10)","Retenu comme candidat v1 : gain net sur baseline, coût carbone mesuré et explication cohérente."
