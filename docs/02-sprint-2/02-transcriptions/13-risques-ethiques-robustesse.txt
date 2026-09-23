@@ -1,0 +1,959 @@
+Donc voilà, ok, parfait, merci.
+Donc, sur, là, je me, enfin, on va se, on va parler seulement, enfin, seulement,
+en majorité de tout ce qui est, du coup, computer vision, et en particulier pour l'industriel.
+Donc, ce qui est notre cas à nous, mais justement,
+je pense que s'il y en a d'entre vous qui sont en train d'essayer, justement,
+d'englober votre projet, de faire un mini-rapport, etc.,
+c'est des choses qu'il faut prendre en compte quand vous présentez le projet.
+Donc, les risques qui sont spécifiques par rapport à ce projet-là d'imagerie,
+de qualité, etc., le premier, c'est le biais.
+C'est-à-dire qu'un modèle va apprendre ce que vous lui montrez,
+et seulement cela.
+C'est-à-dire que si votre dataset, ça, de toute façon, on l'a dit plusieurs fois,
+mais vos données sont vraiment la base de vos projets.
+Donc, faites bien attention dès le départ à avoir un dataset bien représentatif
+de votre, des données en prod, des vraies données dans la réalité, du coup.
+Parce que sinon, du coup, vous pourriez avoir des erreurs et quelque chose qui n'est pas…
+Vous entraînez un modèle qui marche super bien, vous arrivez en prod, ça ne fonctionne plus.
+Et parce que votre jeu d'entraînement n'était pas représentatif de ce que vous aviez.
+Par exemple, c'est que, alors, là, si vous faites ce type de projet,
+le type de pièce, évidemment, si vous changez de type de pièce entre l'entraînement
+et la production, vous allez avoir des problèmes.
+L'éclairage, ça, c'est…
+Si vous avez, du coup, l'exemple que je vous disais,
+où vous vous dites, ah, ben, je vais faire un projet,
+je n'ai jamais pris de photo, je prends les photos dans un, je ne sais pas,
+dans un bureau, etc., qui est bien éclairé,
+et ensuite, quand je vais en bout de ligne et que je pose la caméra,
+l'éclairage est beaucoup plus bas, ben, en fait, les détails, vous ne les voyez pas du tout pareil.
+Votre modèle s'est entraîné sur des images beaucoup plus claires que ce qu'il aura en production.
+Et du coup, il est complètement biaisé par rapport à ça.
+Et vous pouvez biaiser le modèle aussi si vous avez une ligne de production qui est surreprésentée.
+Admettons que vous avez pris des photos en sortie de plusieurs lignes de production
+et que vous avez pris, par exemple, je ne sais pas, vous avez 10 lignes
+et il y en a une, vous avez pris 80% des photos sur une ligne.
+Ben, il y a peut-être des défauts qui sont faits par les autres,
+enfin, des trucs normaux qui sont vus sur les autres
+parce qu'il n'y a pas tout à fait le même éclairage,
+pas tout à fait le même angle, etc.
+Ben, du coup, vous allez avoir une ligne de production surreprésentée.
+Cette ligne de production va être considérée comme normale,
+mais le reste, pas forcément.
+Les conséquences, là, vous pouvez voir ça,
+c'est que vous allez avoir des bonnes performances
+tant que vous êtes sur vos données à vous
+que vous avez préparées pour faire votre projet,
+que ce soit, du coup, les données d'entraînement,
+les données de validation, les données de test.
+Par contre, dès que vous partez sur des conditions réelles,
+c'est-à-dire dès que vous allez mettre votre projet en production,
+là, vous allez avoir des performances qui baissent drastiquement.
+Donc, le problème, c'est que vous vous en rendez compte un peu tard de ça.
+Et puis, en plus, l'effet utilisateur
+n'est pas du tout l'effet escompté.
+C'est-à-dire que vous leur dites,
+« Ah, ben, je détecte 90 % des défauts en amont »
+ou quelque chose comme ça,
+où je mets des alertes sur quasi tous les défauts
+et des fois, je fais vérifier quelques défauts qui ne sont pas là,
+quelques pièces qui n'ont pas de défauts.
+Et là, en réalité, il y a beaucoup moins d'alerte
+ou en tout cas, ça ne marche pas bien.
+Donc ça, bien faire attention à vérifier la composition de votre dataset
+au départ de votre projet
+et vérifier que c'est avec ce qui va avec la production.
+Ça vaut le coup aussi de bien vérifier que c'est ce qui va…
+Bonjour, Mariana.
+C'est que c'est ce qui va…
+Avec du coup le besoin aussi.
+Vérifier tant qu'à faire.
+Si vous pouvez vérifier le dataset en entrée,
+vous avez des utilisateurs métiers.
+auditer du coup la composition du dataset,
+mais aussi le besoin métier réellement
+pour être sûr que vous parlez de la même chose.
+Et on va aussi documenter les conditions de collecte.
+C'est-à-dire quand vous allez faire votre dataset d'entraînement,
+à quelle date vous avez enregistré les images,
+d'où elles viennent, comment elles ont été prises, etc.
+Ça, c'est des données qui sont intéressantes à apprendre pour la suite
+et pour si jamais il y a des problématiques par la suite
+ou des choses qui ne marchent pas.
+Donc, les biais, c'est surtout sur les données,
+ça qui peut y arriver, qui peut y avoir ça.
+Et ensuite, vous avez tout ce qui est drift,
+donc les dérives.
+Il y a plusieurs types de drift,
+enfin, plusieurs endroits où il peut y avoir des dérives.
+Les datas.
+Si vous avez vos images de production qui changent,
+par exemple, une nouvelle caméra qui est mise en place,
+une nouvelle, je ne sais pas,
+il y a une usure qui est différente,
+une façon de faire qui change,
+un lot qui est complètement différent, etc.
+vous allez avoir des images de production qui peuvent évoluer
+et qui peuvent potentiellement faire que votre modèle
+qui a été entraîné sur des données il y a un an
+n'est plus, et au fur et à mesure, plus valable.
+Donc, on parle de drift parce que là où pour les biais,
+vous arrivez en test, vous avez des résultats beaucoup moins bons,
+enfin, en production, vous avez des résultats beaucoup moins bons.
+Le drift, c'est que ça va plutôt être petit à petit,
+vous allez voir vos résultats qui vont diminuer.
+Donc, c'est pour ça que vous avez aussi intérêt
+de surveiller vos performances en continu
+pour pouvoir monitorer ces drifts.
+Vous avez, du coup, le concept drift aussi.
+Alors là, c'est une problématique un peu plus complexe,
+c'est que vous pouvez avoir la normalité
+ou le défaut qui évolue dans le temps.
+Par exemple, je ne sais pas,
+mais la normalité avant, je ne sais pas,
+il y avait un scratch dessus.
+Je vais donner quelque chose qui n'a pas de sens.
+Mais il y avait un scratch dessus,
+on considérait que c'était un défaut.
+Et maintenant, on n'a pas de souci avec ce sujet-là.
+Ça peut partir en production,
+ça peut partir chez le client, etc.
+Donc, c'est considéré comme normal.
+Du coup, vous allez avoir beaucoup d'alertes
+pour des scratchs et qui fait que votre modèle en soi
+est mis à une version qui ne fonctionne pas.
+Ça, ce concept drift et ce modèle drift,
+il existe aussi en machine learning, etc.
+et il a été vu, par exemple, pendant le COVID
+pour toutes les agences immobilières
+ou entreprises qui faisaient la prédiction
+de prix de vente ou prédiction dans l'immobilier
+et où, en fait, les volontés des personnes,
+enfin, des clients ont totalement changé.
+Donc, même, alors, il y a le prix des matériaux
+qui a changé, mais normalement,
+dans les bons modèles,
+le prix des matériaux était déjà pris en compte.
+Mais, par contre, les contraintes et les sous
+et, en fait, les clients étaient totalement différents.
+Donc, le monde immobilier a complètement changé
+à ce moment-là.
+Et donc, les modèles qui marchaient avant
+ne marchaient plus après.
+Et donc, ça, ce drift, ça peut faire
+que vous avez un...
+Alors, par exemple, un détecteur d'objets.
+Ça peut être aussi votre détecteur de défauts.
+Et ça peut être un détecteur d'objets.
+Donc, YOLO, c'est un des modèles les plus connus
+pour détecter les objets
+qui peut se dégrader petit à petit
+si le contexte change.
+Mettons, par exemple, je ne sais pas,
+vous avez entraîné votre modèle
+pour être, je ne sais pas,
+une voiture autonome
+qui est majoritairement en campagne.
+Et, en fait, votre voiture va de plus en plus...
+elle va beaucoup en ville
+et de plus en plus.
+Si votre modèle n'a pas été assez entraîné dessus,
+peut-être qu'il y a...
+Parce qu'au début, il n'y avait pas de besoin,
+au fur et à mesure, du coup,
+il va y avoir des erreurs
+ou en tout cas, elle va être moins bonne
+par rapport à la situation
+qui est...
+C'est parce que la situation a évolué.
+Donc, pour ça, on va venir surveiller
+les performances en continu
+et vous pouvez réentraîner périodiquement
+vos modèles.
+Par contre, quand vous réentraînez,
+ça veut dire que vous remontrez
+des données au modèle.
+Là, du coup, il faut évidemment
+qu'il y ait une couche de vérification
+des données que...
+Des images que vous lui donnez
+à l'entraînement
+pour être sûr que ces images-là
+ont du sens et sont OK.
+Donc, ça, c'est plutôt sur le modèle
+et sur ce qu'il faut faire attention
+par rapport aux performances du modèle,
+que ce soit les biais ou les dérives.
+Et après, il y a d'autres problématiques
+sur les images qui arrivent
+qui sont sur la confidentialité.
+Vos images, il faut vous assurer
+que vous n'avez pas de données sensibles
+dans vos images.
+Des visages, des plaques,
+des informations propriétaires, etc.
+Ou alors que vous avez accès
+à ces données-là
+et que vous pouvez les utiliser.
+Pour toute personne identifiable,
+il y a la RGPD qui fait foie.
+Donc, du coup, il faut s'assurer
+que vous êtes dedans.
+En général, les mesures,
+ça va être d'anonymiser.
+Donc, c'est ce que vous avez aussi
+sur le machine learning.
+Mais, par exemple,
+si je mets un sujet en médecine
+d'identification de patients,
+de diagnostics de patients, etc.,
+je vais avoir besoin
+d'anonymiser les données.
+Donc, d'enlever tout ce qui est
+nom, âge, ville, etc.
+on n'est pas censé pouvoir
+retrouver la personne
+avec les informations
+que vous avez.
+Donc, en imagerie,
+ça peut être le fait
+de flouter les personnes
+si vous n'avez pas accès
+à leurs données, normalement.
+Ou alors, minimiser les données,
+c'est-à-dire vous dire,
+je ne sais pas,
+dans votre projet,
+si dès qu'il y a un visage,
+vous ne prenez pas l'image.
+Et aussi, le fait d'avoir
+un accès restreint
+à ce projet-là,
+bien vérifié sur les gens
+qui ont accès
+à ces données de base, en fait.
+Et si tout ce qui est...
+S'il y a du coup aussi
+du secret industriel,
+il faudra bien penser
+à sécuriser, du coup,
+le stockage et les échanges
+entre clients et sous-traitants,
+entre eux,
+et le stockage de vos images,
+le stockage de votre modèle,
+toutes les informations
+sur votre modèle, etc.
+En fait, si quelqu'un récupère
+un modèle et les données
+sur les images
+sur lesquelles vous vous êtes entraînés,
+vous avez énormément d'infos
+sur ce qui sort d'une usine
+et ce qui se passe
+sur la production, par exemple.
+Donc, il y a pas mal de choses
+à penser par rapport à ça,
+mais qui est vraie aussi
+pour tout sujet aussi
+dans le machine learning.
+Mais voilà, pour les images,
+il y a quelque chose en plus.
+Pour vos modèles,
+après, il faut faire attention
+que votre modèle
+soit le plus robuste possible.
+Et des fois,
+vous pouvez avoir
+des erreurs
+dans vos performances
+et il faut pouvoir
+identifier
+si votre erreur
+est une mauvaise performance
+de votre modèle
+ou si votre erreur
+est parce que la donnée
+est hors distribution.
+Une donnée hors distribution,
+du coup,
+c'est une donnée
+qui va être très différente
+de tout ce que le modèle
+a vu à l'entraînement.
+Exemple,
+vous avez entraîné
+votre modèle
+sur les Metal Nuts
+et vous savez pas comment,
+mais vous avez
+une noisette,
+là, par exemple,
+qui passe par votre modèle.
+Le modèle risque
+va peut-être être très mauvais
+sur ce type de pièce-là
+et va peut-être
+vous détecter des erreurs,
+etc.
+mais c'est normal,
+c'est le comportement normal
+qu'on attend du modèle.
+Le modèle est bon
+pour ce qu'il a appris.
+Donc,
+si c'est une donnée
+qui est hors distribution,
+vous ne pouvez pas du tout
+appréhender le comportement
+du modèle avant.
+Donc,
+si c'est,
+par exemple,
+un nouveau type de pièce
+donc avec un objet inattendu,
+dans ces cas-là,
+votre modèle va être mauvais.
+Et s'il y a une image corrompue,
+l'image est complètement différente
+de ce que vous avez vu,
+elle est de très mauvaise qualité
+par rapport aux données
+que vous avez d'habitude,
+dans ces cas-là,
+le modèle
+va faire sa prédiction
+comme il le peut.
+Le plus gros risque,
+c'est qu'en général,
+le modèle va faire une prédiction
+avec une confiance
+qui peut être assez haute.
+C'est-à-dire qu'il va vous dire
+« Ah ben ça,
+c'est clairement un défaut
+parce que c'est vrai,
+par exemple,
+c'est pas ce qu'il a vu
+jusqu'à maintenant. »
+Donc,
+il va vous dire
+« Attention,
+c'est un défaut,
+etc. »
+Mais du coup,
+vous allez avoir
+vous pouvez avoir
+des prédictions
+qui sont confiantes
+mais fausses.
+Donc,
+dans plein de sujets
+de Zepernik,
+vous pouvez avoir
+cette problématique-là
+de le modèle
+classifie mal,
+par exemple.
+Il classifie mal
+votre objet
+parce que...
+Mais par contre,
+avec une confiance
+assez haute,
+donc vous,
+vous classifiez
+automatiquement.
+l'avantage
+de notre
+auto-encodeur
+là,
+ici,
+c'est que
+normalement,
+une entrée
+qui va être
+hors distribution
+va être très différente
+des entrées
+que vous avez vues
+dans votre entraînement.
+Donc,
+le modèle
+devrait mal reconstruire
+et donc,
+il devrait mettre
+une alerte
+qui est ce qu'on attend.
+Mais c'est pas vrai
+pour plein d'autres
+sujets
+où le modèle
+va faire
+une prédiction
+une prédiction
+confiante,
+mais fois,
+sur une mauvaise classe,
+par exemple.
+Donc,
+voilà.
+Donc,
+ça,
+à faire attention
+sur les modèles
+de vision.
+L'avantage
+de l'auto-encodeur,
+c'est que du coup,
+ça,
+normalement,
+il devrait le traiter,
+pardon,
+mais tous ne le prennent
+pas en compte.
+Alors,
+comme les données
+sont le cœur
+de vos projets,
+forcément,
+la qualité des capteurs,
+des caméras,
+de tout ce que vous avez,
+en fait,
+de la source
+de vos données
+peut être vraiment,
+des fois,
+la problématique
+qui fait que votre modèle
+est mauvais.
+Donc,
+comment vous allez
+acquérir vos images
+une fois en prod,
+c'est vraiment
+une problématique
+qu'il faut avoir
+et c'est quelque chose
+qu'il faut d'ailleurs
+se poser dès le départ.
+Si on vous dit,
+pour l'instant,
+on n'a pas
+de caméra,
+enfin,
+de chaîne,
+mais une fois
+que vous avez fait
+votre modèle,
+on l'en mettra.
+En fait,
+votre idée,
+ça serait de savoir
+quelle caméra
+vous avez,
+enfin,
+de chaîne,
+comment elle est placée,
+quelle est la qualité
+de la caméra,
+etc.,
+pour que vous puissiez
+avoir vos données
+qui ressemblent.
+Et du coup,
+une fois que tout ça
+est mis en place,
+si vous avez,
+par exemple,
+une caméra
+qui est mal calivée,
+ça peut potentiellement
+vous créer
+de fausses anomalies.
+Admettons,
+vous avez une caméra
+où la mise au point
+est mal faite
+et fait des flous,
+du flou,
+par exemple,
+ou alors qu'il y a
+une poussière
+sur l'appareil photo,
+dans ces cas-là,
+ça peut,
+même votre auto-encodeur,
+là,
+va potentiellement
+mettre des alertes
+sur des pièces
+qui sont au final
+qui sont au final normal.
+Donc,
+vous allez augmenter
+votre nombre
+de faux positifs.
+Donc ça,
+il faut faire attention
+sur toutes les caméras,
+etc.,
+à standardiser l'éclairage,
+contrôler, du coup,
+tout ce qui est cadrage,
+mise au point,
+etc.,
+et faire, du coup,
+des maintenances régulières
+sur les caméras,
+ça, forcément.
+et évidemment,
+ça va aussi
+avec le fait
+de suivre
+vos résultats
+et vos performances
+et si vous,
+si vous suivez
+vos performances
+et vous trouvez
+que vous avez
+beaucoup plus d'alerte
+que d'habitude
+sur une des chaînes,
+ben,
+le premier jour,
+ça peut être
+de regarder
+les images
+sur lesquelles
+vous avez des défauts
+et vous allez voir,
+soit c'est la chaîne
+qui est de production
+qui est mauvaise
+et qui ne fait que des défauts,
+soit c'est votre acquisition
+qui est mauvaise
+ou alors
+qui a eu le contexte
+qui a changé
+ou plein de choses différentes.
+Mais vous allez devoir,
+du coup,
+monitorer tout
+au fur et à mesure.
+Donc,
+et des fois,
+ce qu'on peut avoir,
+la dernière utilisation,
+enfin,
+la dernière menace
+qu'on peut avoir,
+c'est les attaques
+adversariales,
+c'est-à-dire que
+vous pouvez avoir
+des perturbations
+des fois qui sont minimes,
+qui sont des fois
+d'ailleurs pas visibles
+à l'œil nu
+et qui peuvent tromper
+largement le modèle.
+c'est-à-dire que
+si c'est des poussières
+ou si c'est du flou
+sur le modèle,
+vous allez le voir.
+Enfin,
+sur l'appareil photo,
+vous allez le voir.
+Mais par contre,
+si c'est seulement
+quelques pixels
+qui sont modifiés,
+suivant le nombre
+de pixels,
+nous,
+on ne verra rien.
+Mais en fait,
+ça peut,
+vu comment vous
+calculez votre erreur,
+ça peut rajouter
+des erreurs
+au modèle dessus.
+Donc ça,
+c'est soit,
+si votre image
+est altérée,
+ça peut arriver
+d'avoir ça
+et d'avoir pas mal
+d'erreurs.
+Ou,
+par exemple,
+un autocollant,
+un motif
+qui est rajouté
+quelque part,
+etc.,
+vous allez mettre
+des alertes partout
+alors qu'il n'y en avait
+pas forcément.
+ou alors qu'il faut
+les détecter
+comme vraiment
+des grosses alertes
+et même
+comme des données
+hors distribution.
+Donc en général,
+comme ça,
+pour ne pas agrer
+ce genre de problématiques,
+on vient essayer
+de détecter
+les données
+qui sont en distribution
+déjà,
+vérifier que vos images
+sont bien
+avec les caractéristiques
+et avec les critères
+que vous leur demandez,
+que vous avez demandé
+en amont.
+Et,
+le sujet aussi,
+c'est qu'il y a
+une supervision humaine,
+vous mettez des alertes.
+Ça peut être bien
+qu'il y ait
+une supervision humaine
+derrière votre modèle
+pour vérifier tout ça.
+Donc,
+pour des,
+pour,
+en général,
+pour combler
+tous ces biais,
+dérives,
+etc.,
+on va mettre en place
+des garde-fous
+à plusieurs étapes différentes
+pour être sûr
+que tout va bien.
+Donc déjà,
+vos seuils de décision,
+là,
+quand vous avez
+le 99,
+le 5e centile ou autre,
+vous pouvez le faire bouger.
+Et déjà,
+ça va être de permettre
+de ne pas alerter
+sur la moindre erreur
+pour essayer.
+Et du coup,
+essayez-vous de calibrer
+les faux positifs
+et les faux négatifs.
+Ça, déjà,
+ça vous permet
+de savoir
+combien d'alertes
+à peu près
+vous allez faire
+et comment les gérer.
+le plus important,
+c'est en général,
+c'est qu'on va faire
+du coup,
+un human in the loop,
+c'est-à-dire qu'on va
+venir mettre
+une vérification humaine
+sur des cas incertains
+ou critiques.
+Par exemple,
+vous pouvez mettre
+sur vos modèles
+plusieurs seuils
+et avoir un cas
+qui est...
+Ça,
+le modèle est sûr
+que c'est mis en panne.
+ou, par exemple,
+sur notre cas même,
+c'est faisable aussi
+sur le cas
+de machine learning,
+de dire,
+ben ça,
+attention,
+maintenance panne,
+ça,
+le modèle,
+c'est sûr,
+ben c'est sûr
+que c'est en panne
+ou c'est sûr
+que c'est un défaut,
+pardon.
+Donc,
+si c'est sûr
+que c'est en panne,
+le modèle met
+une alerte directement
+et au milieu,
+vous avez,
+si vous avez un seuil
+de probabilité de panne
+qui est entre 0,65
+et 0,8,
+vous pouvez dire,
+ben là,
+je suis encore certain,
+il faut que l'humain
+vienne voir,
+c'est pas une panne prioritaire
+mais il faut que ça soit vérifié.
+Enfin,
+en tout cas,
+je ne suis pas à 100%
+sûre qu'il y a une panne
+mais il faut venir vérifier.
+Ou,
+je ne suis pas à 100%
+sûre qu'il y a un défaut
+mais il faut que quelqu'un
+vienne vérifier,
+etc.
+Donc,
+vous pouvez mettre des seuils
+et vous pouvez du coup
+donner les seuils
+en sortie
+pour qu'on puisse
+les interpréter.
+Niveau documentation,
+il va falloir
+que vous aussi
+documenter les limites
+de votre modèle.
+Ça,
+on le verra cet après-midi.
+Je vais vous demander
+de faire justement
+la carte de votre modèle
+pour le machine learning
+et vous verrez,
+ça sera toute la doc,
+etc.
+qu'il faut faire
+pour pouvoir donner
+le modèle à quelqu'un d'autre
+derrière
+et documenter ce que le système
+ne sait pas faire.
+C'est une information
+qui peut être très grande.
+Alors,
+évidemment,
+vous ne faites pas
+une liste exhaustive
+de ce qu'il ne sait pas faire
+mais tous les cas exclus
+que vous avez exclus
+de votre sujet,
+vous les enlevez.
+Par exemple,
+je ne sais pas,
+sur les prix
+des biens immobiliers,
+si vous savez
+que vous avez entraîné
+vos modèles
+sur des biens
+qui faisaient
+entre 20 et 200 mètres carrés,
+vous dites que
+si vous êtes largement au-dessus,
+si vous avez quelque chose
+à 500 mètres carrés,
+la performance sera peut-être
+très mauvaise
+parce que le modèle
+n'a pas été entraîné dessus.
+Voilà.
+Vous pouvez mettre
+les cas qui sont exclus
+pour ça.
+Et pareil,
+à documenter aussi
+et surtout à imaginer
+la solution,
+c'est si le modèle
+est indisponible
+ou s'il est peu sûr,
+qu'est-ce qui se passe ?
+Si par exemple,
+votre contrôle qualité
+par image
+dit automatiquement,
+fait passer automatiquement
+les défauts d'un côté
+et les pièces normales
+de l'autre,
+si votre modèle plante,
+qu'est-ce qui se passe ?
+Est-ce que c'est un arrêt
+de la production ?
+Est-ce que tout passe
+en défaut ?
+Est-ce que...
+Enfin, voilà.
+Donc ça,
+il faut aussi le savoir
+de si votre modèle
+dans la boucle,
+dans la chaîne
+dans laquelle il est,
+si votre modèle
+ne fonctionne pas
+ou est-ce que vous le mettez ?
+Et bien faire attention
+d'adapter la solution
+aux enjeux.
+Donc ça,
+toujours pareil,
+de bien comprendre
+les besoins de clients.
+Arbitrer du coup
+le coût d'infos positifs
+contre infos négatifs.
+Ça, c'est ce qu'on a fait
+aussi en machine learning.
+Là, ça va être pareil
+sur les défauts.
+Il vaut mieux
+peut-être détecter
+trop de défauts
+et les vérifier à la main
+plutôt qu'en louper.
+essayer d'expliquer
+les décisions
+et tracer les alertes.
+Alors, expliquer
+les décisions, ça,
+on va le voir aussi
+tout à l'heure.
+Il y a de l'explicabilité
+qu'on peut mettre
+dans les modèles.
+Ça reste quand même
+des choses
+assez floues
+et ce n'est pas déterministe
+à 100%.
+mais par contre,
+vous pouvez expliquer
+comment votre modèle fonctionne
+et du coup,
+expliquer un minimum dessus
+et tracer les alertes.
+Ça, vous pouvez le faire aussi.
+Et surtout,
+il faut décider
+de qui est responsable.
+Donc, définir
+qui décide
+un dernier ressort
+et qui est garant
+du système.
+Par exemple,
+si je vous disais
+si le modèle
+met un défaut
+beaucoup trop d'images
+et que ça prend du temps
+et qu'en fait,
+il n'y a plus
+le personnel
+pour venir vérifier
+qui est responsable
+de ça, etc.
+En tout cas,
+il faut voir
+qui est responsable
+du modèle.
+Qui est garant
+du système,
+du modèle.
+Est-ce qu'il y a
+des questions
+par rapport à ça ?
+Ce que je vous propose
+du coup,
+c'est de
+passer un peu plus
+de temps du coup
+sur
+jusqu'à
+10h30
+11h
+on va dire
+sur vos
+TP
+de
+panne
+de défaut.
+Et comme ça,
+ensuite,
+on rebasculera
+sur le machine learning
+pour justement
+préparer au déploiement
+puisque c'est
+le sujet
+de machine learning
+que vous allez
+vous entraîner
+à déployer.
+Alors,
+vous pourrez faire
+les deux,
+mais en tout cas,
+je vous montrerai
+comment préparer
+celui de machine learning.
+Donc,
+n'hésitez pas
+si vous avez
+des résultats
+à me les envoyer
+pour qu'on en discute
+ensemble
+et s'il y a
+des choses
+que vous avez
+du mal
+à interpréter
+aussi,
+à me les envoyer
+pour qu'on voit
+ensemble
+comment les prendre
+en compte.
+Et je vous mets
+les slides
+sur les documents.
+Merci.

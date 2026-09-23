@@ -1,0 +1,94 @@
+{
+  "framework": "pytorch",
+  "device": "cuda",
+  "category": "wood",
+  "image_size": 256,
+  "epochs": 60,
+  "trainable_parameters": 741379,
+  "roc_auc": 0.963157894736842,
+  "pr_auc": 0.9884199787133828,
+  "chosen_policy": "moyenne + 1σ",
+  "chosen_threshold": 0.0006630276853574065,
+  "chosen_validation_false_positive_rate": 0.24324324324324326,
+  "chosen_metrics": {
+    "precision": 1.0,
+    "recall": 0.35,
+    "f1": 0.5185185185185185,
+    "true_positive": 21,
+    "true_negative": 19,
+    "false_positive": 0,
+    "false_negative": 39
+  },
+  "all_policies": {
+    "moyenne + 1σ": {
+      "threshold": 0.0006630276853574065,
+      "validation_false_positive_rate": 0.24324324324324326,
+      "precision": 1.0,
+      "recall": 0.35,
+      "f1": 0.5185185185185185,
+      "true_positive": 21,
+      "false_positive": 0,
+      "false_negative": 39
+    },
+    "moyenne + 2σ": {
+      "threshold": 0.0008373025093334688,
+      "validation_false_positive_rate": 0.02702702702702703,
+      "precision": 1.0,
+      "recall": 0.18333333333333332,
+      "f1": 0.30985915492957744,
+      "true_positive": 11,
+      "false_positive": 0,
+      "false_negative": 49
+    },
+    "moyenne + 3σ (politique initiale, 02c)": {
+      "threshold": 0.001011577333309531,
+      "validation_false_positive_rate": 0.0,
+      "precision": 1.0,
+      "recall": 0.11666666666666667,
+      "f1": 0.208955223880597,
+      "true_positive": 7,
+      "false_positive": 0,
+      "false_negative": 53
+    },
+    "percentile 90": {
+      "threshold": 0.0007362806275556687,
+      "validation_false_positive_rate": 0.10810810810810811,
+      "precision": 1.0,
+      "recall": 0.25,
+      "f1": 0.4,
+      "true_positive": 15,
+      "false_positive": 0,
+      "false_negative": 45
+    },
+    "percentile 95": {
+      "threshold": 0.0008015447201540165,
+      "validation_false_positive_rate": 0.05405405405405406,
+      "precision": 1.0,
+      "recall": 0.2,
+      "f1": 0.3333333333333333,
+      "true_positive": 12,
+      "false_positive": 0,
+      "false_negative": 48
+    },
+    "percentile 97": {
+      "threshold": 0.0008237126427194902,
+      "validation_false_positive_rate": 0.05405405405405406,
+      "precision": 1.0,
+      "recall": 0.18333333333333332,
+      "f1": 0.30985915492957744,
+      "true_positive": 11,
+      "false_positive": 0,
+      "false_negative": 49
+    },
+    "percentile 99": {
+      "threshold": 0.0008392588616452938,
+      "validation_false_positive_rate": 0.02702702702702703,
+      "precision": 1.0,
+      "recall": 0.18333333333333332,
+      "f1": 0.30985915492957744,
+      "true_positive": 11,
+      "false_positive": 0,
+      "false_negative": 49
+    }
+  }
+}

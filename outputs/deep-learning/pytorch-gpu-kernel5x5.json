@@ -1,0 +1,37 @@
+{
+  "framework": "pytorch",
+  "device": "cuda",
+  "category": "wood",
+  "image_size": 256,
+  "batch_size": 32,
+  "epochs": 60,
+  "trainable_parameters": 2058243,
+  "first_epoch_seconds": 1.8476760999999442,
+  "train_seconds": 70.97775699999988,
+  "seconds_per_epoch": 1.171696286440677,
+  "final_train_loss": 0.0009000944816285655,
+  "validation_error_mean": 0.000951970584097495,
+  "validation_error_std": 0.00039128438344212906,
+  "threshold": 0.002125823734423882,
+  "roc_auc": 0.9535087719298245,
+  "pr_auc": 0.9857967249957454,
+  "metrics_at_threshold": {
+    "threshold": 0.002125823734423882,
+    "precision": 1.0,
+    "recall": 0.03333333333333333,
+    "f1": 0.06451612903225806,
+    "true_positive": 2,
+    "true_negative": 19,
+    "false_positive": 0,
+    "false_negative": 58
+  },
+  "mean_error_by_defect": {
+    "good": 0.0005648701141522635,
+    "color": 0.0010498168573777585,
+    "combined": 0.0011709294087994366,
+    "hole": 0.0012532116899996789,
+    "liquid": 0.0009195697456994423,
+    "scratch": 0.0012889031102919504
+  },
+  "kernel_size": 5
+}

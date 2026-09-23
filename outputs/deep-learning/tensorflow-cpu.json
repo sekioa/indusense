@@ -1,0 +1,37 @@
+{
+  "framework": "tensorflow",
+  "device": "cpu",
+  "category": "wood",
+  "image_size": 256,
+  "batch_size": 32,
+  "epochs": 60,
+  "trainable_parameters": 741379,
+  "first_epoch_seconds": 3.0338188999999147,
+  "train_seconds": 144.05117169999994,
+  "seconds_per_epoch": 2.390124623728814,
+  "final_train_loss": 0.0004421920166350901,
+  "validation_error_mean": 0.0006263178360315274,
+  "validation_error_std": 0.00023231287312186827,
+  "threshold": 0.0013232564553971322,
+  "roc_auc": 0.9605263157894737,
+  "pr_auc": 0.9876662972537259,
+  "metrics_at_threshold": {
+    "threshold": 0.0013232564553971322,
+    "precision": 1.0,
+    "recall": 0.11666666666666667,
+    "f1": 0.208955223880597,
+    "true_positive": 7,
+    "true_negative": 19,
+    "false_positive": 0,
+    "false_negative": 53
+  },
+  "mean_error_by_defect": {
+    "good": 0.0003777135367023983,
+    "color": 0.0007106695622787033,
+    "combined": 0.0008065962800438185,
+    "hole": 0.0008619401844070229,
+    "liquid": 0.0006185024141997939,
+    "scratch": 0.0008916508679681713
+  },
+  "kernel_size": 3
+}

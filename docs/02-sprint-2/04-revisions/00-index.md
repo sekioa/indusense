@@ -19,3 +19,4 @@ Cet index regroupe les fiches synthétiques du parcours IT.
 - [MLflow : architecture, tracking, autolog et Model Registry](13-mlflow-tracking-autolog-model-registry.md)
 - [Réseaux de neurones : MLP, CNN et transfer learning — fondations](14-reseaux-de-neurones-mlp-cnn-transfer-learning.md)
 - [Auto-encodeur : ratio de compression, heatmaps, AUROC pixel, SSIM, objet vs texture, PatchCore](15-auto-encodeur-heatmaps-ratio-compression-ssim.md)
+- [Risques et robustesse d'un projet de vision industrielle : biais, drift, confidentialité, attaques adversariales](16-risques-biais-drift-robustesse-ethique-vision.md)
