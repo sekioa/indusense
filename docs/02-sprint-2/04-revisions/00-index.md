@@ -20,3 +20,7 @@ Cet index regroupe les fiches synthétiques du parcours IT.
 - [Réseaux de neurones : MLP, CNN et transfer learning — fondations](14-reseaux-de-neurones-mlp-cnn-transfer-learning.md)
 - [Auto-encodeur : ratio de compression, heatmaps, AUROC pixel, SSIM, objet vs texture, PatchCore](15-auto-encodeur-heatmaps-ratio-compression-ssim.md)
 - [Risques et robustesse d'un projet de vision industrielle : biais, drift, confidentialité, attaques adversariales](16-risques-biais-drift-robustesse-ethique-vision.md)
+- [CodeCarbon et éco-conception des entraînements ML](17-codecarbon-eco-conception-entrainements-ml.md)
+- [Explicabilité SHAP : TreeExplainer, summary, waterfall, dependence](18-explicabilite-shap-treeexplainer.md)
+- [Architecture notebook / src / scripts : industrialiser un projet ML](19-architecture-notebook-src-scripts-industrialisation.md)
+- [Model card Hugging Face : structure et rédaction](20-model-card-hugging-face-structure-redaction.md)

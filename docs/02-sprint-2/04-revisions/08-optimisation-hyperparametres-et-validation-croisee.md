@@ -256,7 +256,11 @@ Optuna organise l'optimisation autour de quatre objets :
 
 Par défaut, Optuna utilise un `TPESampler`. TPE signifie *Tree-structured Parzen Estimator* : le sampler exploite les résultats passés pour proposer progressivement des zones susceptibles d'être meilleures. C'est la différence majeure avec le tirage indépendant de Random Search.
 
-Le **pruning** arrête tôt un essai peu prometteur lorsqu'un algorithme fournit des résultats intermédiaires. Une Random Forest scikit-learn entraînée en un seul `fit` ne fournit pas naturellement ces étapes intermédiaires à Optuna. Il ne faut donc pas promettre un gain de pruning automatique dans ce TP sans implémentation spécifique.
+Le **pruning** arrête tôt un essai peu prometteur lorsqu'un algorithme fournit des résultats intermédiaires. Une Random Forest scikit-learn entraînée en un seul `fit` ne fournit pas naturellement ces étapes intermédiaires à Optuna (contrairement à XGBoost, qui rapporte un score après chaque itération de boosting) : il ne faut donc pas promettre un gain de pruning **automatique** avec cette Random Forest.
+
+**Mise à jour (TP B7, `indusense.fault.tune`).** Un pruning reste possible sans modèle itératif, en changeant ce que Optuna considère comme une « étape » : au lieu de rapporter après chaque itération de boosting, on rapporte l'AP moyenne **après chaque fold** de la validation croisée temporelle (`trial.report(valeur_partielle, step=numero_fold)`), puis on interroge `trial.should_prune()`. Un essai nettement pire que la médiane des essais précédents, dès le premier ou le deuxième fold, est arrêté (`optuna.TrialPruned`) sans entraîner les folds restants. C'est un pruning **inter-fold**, pas inter-itération : il fonctionne avec n'importe quel modèle, y compris un modèle non itératif comme RandomForest, du moment que l'entraînement est répété plusieurs fois (ici, une fois par fold). Voir `make_objective` dans [`src/indusense/fault/tune.py`](../../../src/indusense/fault/tune.py) et le notebook [`08-optimisation-carbone-explicabilite.ipynb`](../../../notebooks/02-sprint-2/01-maintenance-predictive/08-optimisation-carbone-explicabilite.ipynb).
+
+**Résultat réellement observé.** Sur 15 essais tirés (budget `n_trials=15, timeout=600s`), **5 ont été élagués** par le `MedianPruner` avant d'avoir entraîné leurs trois folds, et 10 sont allés à leur terme ; le meilleur essai complet atteint une AP CV de 0,5657 (baseline 0,5575). Comparée à une étude sans pruning de même taille (voir [la fiche CodeCarbon](17-codecarbon-eco-conception-entrainements-ml.md), section 5), le pruning fait économiser l'essentiel du coût de calcul sans perte mesurable de performance.
 
 ### Exemple complet
 
@@ -321,7 +325,7 @@ scikit-learn clone les estimateurs dans `cross_validate`, mais appeler successiv
 | Budget | Subi par la taille de la grille | Fixé par `n_iter` | Fixé par `n_trials` ou une durée |
 | Reproductibilité | Déterministe pour une grille et des folds fixés | Nécessite `random_state` | Nécessite notamment une seed du sampler |
 | Espace continu | Discrétisé manuellement | Bien pris en charge par des distributions | Natif avec `suggest_float` et `suggest_int` |
-| Pruning | Non | Non | Possible si des valeurs intermédiaires sont disponibles |
+| Pruning | Non | Non | Automatique si le modèle est itératif (boosting) ; possible autrement via un pruning inter-fold (voir mise à jour B7 ci-dessus) |
 | Dépendance supplémentaire | Non | Non, SciPy est déjà présent ici | Oui, Optuna |
 | Usage recommandé | Affiner une petite zone | Première exploration sous budget | Recherche adaptative plus avancée et traçable |
 
@@ -501,6 +505,10 @@ Bonnes pratiques :
 
 **SHAP** attribue à chaque feature une contribution à la prédiction par rapport à une valeur de base. Une vue globale résume les features qui comptent sur l'ensemble des observations ; une vue locale explique une prédiction précise. SHAP explique ce que le modèle utilise, pas la cause réelle d'une panne. Une feature qui explique presque tout doit faire rechercher une fuite de données.
 
+Pour le détail pratique (API, code, résultats réellement observés), voir les fiches dédiées
+[CodeCarbon et éco-conception](17-codecarbon-eco-conception-entrainements-ml.md) et
+[Explicabilité SHAP](18-explicabilite-shap-treeexplainer.md), toutes deux écrites pour le TP B7.
+
 ## 18. Points à retenir pour le QCM
 
 - Un paramètre est appris pendant `fit` ; un hyperparamètre est fixé avant l'entraînement.
@@ -508,6 +516,7 @@ Bonnes pratiques :
 - `GridSearchCV` teste toutes les combinaisons d'une grille.
 - `RandomizedSearchCV` teste `n_iter` configurations échantillonnées.
 - Optuna organise la recherche en studies et trials, avec un sampler adaptatif possible.
+- Le pruning n'est pas automatique avec une Random Forest (modèle non itératif), mais reste possible en le déclenchant après chaque fold de la CV plutôt qu'après chaque itération de boosting.
 - `refit=True` réentraîne le meilleur candidat sur toutes les données fournies à `fit`.
 - Les transformations apprises doivent être placées dans un `Pipeline` pour éviter les fuites entre folds.
 - `StratifiedKFold` préserve approximativement les proportions de classes mais ne respecte pas l'ordre temporel.
@@ -526,7 +535,7 @@ Bonnes pratiques :
 - Pourquoi les lignes des 15 machines portant le même timestamp doivent rester ensemble.
 - La différence entre recherche exhaustive, recherche aléatoire et recherche adaptative.
 - Pourquoi Randomized Search est recommandé pour l'exploration initiale et Grid Search pour un affinage local.
-- Pourquoi le pruning d'Optuna n'est pas automatiquement exploitable avec cette Random Forest.
+- Pourquoi le pruning d'Optuna n'est pas automatique avec cette Random Forest, et comment un pruning inter-fold le rend malgré tout possible (TP B7).
 - Pourquoi la PR-AUC est optimisée, puis le seuil F2 choisi séparément.
 - Comment le budget de calcul a été défini et comment la reproductibilité est assurée.
 - Pourquoi une nouvelle période vierge reste nécessaire si le test existant a déjà été consulté.
